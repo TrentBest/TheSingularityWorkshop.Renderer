@@ -40,12 +40,15 @@ public static class ObserverDistance
                     nameof(horizons));
             }
 
+            previousMaximum = horizon.MaximumDistance;
+        }
+
+        foreach (var horizon in horizons)
+        {
             if (distance <= horizon.MaximumDistance)
             {
                 return horizon;
             }
-
-            previousMaximum = horizon.MaximumDistance;
         }
 
         return horizons[^1];
