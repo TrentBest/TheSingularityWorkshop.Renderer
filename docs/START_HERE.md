@@ -89,8 +89,10 @@ The dependency direction must remain downward and compositional. Renderer must n
 
 ## Current status
 
-**Documentation-first / architecture discovery**
+**Alpha / computational model established**
 
-The repository is intentionally beginning with the model before a graphics backend is selected.
+The Renderer now has executable foundations for Event Horizon selection, observer-relative projection/parallax, semantic anchors, and FSM-backed computational representation state. The published package is **0.1.0-alpha.2**.
 
-The next implementation milestones should prove the model with small, measurable abstractions rather than prematurely building a complete graphics engine.
+The benchmark laboratory has also produced the first measured calibration data and identified Event Horizon selection allocation as a concrete optimization target.
+
+The next implementation milestones should continue to prove the model with small, measurable abstractions before selecting or building a graphics backend.
