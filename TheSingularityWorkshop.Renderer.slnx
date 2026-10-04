@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="TheSingularityWorkshop.Renderer.csproj" />
+  <Project Path="tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj" />
+</Solution>
