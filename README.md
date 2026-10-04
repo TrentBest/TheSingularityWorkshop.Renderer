@@ -562,3 +562,30 @@ dotnet test .\TheSingularityWorkshop.Renderer.slnx --configuration Release --no-
 
 The library project is `TheSingularityWorkshop.Renderer.csproj` at the repository root. Tests live under `tests/TheSingularityWorkshop.Renderer.Tests/`.
 
+
+
+## Our own GPU stack
+
+The goal is not to wrap somebody else's renderer. The Renderer should own the computational model and, above the unavoidable hardware/driver boundary, its own resource model, command stream, batching, material semantics, shader inputs, residency, synchronization, and scheduling.
+
+A graphics API is the final hardware doorway—not the architecture.
+
+```text
+World / Observer
+      ↓
+Event Horizons
+      ↓
+Renderer computation
+      ↓
+Workshop Render Model
+      ↓
+Workshop GPU Layer
+      ↓
+tiny native transport
+      ↓
+GPU
+```
+
+The first GPU milestone is intentionally small: generate one `RenderFrame`, turn it into a Workshop-owned GPU packet, execute one real GPU draw, and measure every stage separately.
+
+See [GPU Boundary](docs/GPU_BOUNDARY.md).
