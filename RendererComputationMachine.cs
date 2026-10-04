@@ -113,7 +113,7 @@ public sealed class RendererComputationMachine : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        FSM_API.Interaction.Update(ProcessingGroup);
+        _handle.Update(ProcessingGroup);
         return CurrentRepresentation;
     }
 
