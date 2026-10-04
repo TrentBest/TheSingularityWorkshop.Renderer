@@ -36,7 +36,7 @@ Environment:
 - Intel Core i5-10400F
 - .NET 8.0.31 host
 - BenchmarkDotNet 0.16.0-preview.2
-- TheSingularityWorkshop.Renderer 0.1.0-alpha.1
+- TheSingularityWorkshop.Renderer 0.1.0-alpha.2
 
 A later debugger-attached run reproduced the same order of magnitude. It is recorded as validation only because an attached debugger is not a clean performance environment.
 
