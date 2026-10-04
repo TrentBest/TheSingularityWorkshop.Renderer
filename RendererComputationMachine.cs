@@ -78,6 +78,7 @@ public sealed class RendererComputationMachine : IDisposable
     private const string ProcessingGroup = "Renderer";
     private const string DefinitionName = "Renderer.Representation";
 
+    private static readonly object DefinitionLock = new();
     private readonly RendererComputationContext _context;
     private readonly FSMHandle _handle;
     private bool _disposed;
@@ -131,38 +132,40 @@ public sealed class RendererComputationMachine : IDisposable
 
     private static void EnsureDefinition()
     {
-        if (FSM_API.Interaction.Exists(DefinitionName, ProcessingGroup))
+        lock (DefinitionLock)
         {
-            return;
-        }
+            if (FSM_API.Interaction.Exists(DefinitionName, ProcessingGroup))
+            {
+                return;
+            }
 
-        FSM_API.Create.CreateFiniteStateMachine(
+            FSM_API.Create.CreateFiniteStateMachine(
                 DefinitionName,
                 processRate: -1,
                 processingGroup: ProcessingGroup)
             .State(
                 nameof(RepresentationTarget.Semantic),
-                onEnter: SetActiveRepresentation,
+                onEnter: null,
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Aggregate),
-                onEnter: SetActiveRepresentation,
+                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Aggregate),
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Distant),
-                onEnter: SetActiveRepresentation,
+                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Distant),
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Near),
-                onEnter: SetActiveRepresentation,
+                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Near),
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Interactive),
-                onEnter: SetActiveRepresentation,
+                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Interactive),
                 onUpdate: null,
                 onExit: null)
             .WithInitialState(nameof(RepresentationTarget.Semantic))
@@ -182,6 +185,7 @@ public sealed class RendererComputationMachine : IDisposable
                 nameof(RepresentationTarget.Interactive),
                 context => ShouldTransition(context, RepresentationTarget.Interactive))
             .BuildDefinition();
+        }
     }
 
     private static bool ShouldTransition(
@@ -194,16 +198,10 @@ public sealed class RendererComputationMachine : IDisposable
             && context.ActiveRepresentation != target;
     }
 
-    private static void SetActiveRepresentation(IStateContext stateContext)
+    private static void SetActiveRepresentation(
+        IStateContext stateContext,
+        RepresentationTarget representation)
     {
-        var context = (RendererComputationContext)stateContext;
-        context.ActiveRepresentation = Enum.Parse<RepresentationTarget>(
-            stateContext is RendererComputationContext
-                ? context.DesiredRepresentation == context.ActiveRepresentation
-                    ? context.ActiveRepresentation.ToString()
-                    : stateContext is RendererComputationContext
-                        ? context.DesiredRepresentation.ToString()
-                        : nameof(RepresentationTarget.Semantic)
-                : nameof(RepresentationTarget.Semantic));
+        ((RendererComputationContext)stateContext).ActiveRepresentation = representation;
     }
 }
