@@ -448,6 +448,7 @@ Start here:
 - [Event Horizon Theory](docs/EVENT_HORIZON_THEORY.md)
 - [Semantic Rendering](docs/SEMANTIC_RENDERING.md)
 - [Rendering Mathematics](docs/RENDERING_MATH.md)
+- [Parallax and Observer Geometry](docs/PARALLAX_AND_OBSERVER_GEOMETRY.md)
 
 The documentation is deliberately being established before the graphics implementation so the semantic model remains independent of backend technology.
 
