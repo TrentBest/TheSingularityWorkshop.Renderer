@@ -122,3 +122,19 @@ The model is part of the engineering system, not marketing arithmetic.
 Future benchmarks should calibrate horizon selection, semantic anchor lookup, procedural reconstruction, promotion and demotion, cohort migration, visibility and occlusion decisions, representation construction, streaming, CPU/GPU submission, and complete observer workloads.
 
 Eventually the Renderer should be able to estimate CPU work, memory residency, avoided work, and model confidence for large observer-relative worlds before a graphics backend is selected.
+
+## Parallax and physically meaningful distance
+
+Distance is not a visibility cutoff. Perspective makes distant objects smaller, while parallax makes their apparent motion under observer translation smaller as inverse depth.
+
+For lateral observer movement ΔC:
+
+    |Δu| = f * |ΔC| / Z
+
+For two depths:
+
+    |Δu_relative| = f * |ΔC| * |1/Z_near - 1/Z_far|
+
+This gives the Renderer a way to keep a mountain hundreds of kilometers away visible while reducing the frequency and cost of computation associated with its extremely small projected motion.
+
+See [Parallax and Observer Geometry](docs/PARALLAX_AND_OBSERVER_GEOMETRY.md).
