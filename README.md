@@ -589,3 +589,27 @@ GPU
 The first GPU milestone is intentionally small: generate one `RenderFrame`, turn it into a Workshop-owned GPU packet, execute one real GPU draw, and measure every stage separately.
 
 See [GPU Boundary](docs/GPU_BOUNDARY.md).
+
+## Hardware-first GPU direction
+
+The Renderer is intentionally moving toward a **hardware-aware execution model**. The generic GPU contract is the baseline, not the ceiling.
+
+At runtime we want to discover the physical adapter and its capabilities, build a capability profile, and select the strongest Workshop execution path that the hardware supports.
+
+```text
+GPU hardware
+    ↓
+discover
+    ↓
+capability profile
+    ↓
+Workshop GPU strategy
+    ↓
+thin C# native interop
+    ↓
+driver / GPU
+```
+
+This means an NVIDIA device should not be treated exactly like every other GPU merely because a generic abstraction makes that convenient. If CUDA or another vendor capability provides useful leverage, the Renderer should be able to exploit it behind a capability check while retaining a generic baseline for other hardware.
+
+See [GPU Boundary](docs/GPU_BOUNDARY.md) for the hardware-discovery and native-C# direction.
