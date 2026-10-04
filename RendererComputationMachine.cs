@@ -202,10 +202,4 @@ public sealed class RendererComputationMachine : IDisposable
         return true;
     }
 
-    private static void SetActiveRepresentation(
-        IStateContext stateContext,
-        RepresentationTarget representation)
-    {
-        ((RendererComputationContext)stateContext).ActiveRepresentation = representation;
-    }
 }
