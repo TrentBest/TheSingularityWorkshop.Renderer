@@ -81,9 +81,18 @@ Renderer must not require FSM_COS simply to define or execute its core model.
 
 ### Micro Bundles
 
-Rendering capabilities can eventually be delivered as independent microbundles.
+The core Renderer is itself a MicroBundle capability through the RendererMicroBundle adapter
+included in this package.
 
-A renderer capability should be useful independently where practical.
+Additional rendering capabilities can become sibling MicroBundles under the Renderer
+ontology. They do not automatically require separate NuGet packages; package boundaries
+should follow independent distribution, versioning, dependency, configuration, lifecycle,
+or arbitration needs.
+
+FSM_COS consumes these MicroBundles through MicroBundleDomain. It should never need to
+learn Renderer-specific types merely to assemble a runtime.
+
+See [Renderer MicroBundle](MICROBUNDLE.md).
 
 ### GPU boundary
 
