@@ -182,7 +182,7 @@ The Renderer is intended to fit into the Workshop without becoming the compositi
 
 | System | Relationship |
 | --- | --- |
-| **FSM_API** | foundational state abstraction where useful |
+| **FSM_API** | renderer computation and state transitions |
 | **Ontology** | semantic structure and relationships |
 | **Micro Bundles** | independent rendering capabilities and representations |
 | **FSM_COS** | composition and runtime assembly |
@@ -287,7 +287,7 @@ The documentation is deliberately being established before the graphics implemen
 - Event Horizon
 - Observer Context
 - Representation
-- Representation selection
+- Representation selection through FSM computation
 - Update policy
 - Promotion and demotion
 - Temporal stability
@@ -321,6 +321,8 @@ Connect the Renderer to Micro Bundles, Ontology, FSM_API, FSM_COS composition, a
 The repository is intentionally a clean starting point.
 
 The goal is not to build another graphics wrapper.
+
+The Renderer now has its first real computational integration: **FSM_API drives representation state**, while the Renderer remains independent of FSM_COS and graphics APIs.
 
 The goal is to build a rendering system in which **computational detail follows observation**.
 
