@@ -270,6 +270,12 @@ Start here:
 - [Update Frequency](docs/UPDATE_FREQUENCY.md)
 - [FSM Integration](docs/FSM_INTEGRATION.md)
 
+### Theory
+
+- [Rendering Theory](docs/RENDERING_THEORY.md)
+- [Observation Model](docs/OBSERVATION_MODEL.md)
+- [Event Horizon Theory](docs/EVENT_HORIZON_THEORY.md)
+
 The documentation is deliberately being established before the graphics implementation so the semantic model remains independent of backend technology.
 
 ---
