@@ -564,11 +564,11 @@ The library project is `TheSingularityWorkshop.Renderer.csproj` at the repositor
 
 
 
-## Our own GPU stack
+## Our own rendering model, with hardware-aware execution
 
-The goal is not to wrap somebody else's renderer. The Renderer should own the computational model and, above the unavoidable hardware/driver boundary, its own resource model, command stream, batching, material semantics, shader inputs, residency, synchronization, and scheduling.
+The goal is not to wrap somebody else's renderer. The Renderer owns the observer-relative computational model and the Workshop-level description of the rendering work. Concrete CPU and GPU execution belong to the independent Computation capability and its execution-provider MicroBundles.
 
-A graphics API is the final hardware doorway—not the architecture.
+A graphics API is the final hardware doorway—not the architecture. The Renderer describes the work; Computation selects and schedules the execution capability that can perform it.
 
 ```text
 World / Observer
