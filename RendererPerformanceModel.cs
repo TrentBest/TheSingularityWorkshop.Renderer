@@ -46,7 +46,7 @@ public sealed class RendererPerformanceModel
         new(
             baseUpdateNanoseconds: 305.1,
             additionalGroupNanoseconds: (15_736.6 - 305.1) / 49.0,
-            baseAllocationBytes: 0,
+            baseAllocationBytes: 360.0,
             additionalGroupAllocationBytes: 360.0);
 
     /// <summary>Measured base scheduling overhead for one processing group.</summary>
