@@ -1,4 +1,5 @@
 using TheSingularityWorkshop.FSM_API;
+using FSMApi = TheSingularityWorkshop.FSM_API.FSM_API;
 
 namespace TheSingularityWorkshop.Renderer;
 
@@ -93,7 +94,7 @@ public sealed class RendererComputationMachine : IDisposable
 
         _context = context;
         EnsureDefinition();
-        _handle = FSM_API.Create.CreateInstance(DefinitionName, _context, ProcessingGroup);
+        _handle = FSMApi.Create.CreateInstance(DefinitionName, _context, ProcessingGroup);
     }
 
     /// <summary>Gets the computation context managed by this machine.</summary>
@@ -125,7 +126,7 @@ public sealed class RendererComputationMachine : IDisposable
             return;
         }
 
-        FSM_API.Interaction.DestroyInstance(_handle);
+        FSMApi.Interaction.DestroyInstance(_handle);
         _context.IsValid = false;
         _disposed = true;
     }
