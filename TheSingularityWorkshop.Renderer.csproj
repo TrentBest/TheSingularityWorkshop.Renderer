@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>TheSingularityWorkshop.Renderer</PackageId>
+    <Version>0.1.0-alpha.1</Version>
+    <Authors>TheSingularityWorkshop</Authors>
+    <Company>The Singularity Workshop</Company>
+    <Description>Observer-aware rendering foundations built around Event Horizons and computational detail.</Description>
+    <PackageTags>renderer;rendering;event-horizon;lod;graphics;observation;microbundle</PackageTags>
+    <RepositoryUrl>https://github.com/TrentBest/TheSingularityWorkshop.Renderer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/TrentBest/TheSingularityWorkshop.Renderer</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>
