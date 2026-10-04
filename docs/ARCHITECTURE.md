@@ -106,3 +106,25 @@ The host should not redefine the Renderer model.
 > **The Renderer decides what must be represented. The host decides how that representation is presented.**
 
 That separation is one of the most important constraints of the project.
+
+## Hardware-first execution
+
+The platform-neutral core is not intended to collapse hardware into one generic lowest-common-denominator path. The next layer discovers the physical adapter, records its capabilities, and selects the strongest safe Workshop execution strategy.
+
+```text
+Renderer model
+     ↓
+GPU capability discovery
+     ↓
+capability profile
+     ↓
+generic baseline OR specialized path
+     ↓
+thin native C# interop
+     ↓
+driver / hardware
+```
+
+Vendor-specific capabilities are therefore opportunities, not dependencies. NVIDIA CUDA is one possible compute specialization; other vendors and APIs can expose their own paths.
+
+See [GPU Boundary](GPU_BOUNDARY.md).
