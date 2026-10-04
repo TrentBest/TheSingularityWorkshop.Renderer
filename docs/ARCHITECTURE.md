@@ -85,6 +85,16 @@ Rendering capabilities can eventually be delivered as independent microbundles.
 
 A renderer capability should be useful independently where practical.
 
+### GPU boundary
+
+The Renderer produces a platform-neutral `RenderFrame` after observer-relative decisions have been made. Its `RenderView` carries observer/view state and its `RenderDrawCommand` values describe resource identity, transforms, and draw ranges.
+
+A host/backend translates that frame into a concrete graphics API. This is the boundary at which DirectX, Vulkan, WebGPU, OpenGL, or another backend may enter the system.
+
+The core Renderer must remain usable and testable without any of those APIs.
+
+See [GPU Boundary](GPU_BOUNDARY.md).
+
 ### Hosts
 
 AnyApp, Web, Unity integration, VR environments, or future hosts can adapt Renderer output to their presentation technology.
