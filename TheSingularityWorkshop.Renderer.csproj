@@ -10,7 +10,7 @@
     <Authors>TheSingularityWorkshop</Authors>
     <Company>The Singularity Workshop</Company>
     <Description>Observer-aware rendering foundations built around Event Horizons and computational detail.</Description>
-    <PackageTags>renderer;rendering;event-horizon;lod;graphics;observation;microbundle</PackageTags>
+    <PackageTags>renderer;rendering;event-horizon;lod;graphics;observation;microbundle;protocol;semantic;performance</PackageTags>
     <RepositoryUrl>https://github.com/TrentBest/TheSingularityWorkshop.Renderer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="TheSingularityWorkshop.FSM_API" Version="1.0.13" />
+    <PackageReference Include="TheSingularityWorkshop.ProtocolAi" Version="0.1.0-alpha.2" />
   </ItemGroup>
 
   <ItemGroup>
