@@ -170,21 +170,46 @@ public sealed class RendererComputationMachine : IDisposable
                 onUpdate: null,
                 onExit: null)
             .WithInitialState(nameof(RepresentationTarget.Semantic))
-            .AnyTransition(
-                nameof(RepresentationTarget.Semantic),
-                context => ShouldTransition(context, RepresentationTarget.Semantic))
-            .AnyTransition(
-                nameof(RepresentationTarget.Aggregate),
+            .Transition(nameof(RepresentationTarget.Semantic), nameof(RepresentationTarget.Aggregate),
                 context => ShouldTransition(context, RepresentationTarget.Aggregate))
-            .AnyTransition(
-                nameof(RepresentationTarget.Distant),
+            .Transition(nameof(RepresentationTarget.Semantic), nameof(RepresentationTarget.Distant),
                 context => ShouldTransition(context, RepresentationTarget.Distant))
-            .AnyTransition(
-                nameof(RepresentationTarget.Near),
+            .Transition(nameof(RepresentationTarget.Semantic), nameof(RepresentationTarget.Near),
                 context => ShouldTransition(context, RepresentationTarget.Near))
-            .AnyTransition(
-                nameof(RepresentationTarget.Interactive),
+            .Transition(nameof(RepresentationTarget.Semantic), nameof(RepresentationTarget.Interactive),
                 context => ShouldTransition(context, RepresentationTarget.Interactive))
+            .Transition(nameof(RepresentationTarget.Aggregate), nameof(RepresentationTarget.Semantic),
+                context => ShouldTransition(context, RepresentationTarget.Semantic))
+            .Transition(nameof(RepresentationTarget.Aggregate), nameof(RepresentationTarget.Distant),
+                context => ShouldTransition(context, RepresentationTarget.Distant))
+            .Transition(nameof(RepresentationTarget.Aggregate), nameof(RepresentationTarget.Near),
+                context => ShouldTransition(context, RepresentationTarget.Near))
+            .Transition(nameof(RepresentationTarget.Aggregate), nameof(RepresentationTarget.Interactive),
+                context => ShouldTransition(context, RepresentationTarget.Interactive))
+            .Transition(nameof(RepresentationTarget.Distant), nameof(RepresentationTarget.Semantic),
+                context => ShouldTransition(context, RepresentationTarget.Semantic))
+            .Transition(nameof(RepresentationTarget.Distant), nameof(RepresentationTarget.Aggregate),
+                context => ShouldTransition(context, RepresentationTarget.Aggregate))
+            .Transition(nameof(RepresentationTarget.Distant), nameof(RepresentationTarget.Near),
+                context => ShouldTransition(context, RepresentationTarget.Near))
+            .Transition(nameof(RepresentationTarget.Distant), nameof(RepresentationTarget.Interactive),
+                context => ShouldTransition(context, RepresentationTarget.Interactive))
+            .Transition(nameof(RepresentationTarget.Near), nameof(RepresentationTarget.Semantic),
+                context => ShouldTransition(context, RepresentationTarget.Semantic))
+            .Transition(nameof(RepresentationTarget.Near), nameof(RepresentationTarget.Aggregate),
+                context => ShouldTransition(context, RepresentationTarget.Aggregate))
+            .Transition(nameof(RepresentationTarget.Near), nameof(RepresentationTarget.Distant),
+                context => ShouldTransition(context, RepresentationTarget.Distant))
+            .Transition(nameof(RepresentationTarget.Near), nameof(RepresentationTarget.Interactive),
+                context => ShouldTransition(context, RepresentationTarget.Interactive))
+            .Transition(nameof(RepresentationTarget.Interactive), nameof(RepresentationTarget.Semantic),
+                context => ShouldTransition(context, RepresentationTarget.Semantic))
+            .Transition(nameof(RepresentationTarget.Interactive), nameof(RepresentationTarget.Aggregate),
+                context => ShouldTransition(context, RepresentationTarget.Aggregate))
+            .Transition(nameof(RepresentationTarget.Interactive), nameof(RepresentationTarget.Distant),
+                context => ShouldTransition(context, RepresentationTarget.Distant))
+            .Transition(nameof(RepresentationTarget.Interactive), nameof(RepresentationTarget.Near),
+                context => ShouldTransition(context, RepresentationTarget.Near))
             .BuildDefinition();
         }
     }
