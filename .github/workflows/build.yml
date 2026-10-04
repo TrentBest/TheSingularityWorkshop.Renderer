@@ -31,7 +31,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore TheSingularityWorkshop.Renderer.csproj
+        run: dotnet restore tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj
 
       - name: Build tests
         run: dotnet build tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj --configuration Release --no-restore
