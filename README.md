@@ -373,6 +373,27 @@ and seeks the least expensive representation that preserves the information the 
 
 See [Rendering Mathematics](docs/RENDERING_MATH.md).
 
+## Benchmark evidence
+
+The Renderer benchmark program lives in [TheSingularityWorkshop.Renderer.Benchmarks](https://github.com/TrentBest/TheSingularityWorkshop.Renderer.Benchmarks), keeping the package small while giving large performance experiments their own laboratory.
+
+The first clean BenchmarkDotNet result establishes the current mathematical baseline:
+
+| Operation | 10 m | 1,000 m | 300,000 m | Allocation |
+| --- | ---: | ---: | ---: | ---: |
+| ProjectHorizontal | ~6.2 ns | ~6.2 ns | ~6.4 ns | 0 B |
+| LateralParallax | ~2.8 ns | ~2.8 ns | ~2.8 ns | 0 B |
+| ViewAngle | ~20 ns | ~19 ns | ~14 ns | 0 B |
+| SelectEventHorizon | ~33 ns | ~36 ns | ~38 ns | 64 B |
+
+These measurements are machine-specific calibration evidence, not a claim that the complete Renderer is faster than an established production renderer. A later debugger-attached run reproduced the same order of magnitude and is recorded only as validation, not as a clean replacement measurement.
+
+The expanded benchmark laboratory now covers population scaling through 10 million entities, Event Horizon selection with 4/16/64/256 horizons, Renderer FSM scheduling, and million-to-hundred-million-scale autonomous-world workloads. Those experiments are explicitly intended to falsify the observer-relative model if traversal, selection, scheduling, allocation, or global event propagation becomes the dominant cost.
+
+See [Benchmarking](docs/BENCHMARKING.md) for the measurement record and interpretation.
+
+---
+
 ## Event Horizon update frequency
 
 Event Horizons also control **when computation needs to occur**.
@@ -498,7 +519,7 @@ Connect the Renderer to Micro Bundles, Ontology, FSM_API, FSM_COS composition, a
 
 ## Current status
 
-**Architecture discovery / documentation-first**
+**Alpha — computational model and first benchmark evidence**
 
 The repository is intentionally a clean starting point.
 
