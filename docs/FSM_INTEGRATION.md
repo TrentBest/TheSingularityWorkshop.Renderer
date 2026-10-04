@@ -32,7 +32,40 @@ That maps naturally to renderer concerns such as:
 - update scheduling
 - streaming state
 
-The Renderer should reuse the state model where it provides a real benefit instead of creating a parallel state machine abstraction.
+The Renderer now uses FSM_API directly for representation computation. This is not a decorative dependency: an observable entity's representation is an actual FSM state, and promotion/demotion is an actual state transition.
+
+## Representation computation is an FSM
+
+The first executable integration is deliberately small:
+
+```
+Observer / Policy
+       |
+       v
+Desired Representation
+       |
+       v
++---------------------------+
+| FSM_API                   |
+| Renderer.Representation   |
++---------------------------+
+       |
+       v
+Active Representation
+       |
+       v
+Geometry / Material /
+Animation / Simulation /
+Interaction / Streaming
+```
+
+`RendererComputationContext` carries the decision state. `RendererComputationMachine` owns the FSM instance. The FSM does not draw anything; it determines which computational responsibility is active.
+
+This establishes the important direction:
+
+> **Use FSM computation where the renderer has stateful computational behavior—not merely because FSM_API happens to be available.**
+
+That gives the renderer a concrete place to grow richer state machines for promotion, demotion, temporal stability, streaming readiness, interaction, and other Event Horizon dimensions.
 
 ## Horizon-driven processing
 
