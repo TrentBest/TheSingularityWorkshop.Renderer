@@ -507,9 +507,18 @@ Build the smallest testable model that can:
 8. measure avoided work
 9. produce semantic observations alongside visual representations
 
-### Phase 3 — Add rendering backends
+### Phase 3 — Feed a real GPU
 
-Only after the computational model is proven should the project investigate concrete rendering backends.
+The computational model now has a platform-neutral GPU input contract. The next work is to:
+
+1. generate `RenderFrame` data from observer-relative representations
+2. benchmark command construction and memory residency
+3. batch/group commands without changing the Renderer model
+4. select one concrete backend as a proof adapter
+5. measure CPU preparation, submission, GPU execution, and presentation separately
+6. keep the backend below the Renderer boundary
+
+The backend is an implementation target, not the definition of the Renderer.
 
 ### Phase 4 — Integrate with Workshop experiences
 
@@ -519,13 +528,17 @@ Connect the Renderer to Micro Bundles, Ontology, FSM_API, FSM_COS composition, a
 
 ## Current status
 
-**Alpha — computational model and first benchmark evidence**
+**Alpha — computational model, benchmark evidence, and first GPU boundary**
 
-The repository is intentionally a clean starting point.
+The repository has crossed the architectural line from deciding what should be rendered toward defining exactly what survives to the GPU boundary, without coupling the core to a graphics API.
 
 The goal is not to build another graphics wrapper.
 
 The Renderer now has its first real computational integration: **FSM_API drives representation state and provides the foundation for renderer scheduling**, while the Renderer remains independent of FSM_COS and graphics APIs.
+
+The Renderer now has a platform-neutral GPU input boundary. It produces a `RenderFrame` containing observer/view state and draw commands that describe the work surviving observer-relative computation, without coupling the core to DirectX, Vulkan, WebGPU, OpenGL, WPF, or Unity.
+
+See [GPU Boundary](docs/GPU_BOUNDARY.md).
 
 The goal is to build a rendering system in which **computational detail follows observation**.
 
