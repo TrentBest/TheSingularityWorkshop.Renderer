@@ -150,22 +150,22 @@ public sealed class RendererComputationMachine : IDisposable
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Aggregate),
-                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Aggregate),
+                onEnter: null,
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Distant),
-                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Distant),
+                onEnter: null,
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Near),
-                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Near),
+                onEnter: null,
                 onUpdate: null,
                 onExit: null)
             .State(
                 nameof(RepresentationTarget.Interactive),
-                onEnter: _ => SetActiveRepresentation(_, RepresentationTarget.Interactive),
+                onEnter: null,
                 onUpdate: null,
                 onExit: null)
             .WithInitialState(nameof(RepresentationTarget.Semantic))
@@ -193,9 +193,13 @@ public sealed class RendererComputationMachine : IDisposable
         RepresentationTarget target)
     {
         var context = (RendererComputationContext)stateContext;
-        return context.IsValid
-            && context.DesiredRepresentation == target
-            && context.ActiveRepresentation != target;
+        if (!context.IsValid || context.DesiredRepresentation != target || context.ActiveRepresentation == target)
+        {
+            return false;
+        }
+
+        context.ActiveRepresentation = target;
+        return true;
     }
 
     private static void SetActiveRepresentation(
