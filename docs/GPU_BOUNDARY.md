@@ -215,3 +215,104 @@ We do not need to write a GPU driver, replace the operating system graphics stac
 We own the renderer. The driver owns the hardware.
 
 That is the useful boundary.
+
+## Hardware discovery and capability specialization
+
+The next layer is not a generic backend. It is **hardware discovery**.
+
+The Renderer should be able to establish a hardware profile before selecting its GPU execution path:
+
+```text
+physical GPU
+    ↓
+adapter/device discovery
+    ↓
+vendor + architecture + device identity
+    ↓
+capability profile
+    ↓
+Workshop GPU strategy
+    ↓
+hardware-specific execution
+```
+
+A generic baseline remains necessary so the Renderer can run broadly, but it must not become the ceiling. The capability model should be additive: a GPU that exposes more useful hardware should allow the Renderer to do more useful work.
+
+Conceptually:
+
+```text
+                    Workshop GPU
+                         |
+             +-----------+-----------+
+             |                       |
+        baseline path           capability path
+             |                       |
+       common operations       detected features
+                                     |
+                         +-----------+-----------+
+                         |           |           |
+                      vendor      memory      execution
+                      features    model        features
+                         |           |           |
+                         +-----------+-----------+
+                                     |
+                                     v
+                              specialized path
+```
+
+## C# should reach as close to the metal as practical
+
+The first implementation should remain C# rather than forcing a managed rendering abstraction to hide the hardware.
+
+Where the operating system or driver exposes a native interface, the Workshop can use C# interop directly:
+
+- P/Invoke where the native ABI is the appropriate boundary
+- function pointers and unmanaged delegates where appropriate
+- `unsafe` code for explicitly controlled native-memory operations
+- `NativeMemory` for unmanaged allocations
+- blittable structs for direct data exchange
+- spans over unmanaged memory where safe and useful
+- explicit lifetime ownership for native resources
+- direct inspection of adapter/device capabilities
+- vendor-specific paths behind capability checks
+- CUDA or another compute interface when a device exposes useful compute capability
+
+The goal is not to pretend native APIs are managed objects. The goal is to make the managed boundary extremely thin and keep the Workshop representation on our side of it.
+
+## CUDA is a capability, not the renderer
+
+NVIDIA CUDA should be treated as an important example of specialization rather than as the generic rendering architecture.
+
+Where NVIDIA hardware is detected and CUDA provides leverage for a workload, the Renderer can eventually select a CUDA-backed compute path while preserving the same Workshop-level model.
+
+```text
+Workshop GPU model
+       |
+       +--> generic GPU execution
+       |
+       +--> NVIDIA capability path
+       |       +--> CUDA compute
+       |       +--> future NVIDIA-specific features
+       |
+       +--> AMD capability path
+       |
+       +--> Intel capability path
+       |
+       +--> other hardware path
+```
+
+This prevents the common-denominator trap without making NVIDIA a hard dependency.
+
+## Driver versus renderer
+
+We should distinguish three different layers:
+
+1. **Workshop renderer** — the algorithms, representations, command model, resource model, scheduling, and GPU strategy we own.
+2. **Native transport layer** — the smallest C# interop layer required to communicate with the operating system/driver interface.
+3. **GPU driver/firmware** — the vendor software and hardware control we do not need to replace to obtain direct execution.
+
+Writing a completely new production GPU driver is a different project with operating-system kernel, device-protocol, firmware, certification, and hardware-documentation requirements. It is not required to get the Renderer extremely close to the hardware.
+
+But we should absolutely investigate how thin our native transport can become, what hardware information is available, and how much of the GPU's exposed capability we can use from C#.
+
+That investigation is now part of the Renderer roadmap.
