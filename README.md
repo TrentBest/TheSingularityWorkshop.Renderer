@@ -99,6 +99,38 @@ This means performance can improve **before** work reaches the graphics API.
 
 ---
 
+## FSM_API is part of the rendering substrate
+
+The Renderer is deliberately not building a second state/scheduling system beside FSM_API.
+
+FSM_API already provides:
+
+- named processing groups
+- process-rate throttling
+- event-driven/manual processing
+- state transitions
+- runtime definition modification
+- POCO-friendly state context
+
+Those capabilities map directly onto Event Horizon computation.
+
+Conceptually:
+
+```
+LOD0 / immediate       -> highest-frequency computation
+LOD1 / interaction     -> high-frequency computation
+LOD2 / local context   -> moderate computation
+LOD3 / environment     -> low-frequency computation
+...
+LOD10 / distant        -> very low-frequency or event-driven computation
+```
+
+The LOD number is therefore a policy label. The FSM and its scheduler determine computational responsibility.
+
+See [FSM Scheduling Model](docs/FSM_SCHEDULING_MODEL.md) and [FSM Integration](docs/FSM_INTEGRATION.md) for the deeper model.
+
+---
+
 ## Detail is multidimensional
 
 Traditional LOD tends to reduce detail along one visual axis.
@@ -182,7 +214,7 @@ The Renderer is intended to fit into the Workshop without becoming the compositi
 
 | System | Relationship |
 | --- | --- |
-| **FSM_API** | renderer computation and state transitions |
+| **FSM_API** | renderer computation and scheduling substrate |
 | **Ontology** | semantic structure and relationships |
 | **Micro Bundles** | independent rendering capabilities and representations |
 | **FSM_COS** | composition and runtime assembly |
@@ -217,6 +249,8 @@ The entity does not become a different entity when its representation changes.
 
 The observer determines which representation is computationally justified.
 
+A procedural entity may retain a stable identity and deterministic seed while its materialized detail changes dramatically with observation.
+
 This also makes the model useful for different observers:
 
 - nearby first-person observer
@@ -226,6 +260,66 @@ This also makes the model useful for different observers:
 - VR observer
 - AI observer
 - networked client
+
+---
+
+## Deterministic procedural detail
+
+A distant tree should not require all of its leaves to remain materialized merely so the tree can later become detailed.
+
+The stronger model is:
+
+```
+entity identity
+      +
+placement identity
+      +
+deterministic seed
+      |
+      v
+representation appropriate to observer
+```
+
+When promoted, additional branches, leaves, material variation, animation parameters, and collision detail can be reconstructed from stable inputs.
+
+The same tree remains the same tree.
+
+The Workshop already has Squirrel3 documentation in SingularityWarehouse, making Squirrel3 a candidate mathematical primitive for investigation. The Renderer will benchmark that and alternatives rather than assuming the answer prematurely.
+
+> **When detail is not justified, retain the information needed to reconstruct it — not the detail itself.**
+
+---
+
+## AI is also an observer
+
+The observer does not necessarily need a rendered image.
+
+An AI observer can receive a semantic observation such as:
+
+```
+10 m left: goblin
+100 m right: dragon
+interaction: goblin reachable
+threat: dragon high
+```
+
+The LLM or AI system should not have to spend computational effort rediscovering facts already available in the world model.
+
+The same observation system can therefore produce:
+
+```
+World
+  |
+  v
+Observer model
+  |
+  +------> visual representation
+  +------> semantic observation
+  +------> interaction affordances
+  +------> simulation participation
+```
+
+Rendering is consequently about constructing the right **observable information**, not merely drawing lines.
 
 ---
 
@@ -258,6 +352,32 @@ The architecture should allow an experience to choose the policy appropriate to 
 
 ---
 
+## Occlusion can become computational leverage
+
+A highly detailed foreground object can occupy enough screen space to hide portions of the environment behind it.
+
+That creates a potentially useful relationship:
+
+```
+foreground promotion
+        |
+        v
+more foreground detail
+        |
+        v
+greater occlusion
+        |
+        v
+less observable detail behind it
+        |
+        v
+less computation justified behind it
+```
+
+This must be measured rather than assumed, but it suggests an important direction: detailed nearby geometry can sometimes reduce the amount of distant geometry an observer can benefit from.
+
+---
+
 ## Documentation
 
 Start here:
@@ -269,6 +389,7 @@ Start here:
 - [Representation](docs/REPRESENTATION.md)
 - [Update Frequency](docs/UPDATE_FREQUENCY.md)
 - [FSM Integration](docs/FSM_INTEGRATION.md)
+- [FSM Scheduling Model](docs/FSM_SCHEDULING_MODEL.md)
 
 ### Theory
 
@@ -288,9 +409,12 @@ The documentation is deliberately being established before the graphics implemen
 - Observer Context
 - Representation
 - Representation selection through FSM computation
+- FSM-backed scheduling
 - Update policy
 - Promotion and demotion
 - Temporal stability
+- deterministic procedural reconstruction
+- semantic observation
 
 ### Phase 2 — Prove it without a GPU
 
@@ -302,7 +426,9 @@ Build the smallest testable model that can:
 4. select a representation
 5. schedule representation updates
 6. promote and demote representations
-7. measure avoided work
+7. reconstruct procedural detail deterministically
+8. measure avoided work
+9. produce semantic observations alongside visual representations
 
 ### Phase 3 — Add rendering backends
 
@@ -322,7 +448,7 @@ The repository is intentionally a clean starting point.
 
 The goal is not to build another graphics wrapper.
 
-The Renderer now has its first real computational integration: **FSM_API drives representation state**, while the Renderer remains independent of FSM_COS and graphics APIs.
+The Renderer now has its first real computational integration: **FSM_API drives representation state and provides the foundation for renderer scheduling**, while the Renderer remains independent of FSM_COS and graphics APIs.
 
 The goal is to build a rendering system in which **computational detail follows observation**.
 
