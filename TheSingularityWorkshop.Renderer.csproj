@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>TheSingularityWorkshop.Renderer</PackageId>
-    <Version>0.1.0-alpha.1</Version>
+    <Version>0.1.0-alpha.2</Version>
     <Authors>TheSingularityWorkshop</Authors>
     <Company>The Singularity Workshop</Company>
     <Description>Observer-aware rendering foundations built around Event Horizons and computational detail.</Description>
