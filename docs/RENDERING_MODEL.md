@@ -92,8 +92,31 @@ That is not a failure.
 
 It is an intentional computational decision based on the observer, current horizon, available resources, and experience requirements.
 
-## Future implementation question
+## GPU handoff
 
-The first useful implementation should prove representation selection independently of a GPU.
+The first useful implementation has now proved that representation selection can remain independent of a GPU. The next step is deliberately the opposite direction: preserve that independence while producing a concrete GPU input contract.
 
-If the model cannot select the correct representation without a graphics API, the architecture is too tightly coupled to presentation.
+`RenderFrame` is that contract. It contains observer view state and the draw work that survived representation selection. A backend can consume it without the Renderer knowing which graphics API will execute it.
+
+The architecture is therefore:
+
+```text
+World
+  |
+  v
+Observer-relative computation
+  |
+  v
+Representation selection
+  |
+  v
+RenderFrame
+  |
+  v
+Backend adapter
+  |
+  v
+GPU
+```
+
+The backend must remain downstream of the computational model.
