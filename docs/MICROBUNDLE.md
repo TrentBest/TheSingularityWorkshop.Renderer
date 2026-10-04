@@ -1,6 +1,6 @@
 # Renderer MicroBundle
 
-The Renderer is a capability, not a composition-kernel responsibility.
+The Renderer is a capability, not a composition-kernel responsibility. Concrete execution is deliberately outside the Renderer package: Computation defines the execution boundary, while CPU and GPU execution are independent MicroBundles.
 
 The package therefore contains its own MicroBundle adapter: RendererMicroBundle. This keeps the number of NuGet packages small while still giving FSM_COS the correct composition boundary.
 
@@ -76,9 +76,11 @@ The composition crane should be assembled once and kept small.
                     |
              Renderer MicroBundle
                     |
+               Computation
+                    |
           +---------+---------+
-          |         |         |
-       Cartoon   Reality   LowPoly
+          |                   |
+      CPU MicroBundle    GPU MicroBundle
 ```
 
 The crane does not grow a new arm every time a new capability appears. It receives another MicroBundle and installs it.
@@ -100,6 +102,8 @@ FSM_COS ───────► Renderer (only when a host/catalog chooses to c
 ```
 
 Renderer may depend on the neutral MicroBundle contract because it is authoring its own capability adapter. Renderer never depends upward on FSM_COS.
+
+The same rule applies to execution: Renderer does not become a CPU/GPU implementation package. A future Computation package can contain its own MicroBundle adapter, while CPU and GPU provider packages each contain their own adapters and can be composed independently.
 
 FSM_COS remains a consumer of the domain contract and does not acquire Renderer-specific logic.
 
