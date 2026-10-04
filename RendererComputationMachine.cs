@@ -135,12 +135,12 @@ public sealed class RendererComputationMachine : IDisposable
     {
         lock (DefinitionLock)
         {
-            if (FSM_API.Interaction.Exists(DefinitionName, ProcessingGroup))
+            if (FSMApi.Interaction.Exists(DefinitionName, ProcessingGroup))
             {
                 return;
             }
 
-            FSM_API.Create.CreateFiniteStateMachine(
+            FSMApi.Create.CreateFiniteStateMachine(
                 DefinitionName,
                 processRate: -1,
                 processingGroup: ProcessingGroup)
