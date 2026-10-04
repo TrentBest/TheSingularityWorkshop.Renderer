@@ -513,3 +513,18 @@ The goal is to build a rendering system in which **computational detail follows 
 ## License
 
 MIT
+
+## Development
+
+The repository has one explicit solution, `TheSingularityWorkshop.Renderer.slnx`, containing the Renderer library and its test project.
+
+Restore and build the complete solution from the repository root:
+
+```powershell
+dotnet restore .\TheSingularityWorkshop.Renderer.slnx
+dotnet build .\TheSingularityWorkshop.Renderer.slnx --configuration Release
+dotnet test .\TheSingularityWorkshop.Renderer.slnx --configuration Release --no-build
+```
+
+The library project is `TheSingularityWorkshop.Renderer.csproj` at the repository root. Tests live under `tests/TheSingularityWorkshop.Renderer.Tests/`.
+
