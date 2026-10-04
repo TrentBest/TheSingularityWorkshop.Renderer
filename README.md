@@ -542,7 +542,7 @@ See [GPU Boundary](docs/GPU_BOUNDARY.md).
 
 The goal is to build a rendering system in which **computational detail follows observation**.
 
----
+---\n\n## Renderer as a MicroBundle\n\nThe Renderer is a capability that FSM_COS composes; it is not a reason for FSM_COS to learn rendering.\n\nThe package therefore includes its own MicroBundle adapter, RendererMicroBundle. We deliberately do not create a second NuGet package solely to hold that adapter.\n\n```text\nRenderer package\n   |\n   +-- rendering model\n   +-- Event Horizons\n   +-- GPU boundary\n   +-- MicroBundle adapter\n             |\n             v\n          FSM_COS\n             |\n             v\n       RuntimeAssembly\n```\n\nThe core Renderer capability belongs to the Renderer ontology and can grow into a family of independently composable rendering capabilities:\n\n```text\nRenderer\n├── Renderer core\n├── Renderer.Cartoon\n├── Renderer.Reality\n├── Renderer.LowPoly\n├── Renderer.Semantic\n├── Renderer.Terrain\n└── future rendering capabilities\n```\n\nThese do not automatically imply separate NuGet packages. A new package should exist only when a capability genuinely benefits from independent versioning, distribution, dependency closure, configuration, lifecycle, or arbitration.\n\nThat gives the Workshop the intended **Voltron architecture**:\n\n> **NuGet packages contain capabilities. MicroBundles are how those capabilities enter a composition. FSM_COS is the crane that assembles them; the crane should not become larger every time we add another robot.**\n\nSee [Renderer MicroBundle](docs/MICROBUNDLE.md).\n---
 
 ## License
 
