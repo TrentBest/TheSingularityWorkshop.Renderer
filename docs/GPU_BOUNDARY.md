@@ -133,3 +133,85 @@ The benchmark lab should now measure:
 9. CPU submission cost versus GPU execution time.
 
 The first backend should be selected to **prove that the Renderer can feed a real GPU**, not to define what the Renderer is.
+
+
+## The Workshop-native GPU stack
+
+The intent is stronger than building another graphics-API wrapper.
+
+We should own the rendering decisions, resource model, command representation, batching rules, material semantics, shader inputs, and GPU scheduling policy. A native graphics API should enter only at the final transport/execution boundary because the operating system and GPU driver necessarily own that hardware interface.
+
+```text
+                 THE SINGULARITY WORKSHOP
+
+World / Observer / Event Horizons
+              |
+              v
+      Renderer computation
+              |
+              v
+     Workshop Render Model
+              |
+       +------+------+
+       |             |
+       v             v
+  resources      command stream
+       |             |
+       +------+------+
+              |
+              v
+       Workshop GPU Layer
+              |
+              v
+     tiny native transport
+              |
+              v
+             GPU
+```
+
+The **GPU Layer is ours**. A platform API is merely the last-mile mechanism required to submit bytes and commands to actual hardware.
+
+That distinction keeps the architecture honest: we are not pretending a DirectX or Vulkan object is our renderer. We are using the platform's hardware doorway to execute a rendering system that we designed.
+
+## What we should own
+
+The Workshop should eventually define and measure its own:
+
+- resource identity and lifetime
+- geometry representation
+- material representation
+- semantic-to-visual mapping
+- instance representation
+- command stream format
+- batching rules
+- visibility decisions
+- Event Horizon transitions
+- update cadence
+- procedural reconstruction
+- shader input contract
+- GPU memory residency policy
+- synchronization policy
+- render scheduling
+
+A concrete API backend should implement only the unavoidable translation into the operating system's graphics/hardware interface.
+
+## First concrete GPU milestone
+
+The first real GPU experiment should therefore be deliberately small:
+
+1. produce one `RenderFrame`
+2. translate it into a Workshop-owned GPU packet
+3. upload the packet and its minimum resources
+4. execute one draw on real GPU hardware
+5. measure CPU preparation, transfer, GPU execution, and presentation independently
+6. keep the graphics API-specific code outside the Renderer core
+
+The first image does not need to be impressive. It needs to prove that **our computational model can reach real GPU execution without surrendering ownership of the rendering architecture**.
+
+## What this does not mean
+
+We do not need to write a GPU driver, replace the operating system graphics stack, or reproduce decades of hardware-specific driver work.
+
+We own the renderer. The driver owns the hardware.
+
+That is the useful boundary.
