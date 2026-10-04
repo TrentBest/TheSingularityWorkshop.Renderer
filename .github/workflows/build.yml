@@ -31,10 +31,10 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore
-        run: dotnet restore tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj
+        run: dotnet restore TheSingularityWorkshop.Renderer.slnx
 
       - name: Build tests
-        run: dotnet build tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj --configuration Release --no-restore
+        run: dotnet build TheSingularityWorkshop.Renderer.slnx --configuration Release --no-restore
 
       - name: Test with coverage
         run: >
