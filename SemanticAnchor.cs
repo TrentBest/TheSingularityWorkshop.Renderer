@@ -13,6 +13,7 @@ namespace TheSingularityWorkshop.Renderer;
 /// </remarks>
 public readonly record struct SemanticAnchor
 {
+    /// <summary>Creates a semantic anchor from a protocol reference and normalized local coordinates.</summary>
     public SemanticAnchor(ProtocolReference reference, double x, double y, double z)
     {
         if (reference.ProtocolId == 0 || reference.SymbolId == 0)
