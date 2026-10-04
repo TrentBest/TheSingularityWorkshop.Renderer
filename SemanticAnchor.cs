@@ -15,6 +15,9 @@ public readonly record struct SemanticAnchor
 {
     public SemanticAnchor(ProtocolReference reference, double x, double y, double z)
     {
+        if (reference.ProtocolId == 0 || reference.SymbolId == 0)
+            throw new ArgumentException("A semantic anchor requires a valid protocol reference.", nameof(reference));
+
         if (!double.IsFinite(x) || !double.IsFinite(y) || !double.IsFinite(z))
             throw new ArgumentException("Anchor coordinates must be finite.");
 
