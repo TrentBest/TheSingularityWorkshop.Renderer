@@ -94,13 +94,29 @@ learn Renderer-specific types merely to assemble a runtime.
 
 See [Renderer MicroBundle](MICROBUNDLE.md).
 
-### GPU boundary
+### Computation and GPU execution
 
-The Renderer produces a platform-neutral `RenderFrame` after observer-relative decisions have been made. Its `RenderView` carries observer/view state and its `RenderDrawCommand` values describe resource identity, transforms, and draw ranges.
+Renderer defines the visual workload: what must be represented, what representation survives the Event Horizon policy, and what computational work is justified. It does not own the concrete CPU or GPU execution machinery.
 
-A host/backend translates that frame into a concrete graphics API. This is the boundary at which DirectX, Vulkan, WebGPU, OpenGL, or another backend may enter the system.
+The neutral `RenderFrame` is one workload representation. The independent **Computation** capability defines how workloads can be described, selected, scheduled, measured, and matched to available execution capabilities. Concrete CPU and GPU execution are supplied by their own MicroBundles.
 
-The core Renderer must remain usable and testable without any of those APIs.
+```text
+Renderer
+   |
+   | visual workload
+   v
+Computation
+   |
+   +--> CPU MicroBundle
+   |
+   +--> GPU MicroBundle
+   |
+   +--> future accelerator MicroBundle
+```
+
+A GPU MicroBundle may translate Workshop GPU work into DirectX, Vulkan, WebGPU, OpenGL, CUDA, or another native path. Those APIs are execution boundaries, not Renderer architecture.
+
+See [GPU Boundary](GPU_BOUNDARY.md).
 
 See [GPU Boundary](GPU_BOUNDARY.md).
 
@@ -116,9 +132,11 @@ The host should not redefine the Renderer model.
 
 That separation is one of the most important constraints of the project.
 
-## Hardware-first execution
+## Hardware-aware computation
 
-The platform-neutral core is not intended to collapse hardware into one generic lowest-common-denominator path. The next layer discovers the physical adapter, records its capabilities, and selects the strongest safe Workshop execution strategy.
+The platform-neutral Renderer is not intended to collapse hardware into one generic lowest-common-denominator path. Hardware capability discovery and execution selection belong to the independent Computation capability and its execution-provider MicroBundles.
+
+The Renderer describes the work; Computation discovers what execution capabilities are available and selects an appropriate provider. Hardware presence alone must not activate a provider.
 
 ```text
 Renderer model
