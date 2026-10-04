@@ -1,5 +1,7 @@
 namespace TheSingularityWorkshop.Renderer;
 
+using System.Collections.Generic;
+
 /// <summary>
 /// Provides a small, backend-independent representation-selection primitive
 /// based on observer distance.
@@ -29,8 +31,10 @@ public static class ObserverDistance
 
         var previousMaximum = -1d;
 
-        foreach (var horizon in horizons)
+        // Indexing avoids interface-enumerator allocation in the hot selection path.
+        for (var i = 0; i < horizons.Count; i++)
         {
+            var horizon = horizons[i];
             ArgumentNullException.ThrowIfNull(horizon);
 
             if (horizon.MaximumDistance < previousMaximum)
@@ -43,8 +47,10 @@ public static class ObserverDistance
             previousMaximum = horizon.MaximumDistance;
         }
 
-        foreach (var horizon in horizons)
+        for (var i = 0; i < horizons.Count; i++)
         {
+            var horizon = horizons[i];
+
             if (distance <= horizon.MaximumDistance)
             {
                 return horizon;
