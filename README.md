@@ -263,6 +263,30 @@ This also makes the model useful for different observers:
 
 ---
 
+## Semantic rendering and protocol identity
+
+The Renderer also needs a mathematical boundary between **meaning** and **presentation**.
+
+[ProtocolAi](https://github.com/TrentBest/TheSingularityWorkshop.ProtocolAi) provides deterministic integer-backed vocabulary identity. Renderer uses those protocol-qualified symbols as semantic anchors without owning the vocabulary itself.
+
+A form can therefore expose semantic attachment points for anatomy, clothing and covering, equipment, tools, architecture, interaction surfaces, or other domain concepts. The Renderer only needs the protocol reference and spatial relationship; the consuming experience decides what the symbol means.
+
+```text
+ProtocolAi symbol
+       |
+       v
+SemanticAnchor
+       |
+       +--> representation
+       +--> interaction
+       +--> procedural detail
+       +--> semantic observation
+```
+
+This lets semantic detail have its own Event Horizons. Visual, semantic, interaction, simulation, and update-frequency detail do not have to move together.
+
+See [Semantic Rendering](docs/SEMANTIC_RENDERING.md).
+
 ## Deterministic procedural detail
 
 A distant tree should not require all of its leaves to remain materialized merely so the tree can later become detailed.
@@ -322,6 +346,32 @@ Observer model
 Rendering is consequently about constructing the right **observable information**, not merely drawing lines.
 
 ---
+
+## Rendering mathematics
+
+The Renderer is being engineered as an **estimable computational system**, not a collection of guesses about performance.
+
+The initial performance model is calibrated from Workshop FSM_API benchmark observations: approximately 305.1 ns for one processing group and 15,736.6 ns for fifty groups, giving a first-order marginal estimate of about 314.93 ns per additional group. The same observations indicate approximately 360 bytes per processing group.
+
+That produces a first-order model of:
+
+```text
+T(G) ≈ 305.1 + 314.93 * (G - 1) ns
+A(G) ≈ 360 * G bytes
+```
+
+This is explicitly a **model to test**, not a promise. Renderer benchmarks will compare predicted and measured cost as the implementation grows.
+
+The longer-term cost model treats rendering as observer-relative work:
+
+```text
+C_total = selection + scheduler + representation + simulation
+           + streaming + submission + GPU
+```
+
+and seeks the least expensive representation that preserves the information the observer can benefit from.
+
+See [Rendering Mathematics](docs/RENDERING_MATH.md).
 
 ## Event Horizon update frequency
 
@@ -396,6 +446,8 @@ Start here:
 - [Rendering Theory](docs/RENDERING_THEORY.md)
 - [Observation Model](docs/OBSERVATION_MODEL.md)
 - [Event Horizon Theory](docs/EVENT_HORIZON_THEORY.md)
+- [Semantic Rendering](docs/SEMANTIC_RENDERING.md)
+- [Rendering Mathematics](docs/RENDERING_MATH.md)
 
 The documentation is deliberately being established before the graphics implementation so the semantic model remains independent of backend technology.
 
@@ -415,6 +467,8 @@ The documentation is deliberately being established before the graphics implemen
 - Temporal stability
 - deterministic procedural reconstruction
 - semantic observation
+- semantic anchors and protocol identity
+- empirical rendering cost model
 
 ### Phase 2 — Prove it without a GPU
 
