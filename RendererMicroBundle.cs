@@ -33,6 +33,9 @@ public sealed class RendererMicroBundle : IMicroBundle
     /// <summary>Describes the identity and provider surface exposed by this MicroBundle.</summary>
     public MicroBundleDescriptor Descriptor { get; }
 
+    /// <summary>Gets the stable identity of this MicroBundle.</summary>
+    public ulong Id => Descriptor.Id;
+
     /// <summary>Gets the MicroBundle dependencies required before loading.</summary>
     public IReadOnlyList<MicroBundleDependencyRequest> Dependencies { get; }
 
