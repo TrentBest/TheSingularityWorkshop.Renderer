@@ -58,6 +58,20 @@ public class GpuBoundaryTests
 
         Assert.Single(frame.Commands);
         Assert.Equal(RendererRepresentation.Distant, frame.Commands[0].Representation);
+
+        // The producer may reuse its array for a later frame; this snapshot must remain stable.
+        commands[0] = new RenderDrawCommand(
+            new RenderResourceId(3),
+            new RenderResourceId(4),
+            Matrix4x4.CreateTranslation(10, 0, 0),
+            6,
+            2,
+            1,
+            RendererRepresentation.Interactive);
+
+        Assert.Equal(new RenderResourceId(1), frame.Commands[0].Geometry);
+        Assert.Equal(RendererRepresentation.Distant, frame.Commands[0].Representation);
+        Assert.IsNotType<RenderDrawCommand[]>(frame.Commands);
     }
 
     [Fact]
