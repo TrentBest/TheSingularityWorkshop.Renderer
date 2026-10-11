@@ -6,15 +6,21 @@ namespace TheSingularityWorkshop.Renderer;
 public sealed class RenderFrame
 {
     /// <summary>Creates a frame from a view and its draw commands.</summary>
+    /// <remarks>
+    /// The frame owns a stable command snapshot. The source sequence may be reused or mutated by its
+    /// producer after construction without changing this frame. Backends should consume the snapshot
+    /// directly and avoid making another copy unless their own lifetime or threading contract requires it.
+    /// </remarks>
     public RenderFrame(RenderView view, IEnumerable<RenderDrawCommand> commands)
     {
         ArgumentNullException.ThrowIfNull(commands);
         View = view;
-        Commands = commands is RenderDrawCommand[] array ? array : [.. commands];
+        Commands = Array.AsReadOnly(commands.ToArray());
     }
 
     /// <summary>Gets the observer-relative view.</summary>
     public RenderView View { get; }
-    /// <summary>Gets the command snapshot selected for this frame.</summary>
+
+    /// <summary>Gets the immutable ordered command snapshot selected for this frame.</summary>
     public IReadOnlyList<RenderDrawCommand> Commands { get; }
 }
