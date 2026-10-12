@@ -24,23 +24,18 @@ public enum BucketDirtyReason
     FreshnessDeadline = 1 << 7
 }
 
-/// <summary>
-/// Identifies one attempt to refresh a bucket. Completion is accepted only while the
-/// bucket's invalidation generation and source revision still match this ticket.
-/// </summary>
+/// <summary>Identifies one attempt to refresh a bucket.</summary>
 public readonly record struct BucketRefreshTicket(
     string BucketName,
     long InvalidationGeneration,
     long SourceRevision,
     DateTimeOffset StartedAt);
 
-/// <summary>
-/// Backend-free validity and cadence state for one named visual bucket within an Event Horizon.
-/// </summary>
+/// <summary>Backend-free validity and cadence state for one named visual bucket within an Event Horizon.</summary>
 /// <remarks>
-/// This class is a deterministic policy primitive, not a scheduler or a graphics resource.
-/// FSM_API remains responsible for orchestrating meaningful processing groups. A horizon may
-/// contain multiple independent buckets, each with its own cadence and invalidation history.
+/// This is a deterministic policy primitive, not a scheduler or a graphics resource. FSM_API remains
+/// responsible for orchestrating meaningful processing groups. A horizon may contain multiple
+/// independent buckets, each with its own cadence and invalidation history.
 /// </remarks>
 public sealed class EventHorizonBucket
 {
@@ -53,9 +48,6 @@ public sealed class EventHorizonBucket
     private bool _hasValidRepresentation;
 
     /// <summary>Creates a bucket with its own refresh cadence.</summary>
-    /// <param name="name">Domain-defined bucket name, unique within its horizon.</param>
-    /// <param name="horizon">The Event Horizon containing this bucket.</param>
-    /// <param name="updatesPerSecond">Maximum preferred refresh frequency for this bucket.</param>
     public EventHorizonBucket(string name, EventHorizon horizon, double updatesPerSecond)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -64,10 +56,14 @@ public sealed class EventHorizonBucket
         if (!double.IsFinite(updatesPerSecond) || updatesPerSecond <= 0)
             throw new ArgumentOutOfRangeException(nameof(updatesPerSecond));
 
+        var intervalSeconds = 1d / updatesPerSecond;
+        if (!double.IsFinite(intervalSeconds) || intervalSeconds > TimeSpan.MaxValue.TotalSeconds)
+            throw new ArgumentOutOfRangeException(nameof(updatesPerSecond));
+
         Name = name;
         Horizon = horizon;
         UpdatesPerSecond = updatesPerSecond;
-        RefreshInterval = TimeSpan.FromSeconds(1d / updatesPerSecond);
+        RefreshInterval = TimeSpan.FromSeconds(intervalSeconds);
     }
 
     /// <summary>Gets the domain-defined bucket name.</summary>
@@ -150,17 +146,12 @@ public sealed class EventHorizonBucket
     public bool IsRefreshDue(DateTimeOffset now)
     {
         lock (_gate)
-        {
-            if (!_hasValidRepresentation || _dirtyReasons != BucketDirtyReason.None)
-                return true;
-
-            return !_lastRefreshAt.HasValue || now - _lastRefreshAt.Value >= RefreshInterval;
-        }
+            return IsRefreshDueUnderLock(now);
     }
 
     /// <summary>
-    /// Starts a refresh attempt if work is due. The caller should build into separate output
-    /// and publish it only if <see cref="TryCompleteRefresh"/> accepts the returned ticket.
+    /// Starts a refresh attempt if work is due. Build into separate output and publish it only
+    /// if <see cref="TryCompleteRefresh"/> accepts the returned ticket.
     /// </summary>
     public bool TryBeginRefresh(DateTimeOffset now, out BucketRefreshTicket ticket)
     {
@@ -186,6 +177,7 @@ public sealed class EventHorizonBucket
         lock (_gate)
         {
             if (!string.Equals(ticket.BucketName, Name, StringComparison.Ordinal) ||
+                completedAt < ticket.StartedAt ||
                 ticket.InvalidationGeneration != _invalidationGeneration ||
                 ticket.SourceRevision != _sourceRevision)
             {
@@ -196,6 +188,10 @@ public sealed class EventHorizonBucket
             _lastRefreshAt = completedAt;
             _hasValidRepresentation = true;
             _dirtyReasons = BucketDirtyReason.None;
+
+            // Invalidate duplicate/in-flight tickets from the same generation. Only one
+            // completion may publish for a given invalidation generation.
+            _invalidationGeneration++;
             return true;
         }
     }
