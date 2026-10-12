@@ -15,6 +15,7 @@ public enum BucketDirtyReason
 }
 
 public readonly record struct BucketRefreshTicket(
+    Guid BucketId,
     string BucketName,
     long InvalidationGeneration,
     long SourceRevision,
@@ -29,6 +30,7 @@ public readonly record struct BucketRefreshTicket(
 public sealed class EventHorizonBucket
 {
     private readonly object _gate = new();
+    private readonly Guid _bucketId = Guid.NewGuid();
     private BucketDirtyReason _dirtyReasons = BucketDirtyReason.Initial;
     private long _invalidationGeneration;
     private long _sourceRevision;
@@ -158,7 +160,7 @@ public sealed class EventHorizonBucket
                 return false;
             }
 
-            ticket = new BucketRefreshTicket(Name, _invalidationGeneration, _sourceRevision, now);
+            ticket = new BucketRefreshTicket(_bucketId, Name, _invalidationGeneration, _sourceRevision, now);
             return true;
         }
     }
@@ -171,7 +173,8 @@ public sealed class EventHorizonBucket
     {
         lock (_gate)
         {
-            if (!string.Equals(ticket.BucketName, Name, StringComparison.Ordinal) ||
+            if (ticket.BucketId != _bucketId ||
+                !string.Equals(ticket.BucketName, Name, StringComparison.Ordinal) ||
                 completedAt < ticket.StartedAt ||
                 ticket.InvalidationGeneration != _invalidationGeneration ||
                 ticket.SourceRevision != _sourceRevision)
