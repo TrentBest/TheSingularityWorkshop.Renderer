@@ -50,6 +50,58 @@ public sealed class HorizonRepresentationHandoffTests
     }
 
     [Fact]
+    public void ObserverMovementRequiresCoverageToBeReconfirmedForNewRevision()
+    {
+        var handoff = CreateHandoff();
+        handoff.Stage(Representation("near", "Near", ready: true, covers: true));
+
+        // The candidate was prepared for observer revision 12, but the observer has moved.
+        Assert.False(handoff.TryCommit(currentSourceRevision: 7, currentObserverRevision: 13));
+        Assert.Equal("far", handoff.Snapshot.Current.Id);
+
+        // Reprojection/preparation reports the new revision but cannot yet cover the whole view.
+        Assert.True(handoff.UpdatePending("near", isReady: true, coversObserverView: false, observerRevision: 13));
+        Assert.False(handoff.TryCommit(currentSourceRevision: 7, currentObserverRevision: 13));
+        Assert.Equal("far", handoff.Snapshot.Current.Id);
+
+        // Only after coverage is confirmed for the moved observer may the handoff commit.
+        Assert.True(handoff.UpdatePending("near", isReady: true, coversObserverView: true, observerRevision: 13));
+        Assert.True(handoff.TryCommit(currentSourceRevision: 7, currentObserverRevision: 13));
+        Assert.Equal("near", handoff.Snapshot.Current.Id);
+        Assert.Null(handoff.Snapshot.Pending);
+    }
+
+    [Fact]
+    public void NearwardAndFarwardCrossingsKeepOneCurrentRepresentationAtEveryHandoff()
+    {
+        var handoff = CreateHandoff();
+
+        handoff.Stage(Representation("near", "Near", ready: true, covers: true));
+        var preparingNear = handoff.Snapshot;
+        Assert.Equal("far", preparingNear.Current.Id);
+        Assert.Equal("near", preparingNear.Pending!.Id);
+        Assert.True(handoff.TryCommit(7, 12));
+
+        var nearActive = handoff.Snapshot;
+        Assert.Equal("near", nearActive.Current.Id);
+        Assert.Null(nearActive.Pending);
+
+        handoff.Stage(Representation("far-refreshed", "Far", ready: false, covers: false));
+        var preparingFar = handoff.Snapshot;
+        Assert.Equal("near", preparingFar.Current.Id);
+        Assert.Equal("far-refreshed", preparingFar.Pending!.Id);
+        Assert.False(handoff.TryCommit(7, 12));
+        Assert.Equal("near", handoff.Snapshot.Current.Id);
+
+        Assert.True(handoff.UpdatePending("far-refreshed", isReady: true, coversObserverView: true, observerRevision: 12));
+        Assert.True(handoff.TryCommit(7, 12));
+
+        var farActive = handoff.Snapshot;
+        Assert.Equal("far-refreshed", farActive.Current.Id);
+        Assert.Null(farActive.Pending);
+    }
+
+    [Fact]
     public void NewCandidateSupersedesOldPendingWorkWhenObserverReversesDirection()
     {
         var handoff = CreateHandoff();
