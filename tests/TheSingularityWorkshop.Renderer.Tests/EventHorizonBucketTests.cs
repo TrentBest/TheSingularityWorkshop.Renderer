@@ -152,6 +152,17 @@ public sealed class EventHorizonBucketTests
         Assert.False(second.HasValidRepresentation);
     }
 
+    [Fact]
+    public void RefreshTicketCannotBeUsedForAnotherBucketWithTheSameName()
+    {
+        var first = CreateBucket("Lighting", 15);
+        var second = CreateBucket("Lighting", 15);
+
+        Assert.True(first.TryBeginRefresh(Epoch, out var ticket));
+        Assert.False(second.TryCompleteRefresh(ticket, Epoch.AddMilliseconds(1)));
+        Assert.False(second.HasValidRepresentation);
+    }
+
     private static EventHorizonBucket CreateBucket(string name, double updatesPerSecond) =>
         new(name, new EventHorizon("TestHorizon", 100, 1), updatesPerSecond);
 
