@@ -50,6 +50,44 @@ public sealed class EventHorizonBucketDependencyGraphTests
     }
 
     [Fact]
+    public void AddingDependencyInvalidatesOutputBuiltBeforeTheEdgeExisted()
+    {
+        var source = Bucket("Geometry", "Near", 30);
+        var dependent = Bucket("Lighting", "Near", 10);
+        using var graph = new EventHorizonBucketDependencyGraph();
+        Complete(source);
+        Complete(dependent);
+
+        Assert.True(dependent.HasValidRepresentation);
+        Assert.True(graph.AddDependency(source, dependent));
+
+        Assert.False(dependent.HasValidRepresentation);
+        Assert.True((dependent.DirtyReasons & BucketDirtyReason.DependencyChanged) != BucketDirtyReason.None);
+    }
+
+    [Fact]
+    public void AddingDependencyPropagatesInvalidationToAlreadyPreparedTransitiveDependents()
+    {
+        var source = Bucket("Geometry", "Near", 30);
+        var dependent = Bucket("Lighting", "Near", 10);
+        var downstream = Bucket("Shadows", "Far", 1);
+        using var graph = new EventHorizonBucketDependencyGraph();
+        graph.AddDependency(dependent, downstream);
+        Complete(source);
+        Complete(dependent);
+        Complete(downstream);
+
+        Assert.True(dependent.HasValidRepresentation);
+        Assert.True(downstream.HasValidRepresentation);
+
+        graph.AddDependency(source, dependent);
+
+        Assert.False(dependent.HasValidRepresentation);
+        Assert.False(downstream.HasValidRepresentation);
+        Assert.True((downstream.DirtyReasons & BucketDirtyReason.DependencyChanged) != BucketDirtyReason.None);
+    }
+
+    [Fact]
     public void RepeatedSourceRevisionDoesNotInvalidateDependentsAgain()
     {
         var source = Bucket("Motion", "Near", 30);
