@@ -37,6 +37,27 @@ public readonly record struct BucketRefreshTicket(
     long SourceRevision,
     DateTimeOffset StartedAt);
 
+/// <summary>Low-cost counters describing bucket reuse, invalidation, and refresh outcomes.</summary>
+/// <param name="RefreshChecks">Number of cadence/validity checks made by the bucket API.</param>
+/// <param name="RefreshDueChecks">Checks that reported refresh work as due.</param>
+/// <param name="RefreshNotDueChecks">Checks that reported a valid cached representation was not yet due.</param>
+/// <param name="RefreshAttempts">Refresh tickets successfully issued.</param>
+/// <param name="AcceptedRefreshes">Refresh results accepted as current output.</param>
+/// <param name="RejectedRefreshes">Refresh results rejected because their ticket or revisions were stale/invalid.</param>
+/// <param name="Invalidations">Number of explicit or source-revision invalidations applied.</param>
+/// <param name="ReuseCount">Number of times a consumer explicitly confirmed reuse of the valid cached representation.</param>
+/// <param name="ObservedInvalidationReasons">Bitwise union of invalidation reasons observed since construction.</param>
+public readonly record struct EventHorizonBucketMetrics(
+    long RefreshChecks,
+    long RefreshDueChecks,
+    long RefreshNotDueChecks,
+    long RefreshAttempts,
+    long AcceptedRefreshes,
+    long RejectedRefreshes,
+    long Invalidations,
+    long ReuseCount,
+    BucketDirtyReason ObservedInvalidationReasons);
+
 /// <summary>Backend-free validity and cadence state for one named visual bucket within an Event Horizon.</summary>
 /// <remarks>
 /// This is a deterministic policy primitive, not a scheduler or a graphics resource. FSM_API remains
@@ -53,6 +74,15 @@ public sealed class EventHorizonBucket
     private long _cachedSourceRevision;
     private DateTimeOffset? _lastRefreshAt;
     private bool _hasValidRepresentation;
+    private long _refreshChecks;
+    private long _refreshDueChecks;
+    private long _refreshNotDueChecks;
+    private long _refreshAttempts;
+    private long _acceptedRefreshes;
+    private long _rejectedRefreshes;
+    private long _invalidations;
+    private long _reuseCount;
+    private BucketDirtyReason _observedInvalidationReasons;
 
     // Dependency graphs observe invalidation only after the bucket lock is released.
     internal event Action<EventHorizonBucket>? Invalidated;
@@ -115,6 +145,44 @@ public sealed class EventHorizonBucket
         get { lock (_gate) return _cachedSourceRevision; }
     }
 
+    /// <summary>Gets a consistent snapshot of diagnostic counters for this bucket.</summary>
+    public EventHorizonBucketMetrics Metrics
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return new EventHorizonBucketMetrics(
+                    _refreshChecks,
+                    _refreshDueChecks,
+                    _refreshNotDueChecks,
+                    _refreshAttempts,
+                    _acceptedRefreshes,
+                    _rejectedRefreshes,
+                    _invalidations,
+                    _reuseCount,
+                    _observedInvalidationReasons);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Records that a consumer reused the cached representation for a display/processing opportunity.
+    /// Returns false without incrementing the counter if the representation is currently invalid.
+    /// This is an explicit consumer signal, not an estimate based on elapsed cadence.
+    /// </summary>
+    public bool TryRecordReuse()
+    {
+        lock (_gate)
+        {
+            if (!_hasValidRepresentation || _dirtyReasons != BucketDirtyReason.None)
+                return false;
+
+            _reuseCount++;
+            return true;
+        }
+    }
+
     /// <summary>Gets the time at which the last refresh was accepted, if any.</summary>
     public DateTimeOffset? LastRefreshAt
     {
@@ -142,6 +210,8 @@ public sealed class EventHorizonBucket
         {
             _dirtyReasons |= reason;
             _invalidationGeneration++;
+            _invalidations++;
+            _observedInvalidationReasons |= reason;
         }
 
         Invalidated?.Invoke(this);
@@ -162,6 +232,8 @@ public sealed class EventHorizonBucket
             _sourceRevision = sourceRevision;
             _dirtyReasons |= BucketDirtyReason.SourceChanged;
             _invalidationGeneration++;
+            _invalidations++;
+            _observedInvalidationReasons |= BucketDirtyReason.SourceChanged;
         }
 
         Invalidated?.Invoke(this);
@@ -192,6 +264,7 @@ public sealed class EventHorizonBucket
                 return false;
             }
 
+            _refreshAttempts++;
             ticket = new BucketRefreshTicket(_bucketId, Name, _invalidationGeneration, _sourceRevision, now);
             return true;
         }
@@ -214,6 +287,7 @@ public sealed class EventHorizonBucket
                 ticket.InvalidationGeneration != _invalidationGeneration ||
                 ticket.SourceRevision != _sourceRevision)
             {
+                _rejectedRefreshes++;
                 return false;
             }
 
@@ -221,6 +295,7 @@ public sealed class EventHorizonBucket
             _lastRefreshAt = completedAt;
             _hasValidRepresentation = true;
             _dirtyReasons = BucketDirtyReason.None;
+            _acceptedRefreshes++;
 
             // Invalidate duplicate/in-flight tickets from the same generation. Only one
             // completion may publish for a given invalidation generation.
@@ -231,9 +306,17 @@ public sealed class EventHorizonBucket
 
     private bool IsRefreshDueUnderLock(DateTimeOffset now)
     {
-        if (!_hasValidRepresentation || _dirtyReasons != BucketDirtyReason.None)
-            return true;
+        _refreshChecks++;
+        var due = !_hasValidRepresentation ||
+                  _dirtyReasons != BucketDirtyReason.None ||
+                  !_lastRefreshAt.HasValue ||
+                  now - _lastRefreshAt.Value >= RefreshInterval;
 
-        return !_lastRefreshAt.HasValue || now - _lastRefreshAt.Value >= RefreshInterval;
+        if (due)
+            _refreshDueChecks++;
+        else
+            _refreshNotDueChecks++;
+
+        return due;
     }
 }
