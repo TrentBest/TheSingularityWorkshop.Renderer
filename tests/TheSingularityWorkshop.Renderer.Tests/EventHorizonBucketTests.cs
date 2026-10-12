@@ -35,6 +35,21 @@ public sealed class EventHorizonBucketTests
     }
 
     [Fact]
+    public void CadenceExpiryRequestsRefreshWithoutDiscardingReusableRepresentation()
+    {
+        var bucket = CreateBucket("FarEnvironment", 1);
+        CompleteInitialRefresh(bucket, Epoch);
+
+        Assert.True(bucket.HasValidRepresentation);
+        Assert.True(bucket.IsRefreshDue(Epoch.AddSeconds(1)));
+
+        // A refresh is due, but the cached representation remains usable until an actual
+        // invalidation occurs or replacement work is accepted.
+        Assert.True(bucket.HasValidRepresentation);
+        Assert.Equal(BucketDirtyReason.None, bucket.DirtyReasons);
+    }
+
+    [Fact]
     public void BucketsInvalidateIndependently()
     {
         var environment = CreateBucket("Environment", 1);
