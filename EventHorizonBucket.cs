@@ -1,19 +1,35 @@
 namespace TheSingularityWorkshop.Renderer;
 
+/// <summary>Identifies why a cached bucket representation may no longer be reused.</summary>
 [Flags]
 public enum BucketDirtyReason
 {
+    /// <summary>No known invalidation reason.</summary>
     None = 0,
+    /// <summary>The bucket has not yet produced a valid representation.</summary>
     Initial = 1 << 0,
+    /// <summary>Source state used to build the representation changed.</summary>
     SourceChanged = 1 << 1,
+    /// <summary>Entities or cohorts entered or left the bucket.</summary>
     MembershipChanged = 1 << 2,
+    /// <summary>Observer movement or orientation invalidated this representation.</summary>
     ObserverChanged = 1 << 3,
+    /// <summary>A referenced geometry, material, texture, or other resource changed.</summary>
     ResourceChanged = 1 << 4,
+    /// <summary>A dependency changed and invalidated this bucket's derived output.</summary>
     DependencyChanged = 1 << 5,
+    /// <summary>An explicit policy or caller request invalidated the representation.</summary>
     Explicit = 1 << 6,
+    /// <summary>The configured freshness deadline elapsed.</summary>
     FreshnessDeadline = 1 << 7
 }
 
+/// <summary>Identifies one attempt to refresh one specific bucket instance.</summary>
+/// <param name="BucketId">Unique identity of the bucket that issued the ticket.</param>
+/// <param name="BucketName">Human-readable name of the bucket.</param>
+/// <param name="InvalidationGeneration">Generation observed when refresh work began.</param>
+/// <param name="SourceRevision">Source revision captured when refresh work began.</param>
+/// <param name="StartedAt">Time at which the refresh attempt began.</param>
 public readonly record struct BucketRefreshTicket(
     Guid BucketId,
     string BucketName,
@@ -39,6 +55,9 @@ public sealed class EventHorizonBucket
     private bool _hasValidRepresentation;
 
     /// <summary>Creates a bucket with its own refresh cadence.</summary>
+    /// <param name="name">Domain-defined bucket name.</param>
+    /// <param name="horizon">Event Horizon that contains this bucket.</param>
+    /// <param name="updatesPerSecond">Preferred refresh frequency, representable as a positive TimeSpan interval.</param>
     public EventHorizonBucket(string name, EventHorizon horizon, double updatesPerSecond)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -100,6 +119,7 @@ public sealed class EventHorizonBucket
     }
 
     /// <summary>Marks this bucket stale without invalidating unrelated buckets.</summary>
+    /// <param name="reason">One or more defined reasons that invalidate the current representation.</param>
     public void MarkDirty(BucketDirtyReason reason)
     {
         const BucketDirtyReason allReasons =
@@ -126,6 +146,7 @@ public sealed class EventHorizonBucket
     /// Records a new authoritative source revision and invalidates output built from an older one.
     /// Repeating the same revision does not invalidate the cache.
     /// </summary>
+    /// <param name="sourceRevision">Current authoritative source revision.</param>
     public void SetSourceRevision(long sourceRevision)
     {
         lock (_gate)
@@ -140,6 +161,7 @@ public sealed class EventHorizonBucket
     }
 
     /// <summary>Returns whether a refresh is required at the supplied deterministic time.</summary>
+    /// <param name="now">Time against which the bucket cadence is evaluated.</param>
     public bool IsRefreshDue(DateTimeOffset now)
     {
         lock (_gate)
@@ -150,6 +172,9 @@ public sealed class EventHorizonBucket
     /// Starts a refresh attempt if work is due. Build into separate output and publish it only
     /// if <see cref="TryCompleteRefresh"/> accepts the returned ticket.
     /// </summary>
+    /// <param name="now">Time at which the refresh attempt starts.</param>
+    /// <param name="ticket">Receives a ticket that must accompany the completed output.</param>
+    /// <returns>True if refresh work is due and a ticket was issued.</returns>
     public bool TryBeginRefresh(DateTimeOffset now, out BucketRefreshTicket ticket)
     {
         lock (_gate)
@@ -169,6 +194,9 @@ public sealed class EventHorizonBucket
     /// Accepts completed output only if no invalidation or source revision change occurred
     /// while it was being produced. Rejected output must not replace the last valid cache.
     /// </summary>
+    /// <param name="ticket">Ticket issued for this bucket's refresh attempt.</param>
+    /// <param name="completedAt">Time at which refresh work completed.</param>
+    /// <returns>True if the output is accepted as the current representation.</returns>
     public bool TryCompleteRefresh(BucketRefreshTicket ticket, DateTimeOffset completedAt)
     {
         lock (_gate)
