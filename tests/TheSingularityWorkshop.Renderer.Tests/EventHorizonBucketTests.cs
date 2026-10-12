@@ -98,7 +98,30 @@ public sealed class EventHorizonBucketTests
     }
 
     [Fact]
-    public void BucketRequiresNameHorizonAndPositiveFrequency()
+    public void OnlyOneTicketFromAGenerationCanPublish()
+    {
+        var bucket = CreateBucket("Environment", 1);
+        Assert.True(bucket.TryBeginRefresh(Epoch, out var first));
+        Assert.True(bucket.TryBeginRefresh(Epoch, out var second));
+
+        Assert.True(bucket.TryCompleteRefresh(first, Epoch.AddMilliseconds(1)));
+        Assert.False(bucket.TryCompleteRefresh(second, Epoch.AddMilliseconds(2)));
+    }
+
+    [Fact]
+    public void CompletionBeforeTicketStartIsRejectedWithoutConsumingTicket()
+    {
+        var bucket = CreateBucket("Motion", 30);
+        Assert.True(bucket.TryBeginRefresh(Epoch, out var ticket));
+
+        Assert.False(bucket.TryCompleteRefresh(ticket, Epoch.AddTicks(-1)));
+        Assert.False(bucket.HasValidRepresentation);
+        Assert.True(bucket.TryCompleteRefresh(ticket, Epoch.AddTicks(1)));
+        Assert.True(bucket.HasValidRepresentation);
+    }
+
+    [Fact]
+    public void BucketRequiresNameHorizonAndRepresentablePositiveFrequency()
     {
         var horizon = new EventHorizon("Near", 10, 60);
 
@@ -106,6 +129,7 @@ public sealed class EventHorizonBucketTests
         Assert.Throws<ArgumentNullException>(() => new EventHorizonBucket("Motion", null!, 1));
         Assert.Throws<ArgumentOutOfRangeException>(() => new EventHorizonBucket("Motion", horizon, 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => new EventHorizonBucket("Motion", horizon, double.NaN));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new EventHorizonBucket("Motion", horizon, double.MaxValue));
     }
 
     [Fact]
