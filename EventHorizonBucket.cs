@@ -54,6 +54,9 @@ public sealed class EventHorizonBucket
     private DateTimeOffset? _lastRefreshAt;
     private bool _hasValidRepresentation;
 
+    // Dependency graphs observe invalidation only after the bucket lock is released.
+    internal event Action<EventHorizonBucket>? Invalidated;
+
     /// <summary>Creates a bucket with its own refresh cadence.</summary>
     /// <param name="name">Domain-defined bucket name.</param>
     /// <param name="horizon">Event Horizon that contains this bucket.</param>
@@ -140,6 +143,8 @@ public sealed class EventHorizonBucket
             _dirtyReasons |= reason;
             _invalidationGeneration++;
         }
+
+        Invalidated?.Invoke(this);
     }
 
     /// <summary>
@@ -158,6 +163,8 @@ public sealed class EventHorizonBucket
             _dirtyReasons |= BucketDirtyReason.SourceChanged;
             _invalidationGeneration++;
         }
+
+        Invalidated?.Invoke(this);
     }
 
     /// <summary>Returns whether a refresh is required at the supplied deterministic time.</summary>
