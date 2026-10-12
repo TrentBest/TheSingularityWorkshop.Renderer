@@ -98,6 +98,18 @@ A consumer calls `TryRecordReuse` only when it actually reused a valid cached re
 
 They are **work-accounting signals, not proof of a frame-time or energy improvement**. End-to-end performance still needs repeatable workloads measuring CPU preparation/scheduling, allocations, transferred bytes, GPU stage timings, cache memory, and frame-time percentiles on recorded hardware.
 
+## A complete selective-refresh scenario
+
+The regression scenario in `EventHorizonWorkloadScenarioTests` exercises the policy as one chain rather than testing each primitive in isolation:
+
+1. Prepare valid representations for near geometry, near lighting, far shadows, and an unrelated far population.
+2. Declare geometry → lighting → shadows dependencies.
+3. Change the geometry source revision.
+4. Verify lighting and shadows become invalid, while the unrelated far population remains valid and records explicit cache reuse.
+5. Refresh the invalidated chain and verify the resulting representations are accepted.
+
+This demonstrates the intended correctness boundary: **a source change propagates to declared dependents, not every bucket in the scene**. The scenario uses the real Renderer bucket APIs and deterministic timestamps. It is a policy regression test—not a live renderer, a GPU execution test, or a performance benchmark.
+
 ## Current boundaries
 
 Implemented in the backend-free Renderer model:
