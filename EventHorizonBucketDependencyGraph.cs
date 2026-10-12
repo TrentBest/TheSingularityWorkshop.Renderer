@@ -42,8 +42,13 @@ public sealed class EventHorizonBucketDependencyGraph : IDisposable
 
             ObserveUnderLock(source);
             ObserveUnderLock(dependent);
-            return true;
         }
+
+        // The dependent may already hold output computed before this edge existed, or before
+        // the source became valid. Invalidate it immediately. Notify outside the graph lock:
+        // bucket notifications are synchronous and can re-enter this graph.
+        dependent.MarkDirty(BucketDirtyReason.DependencyChanged);
+        return true;
     }
 
     /// <summary>Returns a snapshot of the buckets directly invalidated by a source bucket.</summary>
