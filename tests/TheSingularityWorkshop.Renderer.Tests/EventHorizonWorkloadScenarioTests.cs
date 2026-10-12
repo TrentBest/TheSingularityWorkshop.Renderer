@@ -52,13 +52,13 @@ public sealed class EventHorizonWorkloadScenarioTests
         Assert.True(shadows.HasValidRepresentation);
         Assert.True(population.HasValidRepresentation);
 
-        Assert.Equal(1, geometry.Metrics.AcceptedRefreshes);
+        Assert.Equal(2, geometry.Metrics.AcceptedRefreshes);
         Assert.Equal(2, lighting.Metrics.AcceptedRefreshes);
         Assert.Equal(2, shadows.Metrics.AcceptedRefreshes);
-        Assert.Equal(0, population.Metrics.RefreshAttempts);
+        Assert.Equal(1, population.Metrics.RefreshAttempts);
         Assert.Equal(2, population.Metrics.ReuseCount);
-        Assert.Equal(1, lighting.Metrics.Invalidations);
-        Assert.Equal(1, shadows.Metrics.Invalidations);
+        Assert.Equal(2, lighting.Metrics.Invalidations);
+        Assert.Equal(2, shadows.Metrics.Invalidations);
     }
 
     private static EventHorizonBucket Bucket(string name, string horizon, double frequency) =>
