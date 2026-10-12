@@ -16,7 +16,7 @@ public sealed class HorizonRepresentationHandoffTests
         Assert.Equal("far", staged.Current.Id);
         Assert.Equal("near", staged.Pending!.Id);
         Assert.True(staged.Generation > initial.Generation);
-        Assert.False(handoff.TryCommit(sourceRevision: 7, observerRevision: 12));
+        Assert.False(handoff.TryCommit(currentSourceRevision: 7, currentObserverRevision: 12));
         Assert.Equal("far", handoff.Snapshot.Current.Id);
     }
 
