@@ -210,6 +210,43 @@ public sealed class EventHorizonBucketTests
             metrics.ObservedInvalidationReasons);
     }
 
+    [Fact]
+    public void MultipleNamedBucketsCanShareOneHorizonAndKeepIndependentCadence()
+    {
+        var horizon = new EventHorizon("Near", 100, 30);
+        var geometry = new EventHorizonBucket("Geometry", horizon, 30);
+        var motion = new EventHorizonBucket("Motion", horizon, 15);
+        CompleteInitialRefresh(geometry, Epoch);
+        CompleteInitialRefresh(motion, Epoch);
+
+        geometry.MarkDirty(BucketDirtyReason.ResourceChanged);
+
+        Assert.Same(horizon, geometry.Horizon);
+        Assert.Same(horizon, motion.Horizon);
+        Assert.False(geometry.HasValidRepresentation);
+        Assert.True(motion.HasValidRepresentation);
+        Assert.True(geometry.IsRefreshDue(Epoch.AddMilliseconds(1)));
+        Assert.False(motion.IsRefreshDue(Epoch.AddMilliseconds(1)));
+    }
+
+    [Fact]
+    public void NearAndFarBucketsRefreshAtDifferentRatesWhileFarRepresentationRemainsReusable()
+    {
+        var nearHorizon = new EventHorizon("Near", 100, 30);
+        var farHorizon = new EventHorizon("Far", 10000, 1);
+        var near = new EventHorizonBucket("Zombies", nearHorizon, 30);
+        var far = new EventHorizonBucket("Zombies", farHorizon, 1);
+        CompleteInitialRefresh(near, Epoch);
+        CompleteInitialRefresh(far, Epoch);
+
+        Assert.True(near.IsRefreshDue(Epoch.AddMilliseconds(34)));
+        Assert.False(far.IsRefreshDue(Epoch.AddMilliseconds(34)));
+        Assert.True(near.HasValidRepresentation);
+        Assert.True(far.HasValidRepresentation);
+        Assert.True(far.TryRecordReuse());
+        Assert.Equal(1, far.Metrics.ReuseCount);
+    }
+
     private static EventHorizonBucket CreateBucket(string name, double updatesPerSecond) =>
         new(name, new EventHorizon("TestHorizon", 100, 1), updatesPerSecond);
 
