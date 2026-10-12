@@ -21,7 +21,7 @@ public sealed class EventHorizonBucketDependencyGraphTests
 
         source.MarkDirty(BucketDirtyReason.ResourceChanged);
 
-        Assert.NotEqual(BucketDirtyReason.None, dependent.DirtyReasons & BucketDirtyReason.DependencyChanged);
+        Assert.True((dependent.DirtyReasons & BucketDirtyReason.DependencyChanged) != BucketDirtyReason.None);
         Assert.False(dependent.HasValidRepresentation);
         Assert.True(unrelated.HasValidRepresentation);
         Assert.False(unrelated.IsRefreshDue(Epoch.AddMilliseconds(1)));
@@ -42,9 +42,9 @@ public sealed class EventHorizonBucketDependencyGraphTests
 
         geometry.SetSourceRevision(42);
 
-        Assert.NotEqual(BucketDirtyReason.None, geometry.DirtyReasons & BucketDirtyReason.SourceChanged);
-        Assert.NotEqual(BucketDirtyReason.None, lighting.DirtyReasons & BucketDirtyReason.DependencyChanged);
-        Assert.NotEqual(BucketDirtyReason.None, distantShadows.DirtyReasons & BucketDirtyReason.DependencyChanged);
+        Assert.True((geometry.DirtyReasons & BucketDirtyReason.SourceChanged) != BucketDirtyReason.None);
+        Assert.True((lighting.DirtyReasons & BucketDirtyReason.DependencyChanged) != BucketDirtyReason.None);
+        Assert.True((distantShadows.DirtyReasons & BucketDirtyReason.DependencyChanged) != BucketDirtyReason.None);
         Assert.False(lighting.HasValidRepresentation);
         Assert.False(distantShadows.HasValidRepresentation);
     }
