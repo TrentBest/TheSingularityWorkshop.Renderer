@@ -1,30 +1,19 @@
 namespace TheSingularityWorkshop.Renderer;
 
-/// <summary>Identifies why a cached bucket representation may no longer be reused.</summary>
 [Flags]
 public enum BucketDirtyReason
 {
-    /// <summary>The bucket has no known invalidation reason.</summary>
     None = 0,
-    /// <summary>The bucket has not yet produced a valid representation.</summary>
     Initial = 1 << 0,
-    /// <summary>Source state used to build the representation changed.</summary>
     SourceChanged = 1 << 1,
-    /// <summary>Entities or cohorts entered or left the bucket.</summary>
     MembershipChanged = 1 << 2,
-    /// <summary>Observer movement or orientation invalidated this representation.</summary>
     ObserverChanged = 1 << 3,
-    /// <summary>A referenced geometry, material, texture, or other resource changed.</summary>
     ResourceChanged = 1 << 4,
-    /// <summary>A dependency changed and invalidated this bucket's derived output.</summary>
     DependencyChanged = 1 << 5,
-    /// <summary>An explicit policy or caller request invalidated the representation.</summary>
     Explicit = 1 << 6,
-    /// <summary>The configured freshness deadline elapsed.</summary>
     FreshnessDeadline = 1 << 7
 }
 
-/// <summary>Identifies one attempt to refresh a bucket.</summary>
 public readonly record struct BucketRefreshTicket(
     string BucketName,
     long InvalidationGeneration,
@@ -57,8 +46,14 @@ public sealed class EventHorizonBucket
             throw new ArgumentOutOfRangeException(nameof(updatesPerSecond));
 
         var intervalSeconds = 1d / updatesPerSecond;
-        if (!double.IsFinite(intervalSeconds) || intervalSeconds > TimeSpan.MaxValue.TotalSeconds)
+        // TimeSpan has 100 ns resolution. Reject frequencies that round the interval to zero;
+        // otherwise an ostensibly rate-limited bucket becomes due on every scheduling check.
+        if (!double.IsFinite(intervalSeconds) ||
+            intervalSeconds > TimeSpan.MaxValue.TotalSeconds ||
+            intervalSeconds < 1d / TimeSpan.TicksPerSecond)
+        {
             throw new ArgumentOutOfRangeException(nameof(updatesPerSecond));
+        }
 
         Name = name;
         Horizon = horizon;
