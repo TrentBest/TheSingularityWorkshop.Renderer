@@ -178,6 +178,38 @@ public sealed class EventHorizonBucketTests
         Assert.False(second.HasValidRepresentation);
     }
 
+    [Fact]
+    public void MetricsDistinguishExplicitReuseFromDueRefreshAndRejectedWork()
+    {
+        var bucket = CreateBucket("FarEnvironment", 1);
+
+        Assert.False(bucket.TryRecordReuse());
+        Assert.True(bucket.TryBeginRefresh(Epoch, out var initialTicket));
+        Assert.True(bucket.TryCompleteRefresh(initialTicket, Epoch));
+
+        Assert.True(bucket.TryRecordReuse());
+        Assert.False(bucket.IsRefreshDue(Epoch.AddMilliseconds(10)));
+        bucket.MarkDirty(BucketDirtyReason.ResourceChanged);
+        Assert.False(bucket.TryRecordReuse());
+
+        Assert.True(bucket.TryBeginRefresh(Epoch.AddSeconds(2), out var staleTicket));
+        bucket.SetSourceRevision(1);
+        Assert.False(bucket.TryCompleteRefresh(staleTicket, Epoch.AddSeconds(2).AddMilliseconds(1)));
+
+        var metrics = bucket.Metrics;
+        Assert.Equal(3, metrics.RefreshChecks);
+        Assert.Equal(2, metrics.RefreshDueChecks);
+        Assert.Equal(1, metrics.RefreshNotDueChecks);
+        Assert.Equal(2, metrics.RefreshAttempts);
+        Assert.Equal(1, metrics.AcceptedRefreshes);
+        Assert.Equal(1, metrics.RejectedRefreshes);
+        Assert.Equal(2, metrics.Invalidations);
+        Assert.Equal(1, metrics.ReuseCount);
+        Assert.Equal(
+            BucketDirtyReason.ResourceChanged | BucketDirtyReason.SourceChanged,
+            metrics.ObservedInvalidationReasons);
+    }
+
     private static EventHorizonBucket CreateBucket(string name, double updatesPerSecond) =>
         new(name, new EventHorizon("TestHorizon", 100, 1), updatesPerSecond);
 
