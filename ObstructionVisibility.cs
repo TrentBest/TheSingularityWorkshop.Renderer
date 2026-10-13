@@ -26,7 +26,9 @@ public enum OcclusionOutcome
     Unobstructed,
     /// <summary>The subject is partially covered by a nearer obstruction.</summary>
     PartiallyOccluded,
-    /// <summary>An opaque, nearer obstruction fully contains the subject rectangle.</summary>
+    /// <summary>The rectangles overlap, but the obstruction shape is not proven to cover the full subject.</summary>
+    OcclusionUncertain,
+    /// <summary>An opaque, nearer obstruction is proven to fully cover the subject rectangle.</summary>
     FullyOccluded,
     /// <summary>Required bounds or depth values are invalid.</summary>
     InvalidInput
@@ -99,15 +101,14 @@ public static class ObstructionVisibility
             0,
             1);
 
-        if (opacity >= 1 && fullCoverageGuaranteed && obstructionBounds.Contains(subjectBounds))
+        if (opacity >= 1 && obstructionBounds.Contains(subjectBounds))
         {
-            return new OcclusionAssessment(OcclusionOutcome.FullyOccluded, 1, false, false);
+            if (fullCoverageGuaranteed)
+                return new OcclusionAssessment(OcclusionOutcome.FullyOccluded, 1, false, false);
+
+            return new OcclusionAssessment(OcclusionOutcome.OcclusionUncertain, coverage, true, true);
         }
 
-        return new OcclusionAssessment(
-            OcclusionOutcome.PartiallyOccluded,
-            coverage,
-            true,
-            true);
+        return new OcclusionAssessment(OcclusionOutcome.PartiallyOccluded, coverage, true, true);
     }
 }
