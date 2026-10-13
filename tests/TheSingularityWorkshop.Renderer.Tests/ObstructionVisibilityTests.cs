@@ -16,7 +16,7 @@ public sealed class ObstructionVisibilityTests
             PerceptionChannel.Visible, PerceptionChannel.Visible, fullCoverageGuaranteed: true);
 
         Assert.Equal(OcclusionOutcome.FullyOccluded, result.Outcome);
-        Assert.True(result.RenderSubject);
+        Assert.False(result.RenderSubject);
         Assert.False(result.CompositeObstructionAfterSubject);
         Assert.Equal(1, result.SubjectCoverage);
     }
@@ -81,6 +81,6 @@ public sealed class ObstructionVisibilityTests
             PerceptionChannel.Visible, PerceptionChannel.Visible);
 
         Assert.Equal(OcclusionOutcome.InvalidInput, result.Outcome);
-        Assert.False(result.RenderSubject);
+        Assert.True(result.RenderSubject);
     }
 }
