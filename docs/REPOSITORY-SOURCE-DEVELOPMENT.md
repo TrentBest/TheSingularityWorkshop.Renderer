@@ -12,6 +12,24 @@ Develop several Workshop repositories together without waiting for every interme
 
 A `ProjectReference` does not fetch a Git branch by itself. The dependency repository must first be checked out at the intended branch/commit; MSBuild then builds the local project.
 
+## Renderer implementation
+
+The Renderer project now implements this pattern for its three direct dependencies:
+
+- `FSM_API/FSM_API.csproj` from the sibling `FSM_API` checkout
+- `TheSingularityWorkshop.ProtocolAi.csproj` from the sibling `TheSingularityWorkshop.ProtocolAi` checkout
+- `TheSingularityWorkshop.MicroBundleDomain.csproj` from the sibling `TheSingularityWorkshop.MicroBundleDomain` checkout
+
+From a sibling-checkout workspace, source integration is explicitly opt-in:
+
+```bash
+dotnet restore TheSingularityWorkshop.Renderer.slnx -p:WorkshopUseRepositorySources=true
+dotnet build TheSingularityWorkshop.Renderer.slnx -c Release --no-restore -p:WorkshopUseRepositorySources=true
+dotnet test TheSingularityWorkshop.Renderer.slnx -c Release --no-build -p:WorkshopUseRepositorySources=true
+```
+
+The default remains `WorkshopUseRepositorySources=false`, so ordinary builds use the pinned NuGet packages. Renderer CI tests both paths independently: the normal package lane restores, tests, and packs against NuGet; the repository-source lane checks out the three dependency `development` branches beside Renderer and builds/tests with source mode enabled. The source lane is integration evidence, not a release or publishing action.
+
 ## 1. Establish a workspace
 
 Use sibling checkouts so relative paths are predictable. For example:
