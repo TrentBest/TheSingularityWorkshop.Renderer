@@ -16,7 +16,7 @@ public sealed class ObstructionVisibilityTests
             PerceptionChannel.Visible, PerceptionChannel.Visible, fullCoverageGuaranteed: true);
 
         Assert.Equal(OcclusionOutcome.FullyOccluded, result.Outcome);
-        Assert.False(result.RenderSubject);
+        Assert.True(result.RenderSubject);
         Assert.False(result.CompositeObstructionAfterSubject);
         Assert.Equal(1, result.SubjectCoverage);
     }
@@ -72,7 +72,7 @@ public sealed class ObstructionVisibilityTests
     }
 
     [Fact]
-    public void InvalidBoundsReturnExplicitInvalidResult()
+    public void InvalidBoundsReturnExplicitInvalidResultWithoutCullingSubject()
     {
         var invalid = new ProjectedRect(0, 0, -1, 1);
 
