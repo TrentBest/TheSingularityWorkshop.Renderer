@@ -20,10 +20,22 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup>
+    <!-- Normal builds use released NuGet packages. Opt in explicitly for sibling-repository integration. -->
+    <WorkshopUseRepositorySources Condition="'$(WorkshopUseRepositorySources)' == ''">false</WorkshopUseRepositorySources>
+    <WorkshopSourceRoot Condition="'$(WorkshopSourceRoot)' == ''">$(MSBuildThisFileDirectory)..</WorkshopSourceRoot>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(WorkshopUseRepositorySources)' != 'true'">
     <PackageReference Include="TheSingularityWorkshop.FSM_API" Version="1.0.13" />
     <PackageReference Include="TheSingularityWorkshop.ProtocolAi" Version="0.1.0-alpha.2" />
     <PackageReference Include="TheSingularityWorkshop.MicroBundleDomain" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(WorkshopUseRepositorySources)' == 'true'">
+    <ProjectReference Include="$(WorkshopSourceRoot)/FSM_API/FSM_API/FSM_API.csproj" />
+    <ProjectReference Include="$(WorkshopSourceRoot)/TheSingularityWorkshop.ProtocolAi/TheSingularityWorkshop.ProtocolAi.csproj" />
+    <ProjectReference Include="$(WorkshopSourceRoot)/TheSingularityWorkshop.MicroBundleDomain/TheSingularityWorkshop.MicroBundleDomain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
