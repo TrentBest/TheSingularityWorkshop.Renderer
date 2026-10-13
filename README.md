@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/moniker.svg" alt="The Singularity Workshop animated moniker" width="100%" />
+</p>
+
 # ✳️ 00 TheSingularityWorkshop.Renderer
 
 [![Build](https://img.shields.io/github/actions/workflow/status/TrentBest/TheSingularityWorkshop.Renderer/build.yml?branch=development)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/build.yml)
