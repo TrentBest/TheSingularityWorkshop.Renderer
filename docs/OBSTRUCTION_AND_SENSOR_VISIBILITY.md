@@ -21,7 +21,7 @@ ProjectedRect uses a caller-defined projection-space coordinate system. Depth is
 
 1. Reject invalid rectangles, depths, opacity, or an empty channel.
 2. If the obstruction is farther away, does not overlap, or does not block the active channel, retain the subject.
-3. If a nearer opaque obstruction contains the complete subject rectangle, the subject may be omitted for that perception channel.
+3. A bounding rectangle alone never proves full occlusion. Only when a nearer opaque obstruction is explicitly marked as a known filled coverage rectangle and contains the complete subject rectangle may the subject be omitted for that perception channel.
 4. If the rectangles overlap only partially, keep the subject eligible and composite the obstruction after its behind-subject contribution, or use an equivalent depth/mask solution in the selected backend.
 5. If the sensor channel is not blocked, the subject remains eligible even when visible-light presentation is fully occluded.
 
@@ -46,6 +46,6 @@ Visibility does not automatically delete an entity, disable simulation, or remov
 
 ## Current limits and proof
 
-The initial C# contract provides projected-rectangle overlap, containment, pairwise coverage, depth ordering, opacity handling, and per-channel blocking. Unit tests cover full suppression, partial compositing, sensor-channel bypass, far-side obstruction, and invalid bounds.
+The initial C# contract provides projected-rectangle overlap, containment, pairwise coverage, depth ordering, opacity handling, per-channel blocking, and an explicit full-coverage guarantee required before a subject may be culled. Unit tests cover full suppression, partial compositing, sensor-channel bypass, far-side obstruction, and invalid bounds.
 
 It does not yet implement camera projection, pixel masks, multi-obstruction union, depth-buffer integration, thermal rendering, interaction reachability, or Event Horizon invalidation wiring. The next vertical slice should feed observer/obstruction revisions into visibility-cache invalidation and make a real sample demonstrate visible-light versus thermal output.
