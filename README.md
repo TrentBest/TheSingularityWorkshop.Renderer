@@ -54,7 +54,7 @@ The current library contains executable foundations for Event Horizon selection 
 Renderer is a library, not a standalone windowed demo. The quickest source-level proof is to run its tests from a checkout with the .NET 8 SDK:
 
 ~~~bash
-dotnet test TheSingularityWorkshop.Renderer.slnx
+dotnet test tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj
 ~~~
 
 The tests exercise the current contracts and their edge cases; they do **not** prove pixel output, GPU performance, or a complete host-to-renderer integration.
@@ -84,7 +84,7 @@ Current implementation, design intent, and exploratory demonstrations are not in
 ## Build and contribute
 
 - SDK: .NET 8.
-- Build: dotnet build TheSingularityWorkshop.Renderer.slnx
+- Build: dotnet build TheSingularityWorkshop.Renderer.csproj
 - Test: dotnet test TheSingularityWorkshop.Renderer.slnx
 - Benchmark laboratory: [TheSingularityWorkshop.Renderer.Benchmarks](https://github.com/TrentBest/TheSingularityWorkshop.Renderer.Benchmarks).
 
