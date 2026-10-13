@@ -6,7 +6,17 @@ namespace TheSingularityWorkshop.Renderer;
 public readonly record struct RenderDrawCommand
 {
     /// <summary>Initializes a draw command.</summary>
-    public RenderDrawCommand(RenderResourceId geometry, RenderResourceId material, Matrix4x4 worldTransform, int indexCount, int firstIndex, int baseVertex, RendererRepresentation representation)
+    public RenderDrawCommand(
+        RenderResourceId geometry,
+        RenderResourceId material,
+        Matrix4x4 worldTransform,
+        int indexCount,
+        int firstIndex,
+        int baseVertex,
+        RendererRepresentation representation,
+        RenderResourceId instances = default,
+        int instanceCount = 1,
+        int firstInstance = 0)
     {
         if (!geometry.IsValid)
             throw new ArgumentException("A valid geometry resource is required.", nameof(geometry));
@@ -17,6 +27,13 @@ public readonly record struct RenderDrawCommand
         if (firstIndex < 0)
             throw new ArgumentOutOfRangeException(nameof(firstIndex));
 
+        if (instanceCount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(instanceCount));
+        if (firstInstance < 0)
+            throw new ArgumentOutOfRangeException(nameof(firstInstance));
+        if (!instances.IsValid && (instanceCount != 1 || firstInstance != 0))
+            throw new ArgumentException("An instance-data resource is required for an instanced range.", nameof(instances));
+
         Geometry = geometry;
         Material = material;
         WorldTransform = worldTransform;
@@ -24,6 +41,9 @@ public readonly record struct RenderDrawCommand
         FirstIndex = firstIndex;
         BaseVertex = baseVertex;
         Representation = representation;
+        Instances = instances;
+        InstanceCount = instanceCount;
+        FirstInstance = firstInstance;
     }
 
     /// <summary>Gets the geometry resource identifier.</summary>
@@ -40,4 +60,10 @@ public readonly record struct RenderDrawCommand
     public int BaseVertex { get; }
     /// <summary>Gets the computational representation that produced this command.</summary>
     public RendererRepresentation Representation { get; }
+    /// <summary>Gets the optional instance-data resource identifier; invalid means one non-instanced draw.</summary>
+    public RenderResourceId Instances { get; }
+    /// <summary>Gets the number of instances to draw.</summary>
+    public int InstanceCount { get; }
+    /// <summary>Gets the first instance in the instance-data resource.</summary>
+    public int FirstInstance { get; }
 }
