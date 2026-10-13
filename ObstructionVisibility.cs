@@ -85,7 +85,9 @@ public static class ObstructionVisibility
             opacity > 1 ||
             channel == PerceptionChannel.None)
         {
-            return new OcclusionAssessment(OcclusionOutcome.InvalidInput, 0, false, false);
+            // Invalid visibility data must never cull an entity. Preserve the subject and let a
+            // later stage decide how to handle the incomplete obstruction result.
+            return new OcclusionAssessment(OcclusionOutcome.InvalidInput, 0, true, false);
         }
 
         if (obstructionDepth >= subjectDepth ||
