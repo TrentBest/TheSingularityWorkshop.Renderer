@@ -64,6 +64,42 @@ jobs:
         with:
           name: renderer-test-results
           path: ./TestResults/*
+  repository-source-integration:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Renderer
+        uses: actions/checkout@v7
+        with:
+          path: Workshop/TheSingularityWorkshop.Renderer
+      - name: Checkout FSM_API development
+        uses: actions/checkout@v7
+        with:
+          repository: TrentBest/FSM_API
+          ref: development
+          path: Workshop/FSM_API
+      - name: Checkout ProtocolAi development
+        uses: actions/checkout@v7
+        with:
+          repository: TrentBest/TheSingularityWorkshop.ProtocolAi
+          ref: development
+          path: Workshop/TheSingularityWorkshop.ProtocolAi
+      - name: Checkout MicroBundleDomain development
+        uses: actions/checkout@v7
+        with:
+          repository: TrentBest/TheSingularityWorkshop.MicroBundleDomain
+          ref: development
+          path: Workshop/TheSingularityWorkshop.MicroBundleDomain
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore from sibling repository sources
+        run: dotnet restore Workshop/TheSingularityWorkshop.Renderer/TheSingularityWorkshop.Renderer.slnx -p:WorkshopUseRepositorySources=true
+      - name: Build from sibling repository sources
+        run: dotnet build Workshop/TheSingularityWorkshop.Renderer/TheSingularityWorkshop.Renderer.slnx --configuration Release --no-restore -p:WorkshopUseRepositorySources=true
+      - name: Test from sibling repository sources
+        run: dotnet test Workshop/TheSingularityWorkshop.Renderer/TheSingularityWorkshop.Renderer.slnx --configuration Release --no-build --verbosity normal -p:WorkshopUseRepositorySources=true
+
   publish_nuget:
     needs: build-and-test
     runs-on: ubuntu-24.04
