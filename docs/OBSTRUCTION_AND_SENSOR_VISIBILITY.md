@@ -46,6 +46,6 @@ Visibility does not automatically delete an entity, disable simulation, or remov
 
 ## Current limits and proof
 
-The initial C# contract provides projected-rectangle overlap, containment, pairwise coverage, depth ordering, opacity handling, per-channel blocking, and an explicit full-coverage guarantee required before a subject may be culled. Unit tests cover full suppression, partial compositing, sensor-channel bypass, far-side obstruction, and invalid bounds.
+The initial C# contract provides projected-rectangle overlap, containment, pairwise coverage, depth ordering, opacity handling, per-channel blocking, and an explicit full-coverage guarantee required before a subject may be culled. Unit tests cover proven full suppression, uncertain bounding-box coverage, partial compositing, sensor-channel bypass, far-side obstruction, and invalid bounds.
 
 It does not yet implement camera projection, pixel masks, multi-obstruction union, depth-buffer integration, thermal rendering, interaction reachability, or Event Horizon invalidation wiring. The next vertical slice should feed observer/obstruction revisions into visibility-cache invalidation and make a real sample demonstrate visible-light versus thermal output.
