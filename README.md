@@ -613,3 +613,7 @@ driver / GPU
 This means an NVIDIA device should not be treated exactly like every other GPU merely because a generic abstraction makes that convenient. If CUDA or another vendor capability provides useful leverage, the Renderer should be able to exploit it behind a capability check while retaining a generic baseline for other hardware.
 
 See [GPU Boundary](docs/GPU_BOUNDARY.md) for the hardware-discovery and native-C# direction.
+
+## Obstruction and sensor-specific visibility
+
+The first pure-model contract for observer-relative rectangle occlusion, channel-specific blocking, and thermal-style visibility policy is documented in [Obstruction and Sensor Visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md). It is a broad-phase contract with unit tests, not yet production render-path wiring or pixel-perfect occlusion.
