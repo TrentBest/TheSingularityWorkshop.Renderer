@@ -60,6 +60,10 @@ public static class ObstructionVisibility
     /// <param name="channel">Active perception channel.</param>
     /// <param name="blockedChannels">Channels blocked by this obstruction.</param>
     /// <param name="opacity">Obstruction opacity from 0 (clear) to 1 (opaque).</param>
+    /// <param name="fullCoverageGuaranteed">
+    /// True only when the rectangle represents a known filled occluding surface, not merely
+    /// the bounding rectangle of an irregular mesh. Defaults to false to avoid unsafe culling.
+    /// </param>
     public static OcclusionAssessment Assess(
         ProjectedRect subjectBounds,
         double subjectDepth,
@@ -67,7 +71,8 @@ public static class ObstructionVisibility
         double obstructionDepth,
         PerceptionChannel channel,
         PerceptionChannel blockedChannels,
-        double opacity = 1)
+        double opacity = 1,
+        bool fullCoverageGuaranteed = false)
     {
         if (!subjectBounds.IsValid ||
             !obstructionBounds.IsValid ||
@@ -94,7 +99,7 @@ public static class ObstructionVisibility
             0,
             1);
 
-        if (opacity >= 1 && obstructionBounds.Contains(subjectBounds))
+        if (opacity >= 1 && fullCoverageGuaranteed && obstructionBounds.Contains(subjectBounds))
         {
             return new OcclusionAssessment(OcclusionOutcome.FullyOccluded, 1, false, false);
         }
