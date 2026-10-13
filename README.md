@@ -456,6 +456,7 @@ Start here:
 - [Start Here](docs/START_HERE.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Event Horizons](docs/EVENT_HORIZONS.md)
+- [Event Horizon Buckets](docs/EVENT_HORIZON_BUCKETS.md) — learn how independently refreshed domains retain valid output, invalidate dependencies, and transfer cohort membership safely.
 - [Rendering Model](docs/RENDERING_MODEL.md)
 - [Representation](docs/REPRESENTATION.md)
 - [Update Frequency](docs/UPDATE_FREQUENCY.md)

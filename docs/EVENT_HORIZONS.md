@@ -121,6 +121,8 @@ The Renderer should expose enough information for downstream presentation to dis
 
 These are related but different events. A geometry buffer can remain valid while its lighting result becomes stale; a far-field image can remain valid while a near-field representation changes; and a display frame can be composed from both cached and freshly rendered results.
 
+For the concrete implementation model—independent named buckets, membership transfer, dependency invalidation, refresh tickets, explicit reuse counters, and safe representation handoff—see [Event Horizon Buckets](EVENT_HORIZON_BUCKETS.md).
+
 ## The visible world extends beyond the focus
 
 The focus is where high-fidelity work is most justified, not a clipping boundary for the world. Renderer should continue selecting suitable representations beyond the immediate focus so the observer sees a coherent environment. Distant terrain, skyline, architecture, vegetation, and other environmental context may use simplified geometry, aggregate representations, impostors, or cached imagery.
