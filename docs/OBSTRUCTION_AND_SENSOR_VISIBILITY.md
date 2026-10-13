@@ -19,7 +19,7 @@ ProjectedRect uses a caller-defined projection-space coordinate system. Depth is
 
 ## Ordering and rejection
 
-1. Reject invalid rectangles, depths, opacity, or an empty channel.
+1. Detect invalid rectangles, depths, opacity, or an empty channel. Invalid data is reported explicitly and **must not cull the subject**; preserve it conservatively until a valid visibility result is available.
 2. If the obstruction is farther away, does not overlap, or does not block the active channel, retain the subject.
 3. A bounding rectangle alone never proves full occlusion. Only when a nearer opaque obstruction is explicitly marked as a known filled coverage rectangle and contains the complete subject rectangle may the subject be omitted for that perception channel.
 4. If the rectangles overlap only partially, keep the subject eligible and composite the obstruction after its behind-subject contribution, or use an equivalent depth/mask solution in the selected backend.
