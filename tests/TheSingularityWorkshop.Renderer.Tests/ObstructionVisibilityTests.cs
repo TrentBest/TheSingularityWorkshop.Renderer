@@ -13,12 +13,24 @@ public sealed class ObstructionVisibilityTests
     {
         var result = ObstructionVisibility.Assess(
             Subject, 0.8, Wall, 0.2,
-            PerceptionChannel.Visible, PerceptionChannel.Visible);
+            PerceptionChannel.Visible, PerceptionChannel.Visible, fullCoverageGuaranteed: true);
 
         Assert.Equal(OcclusionOutcome.FullyOccluded, result.Outcome);
         Assert.False(result.RenderSubject);
         Assert.False(result.CompositeObstructionAfterSubject);
         Assert.Equal(1, result.SubjectCoverage);
+    }
+
+
+    [Fact]
+    public void BoundingRectangleAloneDoesNotProveFullOcclusion()
+    {
+        var result = ObstructionVisibility.Assess(
+            Subject, 0.8, Wall, 0.2,
+            PerceptionChannel.Visible, PerceptionChannel.Visible);
+
+        Assert.Equal(OcclusionOutcome.OcclusionUncertain, result.Outcome);
+        Assert.True(result.RenderSubject);
     }
 
     [Fact]
