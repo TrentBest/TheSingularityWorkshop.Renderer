@@ -10,6 +10,10 @@ The first question is:
 
 That leads to the central Renderer concept: **Event Horizons**.
 
+![Living Renderer composition: observer, horizons, independent buckets, and frame assembly](assets/renderer-composition.svg)
+
+*This is a living architecture explainer, not a live runtime monitor. The APIs and contracts shown exist in the repository, but the complete observer-to-backend path is still being integrated. Read the [Living Renderer guide](LIVING_RENDERER.md) for the evidence and next steps.*
+
 ![Living Event Horizons: the five FSM-backed representation states](assets/living-event-horizons.svg)
 
 *This image is emitted by the runnable `.NET` sample using `RendererComputationMachine` and FSM_API. The pulse is SVG presentation; the represented states come from FSM transitions. It is a generated snapshot, not a live process monitor.*
@@ -84,6 +88,7 @@ The dependency direction must remain downward and compositional. Renderer must n
 
 ## Documentation
 
+- [Living Renderer guide](LIVING_RENDERER.md)
 - [Architecture](ARCHITECTURE.md)
 - [Event Horizons](EVENT_HORIZONS.md)
 - [Rendering Model](RENDERING_MODEL.md)
