@@ -129,6 +129,10 @@ Every demo must distinguish these levels:
 
 An animated diagram is useful teaching material, but animation alone is not evidence of a running policy or agent.
 
+## Spatially grounded concepts and interaction
+
+Semantic observations can extend beyond labels and counts to spatially grounded parts and possible interactions: for example, an ATM's card-slot pose, a tank's hatch or maintenance terminal, or a group of characters with a count and spatial extent. See [Spatial Semantics and Affordances](SPATIAL_SEMANTICS_AND_AFFORDANCES.md) for the broader concept and a staged implementation plan. These are design targets, not claims of current runtime support.
+
 ## Related documentation
 
 - [Observation model](OBSERVATION_MODEL.md)
