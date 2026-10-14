@@ -10,6 +10,10 @@ This Renderer begins one level earlier:
 
 That lets the Renderer reduce computation before it reaches drawing.
 
+![Living representation states produced through FSM_API](assets/living-event-horizons.svg)
+
+The five states are actual outputs of the Renderer FSM wrapper; SVG supplies the visual manifestation. Regenerate the snapshot with the command in the repository README.
+
 ## A representation may contain
 
 - geometry
