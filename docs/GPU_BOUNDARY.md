@@ -47,6 +47,10 @@ GPU
 
 The Renderer does not create DirectX, Vulkan, WebGPU, OpenGL, WPF, or Unity objects at this boundary. It produces a compact description of the work that survived observer-relative computation.
 
+The current living SVG sample proves the earlier FSM-backed representation-state seam. It does **not** yet visualize actual `RenderFrame`/`RenderDrawCommand` instances. That is the next useful visualization boundary: show the selected representation beside the platform-neutral command it produces, then connect the command to a real backend.
+
+![Current FSM-backed representation-state proof](assets/living-event-horizons.svg)
+
 ## What the CPU decides
 
 Before a command reaches a graphics adapter, the Renderer should decide:
