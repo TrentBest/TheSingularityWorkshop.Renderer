@@ -7,6 +7,8 @@
 
 # ✳️ 00 TheSingularityWorkshop.Renderer
 
+This README follows the Workshop's shared [Documentation Standard](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/master/DOCUMENTATION_STANDARD.md).
+
 > **A rendering stack designed around computational detail, observation, and Event Horizons.**
 
 TheSingularityWorkshop.Renderer is the beginning of an independent rendering stack for **The Singularity Workshop**.
