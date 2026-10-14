@@ -7,6 +7,8 @@ namespace TheSingularityWorkshop.Renderer;
 /// The coordinator decides whether a selected bucket needs refresh work and returns its ticket. A host
 /// still prepares the actual representation and must call <see cref="EventHorizonBucket.TryCompleteRefresh"/>
 /// only after that output is ready to publish. This class is not a scheduler, graphics backend, or frame builder.
+/// Create a separate coordinator per independent observer context; one observer's active representation is not
+/// authoritative world state and must not be shared as another observer's answer.
 /// </remarks>
 public sealed class ObserverRepresentationCoordinator : IDisposable
 {
