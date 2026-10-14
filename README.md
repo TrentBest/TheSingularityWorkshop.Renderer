@@ -5,7 +5,7 @@
   </a>
 </p>
 
-# TheSingularityWorkshop.Renderer
+# ✳️ 00 TheSingularityWorkshop.Renderer
 
 > **A rendering stack designed around computational detail, observation, and Event Horizons.**
 
