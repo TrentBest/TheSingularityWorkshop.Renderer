@@ -85,7 +85,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Event Horizon contracts](docs/EVENT_HORIZONS.md) and [bucket model](docs/EVENT_HORIZON_BUCKETS.md) — selection and grouping behavior, with the policy boundaries made explicit.
 - [Architecture](docs/ARCHITECTURE.md) — component ownership and dependency direction.
 - [Rendering model](docs/RENDERING_MODEL.md) and [representation](docs/REPRESENTATION.md) — how stable identity can outlive a particular materialized form.
-- [Observation model](docs/OBSERVATION_MODEL.md) and [obstruction/sensor visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md) — observer geometry and channel-specific visibility contracts.
+- [Observation model](docs/OBSERVATION_MODEL.md) and [obstruction/sensor visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md) — observer geometry and channel-specific visibility contracts.\n- [Semantic observation](docs/SEMANTIC_OBSERVATION.md) — Event Horizons as structured observations for AI/FSM agents, including horizon summaries, relations, uncertainty, and freshness.
 - [FSM integration](docs/FSM_INTEGRATION.md) and [scheduling model](docs/FSM_SCHEDULING_MODEL.md) — where FSM_API fits without making it a graphics engine.
 - [GPU boundary](docs/GPU_BOUNDARY.md) — the intended division between CPU-side meaning/policy and GPU-facing execution.
 - [Rendering mathematics](docs/RENDERING_MATH.md) and [benchmarking](docs/BENCHMARKING.md) — cost hypotheses, measurements, and how to interpret their limits.
