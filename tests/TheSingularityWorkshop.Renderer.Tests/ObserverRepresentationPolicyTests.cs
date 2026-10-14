@@ -5,13 +5,13 @@ namespace TheSingularityWorkshop.Renderer.Tests;
 public sealed class ObserverRepresentationPolicyTests
 {
     [Theory]
-    [InlineData(0.5, "Semantic", RepresentationTarget.Semantic, 10)]
-    [InlineData(1.0, "Semantic", RepresentationTarget.Semantic, 10)]
-    [InlineData(2.5, "Aggregate", RepresentationTarget.Aggregate, 8)]
+    [InlineData(0.5, "Interactive", RepresentationTarget.Interactive, 10)]
+    [InlineData(1.0, "Interactive", RepresentationTarget.Interactive, 10)]
+    [InlineData(2.5, "Near", RepresentationTarget.Near, 8)]
     [InlineData(8.0, "Distant", RepresentationTarget.Distant, 4)]
-    [InlineData(20.0, "Near", RepresentationTarget.Near, 2)]
-    [InlineData(45.0, "Interactive", RepresentationTarget.Interactive, 1)]
-    [InlineData(500.0, "Interactive", RepresentationTarget.Interactive, 1)]
+    [InlineData(20.0, "Aggregate", RepresentationTarget.Aggregate, 2)]
+    [InlineData(45.0, "Semantic", RepresentationTarget.Semantic, 1)]
+    [InlineData(500.0, "Semantic", RepresentationTarget.Semantic, 1)]
     public void Select_UsesTheSelectedHorizonRule(
         double distance,
         string expectedHorizon,
@@ -83,19 +83,19 @@ public sealed class ObserverRepresentationPolicyTests
     private static ObserverRepresentationPolicy CreatePolicy() => new(
     [
         new RepresentationHorizonRule(
-            new EventHorizon(nameof(RepresentationTarget.Semantic), 1, 10),
-            RepresentationTarget.Semantic),
+            new EventHorizon(nameof(RepresentationTarget.Interactive), 1, 10),
+            RepresentationTarget.Interactive),
         new RepresentationHorizonRule(
-            new EventHorizon(nameof(RepresentationTarget.Aggregate), 5, 8),
-            RepresentationTarget.Aggregate),
+            new EventHorizon(nameof(RepresentationTarget.Near), 5, 8),
+            RepresentationTarget.Near),
         new RepresentationHorizonRule(
             new EventHorizon(nameof(RepresentationTarget.Distant), 15, 4),
             RepresentationTarget.Distant),
         new RepresentationHorizonRule(
-            new EventHorizon(nameof(RepresentationTarget.Near), 30, 2),
-            RepresentationTarget.Near),
+            new EventHorizon(nameof(RepresentationTarget.Aggregate), 30, 2),
+            RepresentationTarget.Aggregate),
         new RepresentationHorizonRule(
-            new EventHorizon(nameof(RepresentationTarget.Interactive), 100, 1),
-            RepresentationTarget.Interactive)
+            new EventHorizon(nameof(RepresentationTarget.Semantic), 100, 1),
+            RepresentationTarget.Semantic)
     ]);
 }
