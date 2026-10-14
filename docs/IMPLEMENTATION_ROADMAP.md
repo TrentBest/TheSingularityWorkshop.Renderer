@@ -35,6 +35,7 @@ These are baseline statements to preserve and verify against implementation and 
 
 - [ ] Define the minimum observer and candidate-entity input contracts, including coordinate frame, units, validity, and missing/unknown data.
 - [ ] Specify the policy result explicitly: selected horizon/representation, decision reason, cadence or due-work policy, and relevant invalidation/refresh information.
+- [x] Add a distance-only `RepresentationHorizonRule`/`ObserverRepresentationPolicy` bridge and retain the selected horizon identity for downstream bucket lookup. Boundary, ordering, invalid-input, and far-range fallback behavior are covered by tests; non-distance signals and hysteresis remain open.
 - [ ] Test boundary values, invalid inputs, ties, policy overrides, and non-distance signals such as visibility, observer intent, semantic importance, interaction state, and budget.
 - [ ] Implement and test hysteresis/temporal stability so small observer movements do not cause repeated promotion/demotion.
 - [ ] Verify that distance is never treated as a hard visibility cutoff: distant context can remain observable at lower cost.
@@ -49,6 +50,7 @@ These are baseline statements to preserve and verify against implementation and 
 - [ ] Specify and verify how processing cohorts map to FSM_API definitions and processing groups without introducing a competing Renderer scheduler.
 - [ ] Address the documented heterogeneity constraint: instances sharing one FSM definition share definition/bucket scheduling characteristics. Determine the cleanest FSM_API-supported lane/cadence model before designing a Renderer-side workaround.
 - [x] Model selection changes, source revisions, cache invalidation, refresh due/not-due, and valid cached reuse as separate conditions.
+- [x] Connect distance-based policy to FSM-backed representation state and the selected horizon bucket's refresh ticket/reuse decision through `ObserverRepresentationCoordinator`. It returns work decisions but leaves actual output generation and ticket completion to the host.
 - [x] Implement dependency invalidation, refresh tickets, explicit reuse counters, and safe representation handoff in the bucket model; retain end-to-end integration verification as a separate task.
 - [ ] Prove that a new display frame does not automatically force every horizon to recompute in a connected observer-to-presentation workload.
 - [ ] Test event-triggered refresh alongside cadence-triggered refresh in the integrated FSM path.
@@ -60,6 +62,7 @@ These are baseline statements to preserve and verify against implementation and 
 
 - [ ] Build a minimal deterministic workload with entities, one or more observers, several representation choices, and configurable horizon policy.
 - [ ] Run the actual selection → FSM-backed representation state → scheduled evaluation → selected output path.
+- [x] Establish a first cross-repository CPU proof from Renderer distance/horizon selection and FSM representation state through `RenderFrame`, the Visualize adapter, `Visualizer`, and GUI.SVG. See [Visualize integration proof PR #12](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/pull/12). This proof does not yet include bucket scheduling and does not satisfy the full Priority 3 exit criteria.
 - [ ] Demonstrate promotion and demotion while preserving entity identity and authoritative state.
 - [ ] Report work requested, work performed, work reused/avoided, allocation, and time per stage.
 - [ ] Include a baseline that performs comparable work without observer-relative reduction.
