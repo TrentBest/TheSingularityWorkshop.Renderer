@@ -47,6 +47,27 @@ public sealed class ObserverRepresentationCoordinatorTests
     }
 
     [Fact]
+    public void Evaluate_RejectsAnInFlightTicketWhenSourceRevisionChanges()
+    {
+        var (coordinator, _) = CreateCoordinator();
+        using (coordinator)
+        {
+            var now = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
+            var initial = coordinator.Evaluate(0.5, 1, 1, now);
+            var revised = coordinator.Evaluate(0.5, 2, 1, now.AddMilliseconds(1));
+
+            Assert.True(initial.RefreshTicket.HasValue);
+            Assert.True(revised.RefreshTicket.HasValue);
+            Assert.False(initial.Bucket.TryCompleteRefresh(
+                initial.RefreshTicket.Value,
+                now.AddMilliseconds(2)));
+            Assert.True(revised.Bucket.TryCompleteRefresh(
+                revised.RefreshTicket.Value,
+                now.AddMilliseconds(3)));
+        }
+    }
+
+    [Fact]
     public void Evaluate_InvalidatesSelectedBucketWhenObserverRevisionChanges()
     {
         var (coordinator, _) = CreateCoordinator();
