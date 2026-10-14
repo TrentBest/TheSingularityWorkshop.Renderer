@@ -76,6 +76,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Rendering mathematics](docs/RENDERING_MATH.md) and [benchmarking](docs/BENCHMARKING.md) — cost hypotheses, measurements, and how to interpret their limits.
 - [MicroBundle boundary](docs/MICROBUNDLE.md) — how Renderer capabilities may participate in composition without requiring FSM_COS.
 - [Documentation index](docs/START_HERE.md) — use Start Here as the front door to the focused guides.
+- [Implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md) — prioritized completeness criteria, integration proofs, and benchmark milestones.
 
 ## Current status and evidence
 
