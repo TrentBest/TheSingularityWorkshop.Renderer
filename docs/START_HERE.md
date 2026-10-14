@@ -10,6 +10,10 @@ The first question is:
 
 That leads to the central Renderer concept: **Event Horizons**.
 
+![Living Event Horizons: the five FSM-backed representation states](assets/living-event-horizons.svg)
+
+*This image is emitted by the runnable `.NET` sample using `RendererComputationMachine` and FSM_API. The pulse is SVG presentation; the represented states come from FSM transitions. It is a generated snapshot, not a live process monitor.*
+
 ## Event Horizons
 
 An Event Horizon is a spatial or contextual boundary at which the renderer changes the computational representation of an observable entity.
