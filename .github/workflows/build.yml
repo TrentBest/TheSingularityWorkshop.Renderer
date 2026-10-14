@@ -52,6 +52,10 @@ jobs:
           slug: TrentBest/TheSingularityWorkshop.Renderer
           files: ./TestResults/coverage.cobertura.xml
           fail_ci_if_error: true
+      - name: Regenerate living Renderer documentation SVG
+        run: dotnet run --project samples/LivingRenderer/LivingRenderer.csproj --configuration Release -- docs/assets/living-event-horizons.svg
+      - name: Verify living SVG is reproducible
+        run: git diff --exit-code -- docs/assets/living-event-horizons.svg
       - name: Pack
         run: dotnet pack TheSingularityWorkshop.Renderer.csproj --configuration Release --no-build --output ./artifacts
       - name: Upload NuGet package artifact
