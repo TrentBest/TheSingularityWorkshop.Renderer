@@ -27,7 +27,7 @@ public sealed class ObserverRepresentationCoordinatorTests
     [Fact]
     public void Evaluate_ReusesValidCacheUntilCadenceExpires()
     {
-        var (coordinator, buckets) = CreateCoordinator();
+        var (coordinator, _) = CreateCoordinator();
         using (coordinator)
         {
             var now = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
@@ -66,18 +66,20 @@ public sealed class ObserverRepresentationCoordinatorTests
     [Fact]
     public void Evaluate_RejectsPolicyHorizonsWithoutBuckets()
     {
-        var horizon = new EventHorizon("Interactive", 1, 10);
+        var interactive = new EventHorizon("Interactive", 1, 10);
+        var semantic = new EventHorizon("Semantic", 100, 1);
         var policy = new ObserverRepresentationPolicy(
         [
-            new RepresentationHorizonRule(horizon, RepresentationTarget.Interactive)
+            new RepresentationHorizonRule(interactive, RepresentationTarget.Interactive),
+            new RepresentationHorizonRule(semantic, RepresentationTarget.Semantic)
         ]);
         using var coordinator = new ObserverRepresentationCoordinator(
             policy,
-            Array.Empty<EventHorizonBucket>(),
+            [new EventHorizonBucket("interactive", interactive, 10)],
             "missing-bucket-test");
 
         Assert.Throws<InvalidOperationException>(() =>
-            coordinator.Evaluate(0.5, 1, 1, DateTimeOffset.UtcNow));
+            coordinator.Evaluate(45, 1, 1, DateTimeOffset.UtcNow));
     }
 
     [Fact]
