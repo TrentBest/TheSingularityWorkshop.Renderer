@@ -6,6 +6,10 @@ An **Event Horizon** is a spatial or contextual boundary at which the Renderer c
 
 The word is intentional.
 
+![FSM-backed representation states shown as a living SVG](assets/living-event-horizons.svg)
+
+The illustration's five active states are obtained by advancing real `RendererComputationMachine` instances through FSM_API. The SVG pulse is presentation-only; it does not schedule or change the FSM.
+
 A conventional LOD system usually asks:
 
 > Which visual asset should I draw?
