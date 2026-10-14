@@ -99,6 +99,7 @@ These are baseline statements to preserve and verify against implementation and 
 SVG is valuable because it can be both a compact artifact and a visible, inspectable scene. It should expose real contracts and behavior, not become a second implementation of Renderer logic.
 
 - [x] Add a runnable .NET living-documentation sample that advances real `RendererComputationMachine` instances through FSM_API and emits the resulting representation states as SVG. The SVG pulse is presentation-only; the state values are runtime outputs.
+- [x] Add a visual architecture explainer for observer → Event Horizons → independent buckets → RenderFrame/host, with explicit labeling that it is conceptual animation rather than runtime telemetry.
 - [ ] Use the existing Visualize → GUI.SVG proof as the reference pattern: real C# scene/frame data enters a public API, then an adapter emits SVG.
 - [ ] Extend the first proof to consume actual Renderer outputs—observer context, horizon/bucket membership, representation decisions, cadence/refresh state, and selected draw commands as integration matures.
 - [ ] Keep Renderer independent of GUI.SVG and Visualize. Put SVG conversion in an adapter/consumer.
