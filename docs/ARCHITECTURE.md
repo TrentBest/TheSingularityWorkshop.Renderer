@@ -40,6 +40,10 @@ The first five stages are the architectural center of this repository.
 
 The final stages are deliberately replaceable.
 
+![FSM-backed representation states manifested as a living SVG](assets/living-event-horizons.svg)
+
+The illustration is produced by the runnable sample under `samples/LivingRenderer`: it advances one `RendererComputationMachine` per target through FSM_API, then writes the resulting states into SVG. Its pulse is a presentation effect, not a second scheduler.
+
 ## Boundaries
 
 ### Renderer owns
