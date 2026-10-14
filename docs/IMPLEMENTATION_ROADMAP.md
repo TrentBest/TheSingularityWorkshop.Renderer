@@ -67,6 +67,7 @@ These are baseline statements to preserve and verify against implementation and 
 - [ ] Report work requested, work performed, work reused/avoided, allocation, and time per stage.
 - [ ] Include a baseline that performs comparable work without observer-relative reduction.
 - [ ] Test multiple observers whose needs differ; one observer's representation must not become the world's authoritative representation.
+- [x] Verify independent coordinator instances can hold different active representations without sharing FSM state; a full multi-observer rendering workload remains open.
 - [ ] Test visibility/obstruction contracts against the representation decisions that consume them.
 - [ ] Ensure semantic observation can be produced without requiring a visual mesh or GPU.
 
