@@ -49,7 +49,7 @@ The working model separates responsibilities:
 
 Renderer does not own the composition operating system, a complete world simulation, or a production graphics backend. It must remain independently usable; **FSM_COS may compose Renderer capabilities, but Renderer must not depend upward on FSM_COS**.
 
-The current library contains executable foundations for Event Horizon selection and buckets, observer geometry, semantic anchors, obstruction/sensor visibility contracts, and FSM-backed computational representation state. Some architectural handoffs remain policy contracts or exploratory paths rather than a complete integrated rendering pipeline.
+The current library contains executable foundations for Event Horizon selection and buckets, an explicit distance-to-representation policy bridge, observer geometry, semantic anchors, obstruction/sensor visibility contracts, and FSM-backed computational representation state. Some architectural handoffs remain policy contracts or exploratory paths rather than a complete integrated rendering pipeline.
 
 ## 🟢 04 See it in a minute
 
