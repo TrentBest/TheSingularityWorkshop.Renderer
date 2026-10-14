@@ -85,6 +85,23 @@ public sealed class ObserverRepresentationCoordinatorTests
     }
 
     [Fact]
+    public void IndependentObserversKeepIndependentActiveRepresentations()
+    {
+        var (nearObserver, _) = CreateCoordinator("observer-near");
+        var (distantObserver, _) = CreateCoordinator("observer-distant");
+        using (nearObserver)
+        using (distantObserver)
+        {
+            var now = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
+            nearObserver.Evaluate(0.5, 1, 1, now);
+            distantObserver.Evaluate(45, 1, 1, now);
+
+            Assert.Equal(RepresentationTarget.Interactive, nearObserver.ActiveRepresentation);
+            Assert.Equal(RepresentationTarget.Semantic, distantObserver.ActiveRepresentation);
+        }
+    }
+
+    [Fact]
     public void Evaluate_RejectsPolicyHorizonsWithoutBuckets()
     {
         var interactive = new EventHorizon("Interactive", 1, 10);
@@ -121,7 +138,7 @@ public sealed class ObserverRepresentationCoordinatorTests
             new ObserverRepresentationCoordinator(policy, buckets, "duplicate-bucket-test"));
     }
 
-    private static (ObserverRepresentationCoordinator Coordinator, EventHorizonBucket[] Buckets) CreateCoordinator()
+    private static (ObserverRepresentationCoordinator Coordinator, EventHorizonBucket[] Buckets) CreateCoordinator(string contextName = "observer-coordinator-test")
     {
         var rules = new[]
         {
@@ -136,6 +153,6 @@ public sealed class ObserverRepresentationCoordinatorTests
             new EventHorizonBucket($"bucket-{rule.Horizon.Name}", rule.Horizon, rule.Horizon.UpdatesPerSecond))
             .ToArray();
 
-        return (new ObserverRepresentationCoordinator(policy, buckets, "observer-coordinator-test"), buckets);
+        return (new ObserverRepresentationCoordinator(policy, buckets, contextName), buckets);
     }
 }
