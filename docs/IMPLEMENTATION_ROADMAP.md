@@ -98,11 +98,12 @@ These are baseline statements to preserve and verify against implementation and 
 
 SVG is valuable because it can be both a compact artifact and a visible, inspectable scene. It should expose real contracts and behavior, not become a second implementation of Renderer logic.
 
+- [x] Add a runnable .NET living-documentation sample that advances real `RendererComputationMachine` instances through FSM_API and emits the resulting representation states as SVG. The SVG pulse is presentation-only; the state values are runtime outputs.
 - [ ] Use the existing Visualize → GUI.SVG proof as the reference pattern: real C# scene/frame data enters a public API, then an adapter emits SVG.
-- [ ] Create a Renderer-focused proof consuming actual Renderer outputs—observer context, horizon/bucket membership, representation decisions, cadence/refresh state, and selected draw commands as integration matures.
+- [ ] Extend the first proof to consume actual Renderer outputs—observer context, horizon/bucket membership, representation decisions, cadence/refresh state, and selected draw commands as integration matures.
 - [ ] Keep Renderer independent of GUI.SVG and Visualize. Put SVG conversion in an adapter/consumer.
 - [ ] Color-code the data and API handoff: source/model inputs, actual public API consumption, and SVG manifestation must be visually distinguishable.
-- [ ] Generate committed SVG artifacts from reproducible C# proof programs and have CI regenerate/compare them. Label hand-authored or browser-only animation as illustrative.
+- [ ] Generate committed SVG artifacts from reproducible C# proof programs and have CI regenerate/compare them. The first FSM-state snapshot now has a generator and a CI freshness check; extend the same pattern to frame commands and richer observer workloads. Label hand-authored or browser-only animation as illustrative.
 - [ ] Show Event Horizons as visible regions/bands, an observer, entities changing representation, and counters that change with actual decisions.
 - [ ] Add useful SVG interaction: links to source/contracts, titles/descriptions, and explicit browser-lab controls for selecting observers/policies or inspecting entities. Distinguish user-driven lab controls from live Renderer execution.
 - [ ] Keep animation presentation-only unless real state updates are explicitly wired through the relevant Workshop API. Never imply SVG animation itself executes FSM_API.
@@ -143,7 +144,7 @@ SVG is valuable because it can be both a compact artifact and a visible, inspect
 2. **Close correctness gaps** in Event Horizon selection, bucket migration, invalidation, and temporal stability.
 3. **Prove one end-to-end CPU path** and measure avoided work against a baseline.
 4. **Stabilize the neutral frame contract** and benchmark command production.
-5. **Create a generated Renderer → Visualize → GUI.SVG proof** exposing real decisions.
+5. **Extend the FSM-backed SVG snapshot** to show real observer decisions and selected frame commands, then connect the proof to Visualize → GUI.SVG.
 6. **Use benchmark results** to prioritize reconstruction, visibility, scheduling, and scaling improvements.
 7. **Integrate and package** only after contracts, tests, generated evidence, and docs agree.
 
