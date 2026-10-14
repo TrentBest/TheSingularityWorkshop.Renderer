@@ -61,6 +61,18 @@ dotnet test tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.R
 
 The tests exercise the current contracts and their edge cases; they do **not** prove pixel output, GPU performance, or a complete host-to-renderer integration.
 
+The first living documentation proof runs the real `RendererComputationMachine` through FSM_API and writes the resulting representation states into an SVG. The pulse is presentation-only; the state choices come from FSM transitions.
+
+![Living Event Horizons generated from FSM_API representation states](docs/assets/living-event-horizons.svg)
+
+Regenerate it from the repository root with:
+
+~~~bash
+dotnet run --project samples/LivingRenderer/LivingRenderer.csproj --configuration Release -- docs/assets/living-event-horizons.svg
+~~~
+
+This is a generated snapshot, not a live process monitor. CI checks that the committed SVG matches the runnable sample.
+
 Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU lab](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/tree/development/samples/SoldierField/WebGpuRunner) in the Visualize repository. It is an exploratory browser-side rendering path with deterministic procedural geometry and an Event Horizon scaling workload. It is **not yet an end-to-end integration of Visualize's .NET contracts with Renderer policy**. Follow its [run instructions](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/samples/SoldierField/WebGpuRunner/README.md); a browser with WebGPU support is required.
 
 ## 🟪 05 Available documentation and theory
