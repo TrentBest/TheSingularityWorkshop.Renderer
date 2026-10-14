@@ -90,6 +90,10 @@ Interaction / Streaming
 
 `RendererComputationContext` carries the decision state. `RendererComputationMachine` owns the FSM instance. The FSM does not draw anything; it determines which computational responsibility is active.
 
+![FSM_API-driven representation state snapshot](assets/living-event-horizons.svg)
+
+The sample under `samples/LivingRenderer` advances five real Renderer FSM instances and writes their active states to SVG. This proves the FSM-to-visual-artifact seam; it does not yet claim a continuous browser connection to a running process.
+
 This establishes the important direction:
 
 > **Use FSM computation where the renderer has stateful computational behavior—not merely because FSM_API happens to be available.**
