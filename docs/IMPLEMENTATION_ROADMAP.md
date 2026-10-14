@@ -45,13 +45,13 @@ These are baseline statements to preserve and verify against implementation and 
 
 ## Priority 2 — Complete Event Horizon buckets, cadence, and invalidation
 
-- [ ] Verify bucket membership, transfer between buckets, and consistency under repeated promotion/demotion.
-- [ ] Specify how processing cohorts map to FSM_API definitions and processing groups without introducing a competing Renderer scheduler.
+- [x] Implement stable per-domain bucket membership, member transfer, and invalidation of affected buckets; `docs/EVENT_HORIZON_BUCKETS.md` documents the current model and regression scenario.
+- [ ] Specify and verify how processing cohorts map to FSM_API definitions and processing groups without introducing a competing Renderer scheduler.
 - [ ] Address the documented heterogeneity constraint: instances sharing one FSM definition share definition/bucket scheduling characteristics. Determine the cleanest FSM_API-supported lane/cadence model before designing a Renderer-side workaround.
-- [ ] Separate these events in the model: representation selection changed; source content changed; presentation cache invalidated; refresh became due; cached representation remains valid.
-- [ ] Implement or complete dependency invalidation, refresh tickets, explicit reuse counters, and safe representation handoff as described in docs/EVENT_HORIZON_BUCKETS.md.
-- [ ] Prove that a new display frame does not automatically force every horizon to recompute.
-- [ ] Test event-triggered refresh alongside cadence-triggered refresh.
+- [x] Model selection changes, source revisions, cache invalidation, refresh due/not-due, and valid cached reuse as separate conditions.
+- [x] Implement dependency invalidation, refresh tickets, explicit reuse counters, and safe representation handoff in the bucket model; retain end-to-end integration verification as a separate task.
+- [ ] Prove that a new display frame does not automatically force every horizon to recompute in a connected observer-to-presentation workload.
+- [ ] Test event-triggered refresh alongside cadence-triggered refresh in the integrated FSM path.
 - [ ] Measure scheduler and bucket-transfer costs independently from representation work.
 
 **Exit criteria:** unchanged distant content can be reused safely; relevant changes invalidate the correct work; refresh is bounded by policy; bucket membership and scheduling remain consistent during migration.
