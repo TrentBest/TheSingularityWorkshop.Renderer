@@ -27,14 +27,23 @@ public sealed record RepresentationHorizonRule
 
 /// <summary>A stable result from observer-distance representation selection.</summary>
 /// <param name="Distance">Observer-to-entity distance in the caller's world units.</param>
-/// <param name="HorizonName">Name of the selected Event Horizon.</param>
+/// <param name="Horizon">The selected horizon object, retained for downstream bucket and cadence selection.</param>
 /// <param name="Representation">Representation requested by the selected rule.</param>
-/// <param name="UpdatesPerSecond">Preferred evaluation cadence declared by the selected horizon.</param>
+/// <remarks>
+/// Retaining the horizon object lets downstream stages map the decision to its bucket without
+/// parsing a display name or reconstructing horizon identity.
+/// </remarks>
 public readonly record struct ObserverRepresentationDecision(
     double Distance,
-    string HorizonName,
-    RepresentationTarget Representation,
-    double UpdatesPerSecond);
+    EventHorizon Horizon,
+    RepresentationTarget Representation)
+{
+    /// <summary>Gets the selected horizon's display name.</summary>
+    public string HorizonName => Horizon.Name;
+
+    /// <summary>Gets the selected horizon's preferred evaluation cadence.</summary>
+    public double UpdatesPerSecond => Horizon.UpdatesPerSecond;
+}
 
 /// <summary>
 /// Selects an explicit representation rule for an observer distance using Renderer Event Horizon policies.
@@ -89,10 +98,6 @@ public sealed class ObserverRepresentationPolicy
     {
         var horizon = ObserverDistance.Select(distance, _horizons);
         var rule = _ruleByHorizon[horizon];
-        return new ObserverRepresentationDecision(
-            distance,
-            horizon.Name,
-            rule.Representation,
-            horizon.UpdatesPerSecond);
+        return new ObserverRepresentationDecision(distance, horizon, rule.Representation);
     }
 }
