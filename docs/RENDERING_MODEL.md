@@ -40,7 +40,7 @@ This makes the Observer Context a first-class part of the rendering model.
 
 ## Representation selection
 
-A future renderer may evaluate something conceptually similar to:
+The broader observer-relative policy is intended to evaluate something conceptually similar to:
 
 ```
 Representation =
@@ -54,7 +54,7 @@ Representation =
         ExperienceRules)
 ```
 
-This is a conceptual model, not an API commitment.
+This is a conceptual model, not an API commitment. The repository already has executable distance/horizon selection and FSM-backed representation-state primitives, but the richer observer, semantic, visibility, budget, and presentation inputs are not yet all connected in one end-to-end path.
 
 ## Representation lifecycle
 
