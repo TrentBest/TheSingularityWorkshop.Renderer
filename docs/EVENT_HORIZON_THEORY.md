@@ -8,6 +8,10 @@ The boundary may be spatial, temporal, semantic, interaction-driven, or budget-d
 
 It is therefore not necessarily a circle around the observer.
 
+![Living Event Horizon representation states](assets/living-event-horizons.svg)
+
+This generated example makes the central distinction visible: the FSM selects computational responsibility; SVG manifests the resulting state. The image's pulse is presentation-only.
+
 ---
 
 ## A horizon is a change in responsibility
