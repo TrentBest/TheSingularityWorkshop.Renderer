@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">The Renderer assembles observer-relative work</title>
+  <desc id="desc">An animated architecture explainer. An observer informs Event Horizon selection; near, mid, and far representations are partitioned into independent visual buckets; only selected work is assembled into a platform-neutral RenderFrame for a host adapter. Animated pulses are illustrative, not runtime telemetry.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#091d31"/><stop offset="1" stop-color="#030811"/></linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8b74e" stop-opacity=".24"/><stop offset="1" stop-color="#e8b74e" stop-opacity=".04"/></linearGradient>
+    <linearGradient id="mid" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#49bde6" stop-opacity=".22"/><stop offset="1" stop-color="#49bde6" stop-opacity=".04"/></linearGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9b8af2" stop-opacity=".2"/><stop offset="1" stop-color="#9b8af2" stop-opacity=".04"/></linearGradient>
+    <filter id="glow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7ea9c8"/></marker>
+  </defs>
+  <rect width="1200" height="700" rx="22" fill="url(#bg)"/>
+  <text x="36" y="43" fill="#f4f8ff" font-family="Segoe UI, sans-serif" font-size="24" font-weight="700">The Renderer assembles only the work an observer needs</text>
+  <text x="36" y="68" fill="#9bb7ce" font-family="Segoe UI, sans-serif" font-size="13">A living architecture explainer • pulses illustrate flow; they are not runtime telemetry</text>
+  <g font-family="Segoe UI, sans-serif">
+    <rect x="34" y="100" width="190" height="540" rx="14" fill="#0b2236" stroke="#31536c"/>
+    <text x="54" y="130" fill="#f4f8ff" font-size="15" font-weight="700">1 · Observe</text>
+    <circle cx="129" cy="220" r="58" fill="#102f48" stroke="#6ca4c8" stroke-width="2"/>
+    <circle cx="129" cy="220" r="38" fill="none" stroke="#427a9d" stroke-dasharray="4 6"/>
+    <circle cx="129" cy="220" r="20" fill="#f1c55e" opacity=".9" filter="url(#glow)"/>
+    <circle cx="129" cy="220" r="8" fill="#fff4c9"/>
+    <path d="M129 180 V153 M129 260 V287 M89 220 H62 M169 220 H196" stroke="#91bad4" stroke-width="1.5"/>
+    <text x="129" y="315" fill="#d7e7f5" font-size="13" text-anchor="middle">Observer / view</text>
+    <text x="129" y="338" fill="#90adc4" font-size="11" text-anchor="middle">position · intent</text>
+    <text x="129" y="355" fill="#90adc4" font-size="11" text-anchor="middle">visibility · budget</text>
+    <rect x="54" y="400" width="150" height="74" rx="9" fill="#102d43" stroke="#456c85"/>
+    <text x="129" y="426" fill="#e4f0fa" font-size="12" text-anchor="middle">World / experience</text>
+    <text x="129" y="447" fill="#90adc4" font-size="10" text-anchor="middle">authoritative state</text>
+    <path d="M129 400 V380" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="129" y="525" fill="#90adc4" font-size="11" text-anchor="middle">The world remains rich.</text>
+    <text x="129" y="543" fill="#90adc4" font-size="11" text-anchor="middle">Representation can vary.</text>
+    <path d="M224 220 H256" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="258" y="100" width="290" height="540" rx="14" fill="#0b2236" stroke="#31536c"/>
+    <text x="280" y="130" fill="#f4f8ff" font-size="15" font-weight="700">2 · Select Event Horizons</text>
+    <circle cx="402" cy="302" r="112" fill="url(#far)" stroke="#9b8af2" stroke-width="1.5" stroke-dasharray="6 6"/>
+    <circle cx="402" cy="302" r="78" fill="url(#mid)" stroke="#49bde6" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <circle cx="402" cy="302" r="43" fill="url(#near)" stroke="#e8b74e" stroke-width="2"/>
+    <circle cx="402" cy="302" r="9" fill="#fff1c1" filter="url(#glow)"/>
+    <text x="402" y="177" fill="#c4baff" font-size="11" text-anchor="middle">FAR · aggregate / sparse</text>
+    <text x="402" y="233" fill="#8fe1fa" font-size="11" text-anchor="middle">MID · reduced detail</text>
+    <text x="402" y="280" fill="#ffdb8b" font-size="11" text-anchor="middle">NEAR</text>
+    <text x="402" y="421" fill="#d7e7f5" font-size="12" text-anchor="middle">Policy selects representation</text>
+    <text x="402" y="442" fill="#90adc4" font-size="10" text-anchor="middle">distance is one signal, not the rule</text>
+    <rect x="280" y="486" width="246" height="91" rx="10" fill="#102d43" stroke="#456c85"/>
+    <text x="403" y="510" fill="#e4f0fa" font-size="12" text-anchor="middle">FSM_API representation state</text>
+    <text x="403" y="531" fill="#90adc4" font-size="10" text-anchor="middle">Semantic → Aggregate → Distant</text>
+    <text x="403" y="548" fill="#90adc4" font-size="10" text-anchor="middle">Near → Interactive</text>
+    <text x="403" y="566" fill="#74d7f5" font-size="10" text-anchor="middle">real state-machine integration</text>
+    <path d="M548 220 H580" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="582" y="100" width="290" height="540" rx="14" fill="#0b2236" stroke="#31536c"/>
+    <text x="604" y="130" fill="#f4f8ff" font-size="15" font-weight="700">3 · Partition &amp; refresh</text>
+    <text x="604" y="157" fill="#90adc4" font-size="11">Independent work buckets</text>
+    <g>
+      <rect x="604" y="180" width="246" height="53" rx="8" fill="#12344b" stroke="#5e9dbb"/>
+      <circle cx="624" cy="206" r="6" fill="#79d5f4"/><text x="641" y="202" fill="#e4f0fa" font-size="12" font-weight="700">Geometry</text><text x="641" y="218" fill="#90adc4" font-size="10">source / resource revisions</text>
+      <rect x="604" y="245" width="246" height="53" rx="8" fill="#12344b" stroke="#5e9dbb"/>
+      <circle cx="624" cy="271" r="6" fill="#79d5f4"/><text x="641" y="267" fill="#e4f0fa" font-size="12" font-weight="700">Motion</text><text x="641" y="283" fill="#90adc4" font-size="10">transforms / animation samples</text>
+      <rect x="604" y="310" width="246" height="53" rx="8" fill="#12344b" stroke="#5e9dbb"/>
+      <circle cx="624" cy="336" r="6" fill="#79d5f4"/><text x="641" y="332" fill="#e4f0fa" font-size="12" font-weight="700">Lighting</text><text x="641" y="348" fill="#90adc4" font-size="10">derived from relevant inputs</text>
+      <rect x="604" y="375" width="246" height="53" rx="8" fill="#12344b" stroke="#5e9dbb"/>
+      <circle cx="624" cy="401" r="6" fill="#79d5f4"/><text x="641" y="397" fill="#e4f0fa" font-size="12" font-weight="700">Shadows / effects</text><text x="641" y="413" fill="#90adc4" font-size="10">refresh when dependencies change</text>
+    </g>
+    <path d="M728 233 V245 M728 298 V310 M728 363 V375" stroke="#7ea9c8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="604" y="459" width="246" height="111" rx="9" fill="#102d43" stroke="#456c85"/>
+    <text x="727" y="482" fill="#e4f0fa" font-size="12" text-anchor="middle" font-weight="700">Change travels by dependency</text>
+    <text x="727" y="503" fill="#90adc4" font-size="10" text-anchor="middle">Geometry → Lighting → Shadows</text>
+    <text x="727" y="522" fill="#90adc4" font-size="10" text-anchor="middle">unrelated far cache can remain valid</text>
+    <text x="727" y="546" fill="#ffdb8b" font-size="10" text-anchor="middle">old output stays until safe handoff</text>
+    <path d="M872 220 H904" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="906" y="100" width="260" height="540" rx="14" fill="#0b2236" stroke="#31536c"/>
+    <text x="928" y="130" fill="#f4f8ff" font-size="15" font-weight="700">4 · Assemble &amp; present</text>
+    <rect x="928" y="177" width="216" height="83" rx="10" fill="#12344b" stroke="#5e9dbb"/>
+    <text x="1036" y="202" fill="#e4f0fa" font-size="13" text-anchor="middle" font-weight="700">RenderView</text>
+    <text x="1036" y="222" fill="#90adc4" font-size="10" text-anchor="middle">observer + view/projection</text>
+    <text x="1036" y="240" fill="#90adc4" font-size="10" text-anchor="middle">matrices</text>
+    <path d="M1036 260 V286" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="928" y="289" width="216" height="94" rx="10" fill="#12344b" stroke="#5e9dbb"/>
+    <text x="1036" y="314" fill="#e4f0fa" font-size="13" text-anchor="middle" font-weight="700">RenderDrawCommand[]</text>
+    <text x="1036" y="334" fill="#90adc4" font-size="10" text-anchor="middle">geometry · material · transform</text>
+    <text x="1036" y="352" fill="#90adc4" font-size="10" text-anchor="middle">index range · representation</text>
+    <text x="1036" y="370" fill="#90adc4" font-size="10" text-anchor="middle">resource IDs, not API handles</text>
+    <path d="M1036 383 V408" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="928" y="411" width="216" height="64" rx="10" fill="#1b3d39" stroke="#6ad7ae" stroke-width="1.5"/>
+    <text x="1036" y="436" fill="#c7ffe8" font-size="13" text-anchor="middle" font-weight="700">RenderFrame</text>
+    <text x="1036" y="455" fill="#9ed9c5" font-size="10" text-anchor="middle">stable ordered command snapshot</text>
+    <path d="M1036 475 V501" stroke="#7ea9c8" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="928" y="504" width="216" height="66" rx="10" fill="#302a51" stroke="#9b8af2"/>
+    <text x="1036" y="529" fill="#e6e0ff" font-size="12" text-anchor="middle" font-weight="700">Host / GPU adapter</text>
+    <text x="1036" y="548" fill="#bdb4ed" font-size="10" text-anchor="middle">future end-to-end proof</text>
+    <text x="1036" y="588" fill="#90adc4" font-size="10" text-anchor="middle">platform-neutral boundary exists</text>
+    <path d="M245 665 H955" stroke="#28465d" stroke-width="1"/>
+    <text x="36" y="674" fill="#8daac1" font-size="10">Solid components are grounded in current Renderer APIs; the complete connected runtime is still an integration goal.</text>
+  </g>
+  <g fill="none" stroke="#f2ca67" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)" opacity=".95">
+    <circle r="4" class="traveller"><animateMotion dur="6s" repeatCount="indefinite" path="M224 220 H256 M548 220 H580 M872 220 H904"/></circle>
+  </g>
+  <style>
+    .traveller{animation:fade 1.6s ease-in-out infinite alternate}
+    @keyframes fade{from{opacity:.25}to{opacity:1}}
+    @media(prefers-reduced-motion:reduce){.traveller{animation:none;opacity:.6}}
+  </style>
+</svg>
