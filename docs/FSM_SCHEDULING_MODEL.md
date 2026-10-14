@@ -10,6 +10,10 @@ FSM_API already provides three mechanisms that map directly onto observer-relati
 
 That means the Renderer does not need to invent a second scheduler merely to express Event Horizon cadence.
 
+![FSM_API representation-state snapshot](assets/living-event-horizons.svg)
+
+This first living documentation artifact proves the state-transition-to-SVG seam. It does not yet show live process-rate telemetry or heterogeneous per-instance cadence; those remain explicit integration work.
+
 ## The rendering interpretation
 
 | Rendering concept | FSM_API mechanism |
