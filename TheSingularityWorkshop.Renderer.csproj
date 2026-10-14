@@ -40,13 +40,14 @@
 
   <ItemGroup>
     <Compile Remove="tests/**/*.cs" />
+    <Compile Remove="samples/**/*.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="" />
     <None Include="LICENSE" Pack="true" PackagePath="" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Update="docs/**/*.md" Pack="true" PackagePath="docs/%(RecursiveDir)%(Filename)%(Extension)" />
     <None Update="docs/assets/moniker.svg" Pack="true" PackagePath="docs/assets/" />
+    <None Update="docs/assets/living-event-horizons.svg" Pack="true" PackagePath="docs/assets/" />
   </ItemGroup>
 </Project>
