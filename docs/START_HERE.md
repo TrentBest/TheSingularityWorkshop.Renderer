@@ -73,7 +73,7 @@ The Renderer owns the model that decides what should be represented. A platform 
 
 The Renderer is intended to fit into the larger Workshop without becoming the composition operating system.
 
-- **FSM_API** provides the foundational state abstraction.
+- **FSM_API** is the foundational state abstraction Renderer already uses for representation transitions; scheduling and end-to-end integration have additional work remaining.
 - **Ontology** provides semantic structure and relationships.
 - **Micro Bundles** can provide rendering capabilities and representations.
 - **FSM_COS** can compose Renderer capabilities into an experience.
