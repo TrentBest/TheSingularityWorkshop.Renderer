@@ -131,7 +131,7 @@ SVG is valuable because it can be both a compact artifact and a visible, inspect
 - [ ] Preserve dependency direction: Renderer may consume FSM_API, ProtocolAi, and MicroBundleDomain as designed; it must not depend on FSM_COS, Visualize, GUI.SVG, a host UI, or a specific graphics API to exist.
 - [ ] Verify RendererMicroBundle exposes the capability without moving Renderer-specific logic into FSM_COS.
 - [ ] Test the normal NuGet dependency path and opt-in sibling-source integration path.
-- [ ] Verify the packed nupkg contains intended README, license, symbols, and visual assets. The current project explicitly packs README.md, LICENSE, and docs/assets/moniker.svg; decide deliberately which theory/guide files or generated artifacts belong in the package rather than assuming all repository docs are included.
+- [x] Configure the package to include README.md, LICENSE, every Markdown guide under docs/, and both the animated moniker and FSM-backed living Event Horizon SVG. The CI workflow regenerates the living SVG and checks for a clean diff before packing; confirm the resulting nupkg contents from a successful CI artifact before release.
 - [ ] Check that README image links work both on GitHub and when the README is consumed from the package.
 - [ ] Keep build/test/coverage/package CI green and NuGet publishing gated off unless explicitly authorized.
 - [ ] Test documented commands from a clean checkout and keep quick-start claims scoped to what those tests prove.
