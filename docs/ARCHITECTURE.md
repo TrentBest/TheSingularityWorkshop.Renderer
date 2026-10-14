@@ -2,9 +2,9 @@
 
 ## Goal
 
-The Renderer should become an independent rendering computation layer for The Singularity Workshop.
+The Renderer is an independent rendering-computation capability for The Singularity Workshop.
 
-It should describe and schedule representations without making the core dependent on a particular graphics platform.
+It describes observer-relative representations and their computational policy without depending on a particular graphics platform. Some policy and presentation handoffs remain incomplete; this is a distinction between integration maturity and the independence of the core model.
 
 ## Conceptual pipeline
 
@@ -71,7 +71,7 @@ The illustration is produced by the runnable sample under `samples/LivingRendere
 
 ### FSM_API
 
-FSM_API is a possible foundational dependency for stateful renderer processing. Renderer should consume it only where that improves the architecture; it should not reproduce an unrelated state abstraction.
+FSM_API is a direct dependency and is already used for stateful representation computation: `RendererComputationMachine` creates and advances an FSM whose active state is the current `RepresentationTarget`. This is an executable integration, not merely a possible future dependency. The full observer-policy → bucket/cadence → selected frame → presentation path is not yet one complete end-to-end pipeline. Renderer should extend FSM_API where it fits the workload rather than build a parallel scheduler.
 
 ### Ontology
 
@@ -119,8 +119,6 @@ Computation
 ```
 
 A GPU MicroBundle may translate Workshop GPU work into DirectX, Vulkan, WebGPU, OpenGL, CUDA, or another native path. Those APIs are execution boundaries, not Renderer architecture.
-
-See [GPU Boundary](GPU_BOUNDARY.md).
 
 See [GPU Boundary](GPU_BOUNDARY.md).
 
