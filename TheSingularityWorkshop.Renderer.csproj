@@ -49,5 +49,6 @@
     <None Update="docs/**/*.md" Pack="true" PackagePath="docs/%(RecursiveDir)%(Filename)%(Extension)" />
     <None Update="docs/assets/moniker.svg" Pack="true" PackagePath="docs/assets/" />
     <None Update="docs/assets/living-event-horizons.svg" Pack="true" PackagePath="docs/assets/" />
+    <None Update="docs/assets/renderer-composition.svg" Pack="true" PackagePath="docs/assets/" />
   </ItemGroup>
 </Project>
