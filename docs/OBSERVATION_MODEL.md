@@ -51,6 +51,17 @@ Therefore:
 
 > **Distance can influence an Event Horizon. It should not define the Event Horizon.**
 
+### Executable distance-to-representation bridge
+
+The current implementation now exposes an explicit bridge for the simplest distance-based policy:
+
+- `ObserverDistance.Select(distance, horizons)` selects an ordered `EventHorizon`.
+- `RepresentationHorizonRule` maps that horizon object to a `RepresentationTarget`; the mapping does not depend on parsing the horizon's display name.
+- `ObserverRepresentationPolicy.Select(distance)` returns the selected horizon name, requested representation, and preferred update cadence as one decision snapshot.
+
+This is an executable policy primitive, not the full observer model. It currently consumes distance and the supplied ordered rules; it does not combine orientation, intent, angular size, visibility, budget, or multiple observers. It also does not advance the FSM, schedule bucket refreshes, or assemble a frame. Those remain separate stages to connect and measure.
+
+
 ---
 
 ## Observer context
