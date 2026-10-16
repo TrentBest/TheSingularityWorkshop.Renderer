@@ -51,6 +51,66 @@ Therefore:
 
 > **Distance can influence an Event Horizon. It should not define the Event Horizon.**
 
+### Executable distance-to-representation bridge
+
+The current implementation now exposes an explicit bridge for the simplest distance-based policy:
+
+- `ObserverDistance.Select(distance, horizons)` selects an ordered `EventHorizon`.
+- `RepresentationHorizonRule` maps that horizon object to a `RepresentationTarget`; the mapping does not depend on parsing the horizon's display name.
+- `ObserverRepresentationPolicy.Select(distance)` returns the selected horizon object and requested representation as one decision snapshot. The object identity lets a later bucket stage select the matching bucket without parsing names.
+- `ObserverRepresentationCoordinator.Evaluate(...)` advances the FSM-backed representation, selects the matching `EventHorizonBucket`, applies source/observer revision invalidation, and returns either a refresh ticket or a cache-reuse result. The host still builds the actual output and completes the ticket only after that output is ready.
+
+The policy is an executable distance-only primitive, not the full observer model. It does not combine orientation, intent, angular size, visibility, budget, or multiple observers. The coordinator advances the FSM and checks bucket cadence/invalidation, but it does not schedule threads, generate geometry, or assemble a frame. Use one coordinator per independent observer: a representation selected for one observer is not authoritative world state and is not automatically correct for another observer. Those broader observer and presentation stages remain to connect and measure.
+
+A host can compose the current primitives like this:
+
+```csharp
+var horizons = new[]
+{
+    new EventHorizon("Interactive", 1, 10),
+    new EventHorizon("Near", 5, 8),
+    new EventHorizon("Distant", 15, 4),
+    new EventHorizon("Aggregate", 30, 2),
+    new EventHorizon("Semantic", 100, 1)
+};
+
+var rules = new[]
+{
+    new RepresentationHorizonRule(horizons[0], RepresentationTarget.Interactive),
+    new RepresentationHorizonRule(horizons[1], RepresentationTarget.Near),
+    new RepresentationHorizonRule(horizons[2], RepresentationTarget.Distant),
+    new RepresentationHorizonRule(horizons[3], RepresentationTarget.Aggregate),
+    new RepresentationHorizonRule(horizons[4], RepresentationTarget.Semantic)
+};
+
+var policy = new ObserverRepresentationPolicy(rules);
+var buckets = horizons
+    .Select(horizon => new EventHorizonBucket(
+        $"bucket-{horizon.Name}", horizon, horizon.UpdatesPerSecond))
+    .ToArray();
+
+using var coordinator = new ObserverRepresentationCoordinator(
+    policy, buckets, "observer-main");
+
+var evaluation = coordinator.Evaluate(distance, sourceRevision, observerRevision, now);
+if (evaluation.RefreshTicket is { } ticket)
+{
+    // The host prepares and stages the representation selected above.
+    // Complete only after that output is ready to publish.
+    if (!evaluation.Bucket.TryCompleteRefresh(ticket, completedAt))
+    {
+        // A source/observer invalidation made this work stale; discard its output.
+    }
+}
+else if (evaluation.CanReuseCachedRepresentation)
+{
+    // Reuse the already valid cached representation for this horizon.
+}
+```
+
+The example deliberately leaves geometry creation and publication to the host. A refresh ticket is permission to do work, not proof that the work has been performed.
+
+
 ---
 
 ## Observer context
