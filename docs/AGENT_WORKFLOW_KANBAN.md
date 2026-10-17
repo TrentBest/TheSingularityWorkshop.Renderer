@@ -28,7 +28,8 @@ The board is an index, not a second source of technical truth:
 | Area | Status | What is true now | Next move / unblock |
 | --- | --- | --- | --- |
 | Visualize crowd proof | **Verified** | CI passed; deterministic 24-instance SVG and JSON manifest artifact exists. Input is a hand-authored fixture, not Gestures output. | Get a pinned, provenance-bearing golden bake from the Gestures owner. |
-| Rendering capability boundary | **Architecture direction established; integration not yet evidenced** | Rendering should be consumed as an optional microbundle loaded by FSM_COS when the selected experience requests it. Renderer/Visualize implementation details must stay behind the bundle contract; core and non-rendering .NET apps must not inherit rendering dependencies. | Define the minimal rendering capability contract and prove one opt-in load path plus one host/experience that runs without it. |\n| City rendering | **Partial proof** | CPU/SVG specimen demonstrates distant window draw-command omission only. No GPU or measured performance claim. | Build the observer-dependent vertical slice with WebPageLLM; keep ownership boundaries intact. |
+| Rendering capability boundary | **Contract discovered; implementation proof open** | MicroBundleDomain owns `IMicroBundle`; FSM_COS composes manifest roots through a catalog and returns `RuntimeAssembly`. WebPage's local Hub-level lifecycle shell still needs its bridge to the domain contract confirmed. | Implement the opt-in and rendering-free proof tracked in [Renderer #15](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/15); coordinate the WebPage bridge without editing its source. |
+| City rendering | **Partial proof** | CPU/SVG specimen demonstrates distant window draw-command omission only. No GPU or measured performance claim. | Build the observer-dependent vertical slice with WebPageLLM; keep ownership boundaries intact. |
 | Visualize lighting | **Ready** | Issue #4 is scoped to deterministic light data, revisions/invalidation, and reference-scene tests. | Start the narrow testable slice. |
 | Renderer bucket arbitration | **Ready** | Issue #7 still needs implementation evidence for forge-time preparation versus runtime execution. | Add concrete tests and a configuration-free manifest path. |
 | Event Horizon continuity | **Needs verification** | Issue #9 references draft PR #8; the board does not yet record verified passing CI. | Check current PR and CI before changing status. |
@@ -55,8 +56,10 @@ The board is an index, not a second source of technical truth:
 ### Ready
 
 #### RENDERING-MICROBUNDLE-01 — Keep rendering optional at the FSM_COS composition boundary
-- **Owner:** FSM_COS for composition/loading contract; Renderer and Visualize for rendering implementation; consuming host for experience wiring
-- **Status:** Architecture direction established; no end-to-end optional-load proof recorded yet.
+- **Owner:** Renderer implementation proof; FSM_COS for composition/loading contract; consuming host for experience wiring
+- **Repo / issue:** [Renderer #15](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/15)
+- **Evidence note:** [Verified contract findings](RENDERING_MICROBUNDLE_INTEGRATION.md)
+- **Status:** Contract discovered; no end-to-end optional-load proof recorded yet.
 - **Principle:** rendering is an optional capability microbundle, loaded only when selected by the experience/FSM_COS composition. Core state, coordination, simulation, and non-rendering .NET applications must not take a mandatory dependency on Renderer, Visualize, GUI.SVG, or a graphics backend.
 - **Next action:** define the smallest host-neutral capability contract; demonstrate both (a) a manifest that loads rendering and (b) a non-rendering manifest that starts without loading or referencing rendering assemblies.
 - **Acceptance evidence:** dependency graph/build test proves core is rendering-free; integration test proves opt-in bundle resolution and activation; a non-rendering sample passes without rendering packages. No claim of implementation until these tests exist.
