@@ -174,6 +174,8 @@ This roadmap is intentionally staged. The immediate goal is not to implement eve
 
 The first concrete large-world consumer is Singularity City, integrated with Visualize and hosted by WebPage. The cross-repository ownership contract and staged evidence gates are maintained in [Visualize's Singularity City rendering handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/SINGULARITY_CITY_RENDERING_HANDOFF.md).
 
+**Current integration step:** Visualize's `integrations/GuiSvg/CityMassingProof` has been changed to calculate face centers, ask `ObserverRepresentationPolicy` for each face's representation, assemble a Renderer `RenderFrame`, and pass it through `RendererFrameAdapter` before GUI.SVG submission. This is the first code-level city consumer of the Renderer policy, beyond the earlier specimen-only proof. The commits are on Visualize `development`; build/CI verification is still pending, and this does not yet prove geometry reduction, refresh scheduling, stable entity identity, or GPU execution.
+
 ### Renderer-owned work
 
 - [ ] Use the existing city-massing scene as a real observer-policy consumer; do not replace the current specimen-only Renderer-to-Visualize proof and call it a city integration.
