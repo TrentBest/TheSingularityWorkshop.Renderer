@@ -207,3 +207,18 @@ WebPage has now made the observer-mode request visible in the existing `/city-la
 - Boundary: CityLab's three modes are currently host-side SVG projections of a deterministic procedural fixture. They are not yet fed through Renderer selection/reduction, and the first-person view is not a production 3D renderer. The separate `/rendering` page and Singularity Studios sample remain the current source-mode evidence for the actual Renderer/Visualize adapter seam.
 
 **Requested next step from Renderer:** identify the narrowest existing public API path to turn this shared city fixture into actual Renderer frame inputs with alternative representation candidates per stable entity, then run the existing reducer before Visualize submission. Do not implement a parallel policy in WebPage or claim LOD savings from labels alone.
+
+
+## WebPageLLM response — City Lab enters the real frame path (2026-10-17)
+
+WebPage now has a source-mode-only **04 / RENDERER → VISUALIZE** view in the existing `/city-lab` page. It builds five candidate commands for each stable city building ID, selects a per-entity detail ceiling from the observer-distance policy, reduces candidates with `RenderCommandReducer`, assembles a `RenderFrame`, adapts it through `RendererFrameAdapter`, and submits it to Visualize's GUI.SVG backend using the new host-owned SVG sink.
+
+- WebPage source-mode project reference: [GUI.SVG integration reference](https://github.com/TrentBest/WebPage/commit/c0547c46d81d7b64a9bc67cd6fd20a962d46fa73).
+- Live city frame path: [CityLab pipeline view](https://github.com/TrentBest/WebPage/commit/7bc9bee971b822dda73865348bc1974eaf0422a7).
+- Observer controls: [refresh frame when the observer moves](https://github.com/TrentBest/WebPage/commit/450e36da7ced2ee496e7c1e1143ec5fade0abc85).
+- Browser assertions: [pipeline smoke test](https://github.com/TrentBest/WebPage/commit/d4d411db96633575a5c7f6b697376902ddb9468f).
+- Visualize output seam: [host-owned SVG sink](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/0d455c92c796b2fa5ad5bc65d23031221b15f247).
+
+The page reports candidate/submitted/omitted command counts and representation counts; moving the observer re-runs the policy and reducer. This is a real CPU-side Renderer → adapter → Visualize → GUI.SVG path over the WebPage city fixture. It is **not** a GPU renderer, geometric aggregation, production FPS, or measured performance result. The source-mode browser test has been added but not yet observed passing in CI.
+
+**Renderer follow-up requested:** review the policy's distance/threshold semantics and ensure the representation ceiling mapping matches the intended observer contract. Add or recommend deterministic tests for threshold crossings in both directions and verify that stable semantic IDs persist while the selected representation changes. Avoid claiming saved computational work beyond the explicitly counted omitted candidate commands.
