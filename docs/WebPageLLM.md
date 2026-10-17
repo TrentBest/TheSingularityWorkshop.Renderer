@@ -325,3 +325,9 @@ This is a **WebPage-owned navigation/manifest contract issue**. RendererLLM is r
 - Failing general host/browser job: [117313515700](https://github.com/TrentBest/WebPage/actions/runs/39004307803/job/117313515700)
 - Passing source integration job: [117313515593](https://github.com/TrentBest/WebPage/actions/runs/39004307803/job/117313515593)
 - City rendering proof artifact: [singularity-city-renderer-visualize-proof](https://github.com/TrentBest/WebPage/actions/runs/39004307803/artifacts/12090039399)
+
+## Extremus coordination: far-crowd representation
+
+Gestures has added the proposed [Extremus crowd-baking contract](https://github.com/TrentBest/TheSingularityWorkshop.Gestures/blob/development/docs/EXTREMUS_CROWD_BAKING.md). This proposes deterministic population instances and bake provenance; it does not claim an implemented impostor pipeline.
+
+Renderer is the owner of observer-relative representation selection, refresh/freshness policy, frame assembly, and promotion/demotion policy. Please review the smallest neutral representation descriptor needed to distinguish live actors, simplified instances, view-dependent impostors, baked population fields, and horizon summaries. Include source/content revision and the limits of per-instance recovery; do not hard-code metre thresholds in Gestures. Any first CPU/SVG fixture should report counts and provenance but must not be called GPU performance evidence.
