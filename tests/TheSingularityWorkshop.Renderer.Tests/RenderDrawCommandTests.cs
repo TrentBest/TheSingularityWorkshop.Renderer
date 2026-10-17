@@ -9,7 +9,8 @@ public sealed class RenderDrawCommandTests
     private static RenderDrawCommand Create(
         RenderResourceId instances = default,
         int instanceCount = 1,
-        int firstInstance = 0) =>
+        int firstInstance = 0,
+        RenderEntityId entity = default) =>
         new(
             new RenderResourceId(1),
             new RenderResourceId(2),
@@ -20,7 +21,8 @@ public sealed class RenderDrawCommandTests
             RendererRepresentation.Near,
             instances,
             instanceCount,
-            firstInstance);
+            firstInstance,
+            entity);
 
     [Fact]
     public void DefaultsToOneNonInstancedDraw()
@@ -30,6 +32,7 @@ public sealed class RenderDrawCommandTests
         Assert.False(command.Instances.IsValid);
         Assert.Equal(1, command.InstanceCount);
         Assert.Equal(0, command.FirstInstance);
+        Assert.False(command.Entity.IsValid);
     }
 
     [Fact]
@@ -40,6 +43,17 @@ public sealed class RenderDrawCommandTests
         Assert.Equal(new RenderResourceId(3), command.Instances);
         Assert.Equal(1000, command.InstanceCount);
         Assert.Equal(24, command.FirstInstance);
+    }
+
+    [Fact]
+    public void PreservesStableSemanticIdentity()
+    {
+        var entity = new RenderEntityId(42);
+
+        var command = Create(entity: entity);
+
+        Assert.True(command.Entity.IsValid);
+        Assert.Equal(entity, command.Entity);
     }
 
     [Fact]
