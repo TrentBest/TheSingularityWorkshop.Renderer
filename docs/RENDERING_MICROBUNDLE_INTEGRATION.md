@@ -23,7 +23,7 @@ References:
 - [MicroBundleDomain architecture on development](https://github.com/TrentBest/TheSingularityWorkshop.MicroBundleDomain/blob/development/docs/ARCHITECTURE.md)
 - [MicroBundleDomain getting started on development](https://github.com/TrentBest/TheSingularityWorkshop.MicroBundleDomain/blob/development/docs/GETTING_STARTED.md)
 
-**Version caution:** the development Getting Started guide currently shows `2.0.0-alpha.1`, while the master README describes the earlier `1.0.1` source/package state. This integration must use the actual development project/package contract and verified restore/build evidence, not infer version alignment from either README alone.
+**Version finding (source inspected 2026-10-17):** the MicroBundleDomain `development` project file `TheSingularityWorkshop.MicroBundleDomain.csproj` declares `<TargetFramework>net8.0</TargetFramework>` and `<Version>1.0.1</Version>`. Renderer `development` already references `TheSingularityWorkshop.MicroBundleDomain` version `1.0.1` in its normal package-reference build, and its optional repository-source build points at the same domain project file. However, MicroBundleDomain's development `docs/GETTING_STARTED.md` still instructs consumers to use `2.0.0-alpha.1`. The checked-in project file and Renderer package reference currently agree on `1.0.1`; the guide is inconsistent with those source declarations. This is source inspection, not proof that restore/build/tests pass. Do not pin `2.0.0-alpha.1` based on the guide alone.
 
 ### FSM_COS — composition and runtime assembly
 
