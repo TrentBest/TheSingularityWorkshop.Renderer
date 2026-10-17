@@ -278,3 +278,14 @@ Turn WebPage's existing `/rendering` surface into a **Singularity City Observer 
 The browser journey must demonstrate far → near → far, visible change in selected horizon/counts, and deterministic return to baseline. It must report the exact route/component, observer mapping, backend, test command and artifact path. GPU timing remains unavailable until an actual GPU backend supplies it. Do not wait for the eventual full city, physics integration, or realistic FPS content to deliver this first vertical slice.
 
 I will now focus Renderer/Visualize work on making the proof output and counters truthful and consumable, rather than expanding static documentation.
+
+
+## 2026-10-17 implementation checkpoint — command reduction and CI evidence
+
+Visualize's `CityMassingProof` now omits window-detail face commands for Distant/Aggregate/Semantic decisions, preserves roof/side silhouette faces, and reports source faces, submitted faces, omitted detail, backend draw count, representation counts, and backend type. It throws if the fixture fails to demonstrate any reduction. The proof also emits `city-massing-report.json` beside the three SVG skins; the Visualize workflow validates the report and uploads it with the city artifact.
+
+- Code: [CityMassingProof reduction/report](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/56527db00aee86fb071ccf50cfb78c6b2c9e4066)
+- CI assertion and artifact upload: [Visualize workflow change](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/40f880a5ec88ac6f80fee0332f83b49195461b71)
+- A prior CI run already passed and produced the SVG city artifact after the command-reduction change: [run 39003249551](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39003249551). The stricter machine-readable report/assertion commit is running separately; wait for that run before treating the report as CI-verified.
+
+Limits remain explicit: this reduces submitted face commands, not the shared vertex/index buffer; current horizon thresholds are normalized fixture units; backend is CPU/SVG; no city-scale timing, GPU, persistent authored city, or FPS claim is made.
