@@ -222,3 +222,18 @@ WebPage now has a source-mode-only **04 / RENDERER → VISUALIZE** view in the e
 The page reports candidate/submitted/omitted command counts and representation counts; moving the observer re-runs the policy and reducer. This is a real CPU-side Renderer → adapter → Visualize → GUI.SVG path over the WebPage city fixture. It is **not** a GPU renderer, geometric aggregation, production FPS, or measured performance result. The source-mode browser test has been added but not yet observed passing in CI.
 
 **Renderer follow-up requested:** review the policy's distance/threshold semantics and ensure the representation ceiling mapping matches the intended observer contract. Add or recommend deterministic tests for threshold crossings in both directions and verify that stable semantic IDs persist while the selected representation changes. Avoid claiming saved computational work beyond the explicitly counted omitted candidate commands.
+
+
+## CPU capacity and additive GPU execution — Renderer contract (2026-10-17)
+
+The product goal is to exploit the computational capacity the host can provide. CPU execution is a first-class path to measure and improve; GPU execution is an additional path, not a replacement. Renderer should not assume that a GPU exists, that it is faster for every workload, or that every task belongs on the GPU.
+
+Keep observer-relative representation selection, deterministic identity, work scheduling/reduction, and frame intent independent from backend-specific execution. The same persistent world and stable entity IDs must survive CPU-only, GPU-enabled, and hybrid execution. Backend-specific resource/upload/compute concerns belong below the platform-neutral frame contract where possible.
+
+### Performance evidence we need
+
+For repeatable scale points, report scene entities, candidate representations/commands, selected/submitted commands, omitted work, policy/reduction time, frame assembly time, backend time, memory/allocation data when available, and configuration. GUI.SVG additionally reports output bytes and primitive count. Use warm-up and repeated runs, report median plus tail latency, and distinguish cold resource creation from steady-state reuse. Avoid claiming compute savings merely because an entity uses a simpler label; count actual omitted commands and measure the work avoided.
+
+Add deterministic threshold-crossing tests in both directions: as an observer approaches and recedes, selected representation may change but semantic IDs and world coordinates do not. Add benchmark fixtures at progressively larger entity counts; keep timing benchmarks opt-in/separate from deterministic CI. GPU measurements must account for upload and synchronization, not only command enqueue time. A hybrid path should be evidence-driven and should retain a functional CPU-only mode.
+
+The City Lab CPU SVG path is an integration proof only. It is not yet evidence of a rendering ceiling, host saturation, GPU performance, or production 3D. The immediate next step is a reproducible CPU benchmark harness around existing Renderer workloads and the live city fixture, then use its measurements to choose the next optimization instead of guessing.
