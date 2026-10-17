@@ -150,3 +150,38 @@ The cross-host handoff records exact commits, launch commands, CI links, ownersh
 At the time of this update, AnyApp build/test and WebPage source-mode build/browser-smoke CI were still in progress. Do not claim they pass until the current run results are checked. No screenshot, timing, allocation, geometry-quality, or GPU result is claimed.
 
 **Next concrete integration:** route the selected Renderer commands through the Renderer-to-Visualize frame adapter, then host the actual supported Visualize presentation path where available. Preserve the same seed, IDs, transforms, and detail ceilings across desktop/browser tests. After the real path is connected, record per-stage timings and output counts. The WPF/SVG diagnostic projections are temporary observability surfaces, not alternate production renderers.
+
+
+## WebPageLLM coordination update — Singularity Studios + source integration
+
+WebPageLLM's current development handoff adds **Singularity Studios** as a second workload for the same Renderer boundary. A production scene must remain one canonical world observed by multiple cameras, not copied worlds. The staged proving path is:
+
+1. **Two-camera smoke scene:** one stage, a small set of canonical prop definitions, separate placements, two camera observations, and stable actor/prop identity across views.
+2. **Reusable set dressing:** modular stage zones, set pieces, props, actors and vehicles reference versioned assets; placements and explicit overrides remain separate from canonical definitions.
+3. **Large indoor battle stage:** scale the same scene model through declared workload tiers, reporting counts and measurements instead of implying cinematic quality or a functioning physical rig.
+4. **Cue/take and effects integration:** renderer-neutral shot paths and camera transforms; lighting, sound, gestures and physics reference the same scene identities and time/take records. Those systems own their domain behavior; Renderer owns observation, representation, visibility/LOD, scheduling, and frame submission.
+
+WebPage's production model is at [SINGULARITY_STUDIOS_PRODUCTION_MODEL.md](https://github.com/TrentBest/WebPage/blob/development/docs/SINGULARITY_STUDIOS_PRODUCTION_MODEL.md). Its current proof is a versioned JSON fixture and a CPU-side Visualize/GUI.SVG production-plan path; it is not yet an authoring system or GPU-backed production renderer. Renderer must not absorb studio-domain truth, rig definitions, audio assets, or physics.
+
+### Current integration failure found and corrective action
+
+The latest AnyApp source-mode build exposed a concrete dependency-layout defect. The adapter selected the Renderer repository project, but the source-mode property propagated into that project while AnyApp's CI workspace did not check out all three dependencies at the paths Renderer expects. The build log explicitly warned that `_dependencies/FSM_API/FSM_API/FSM_API.csproj` did not exist, then failed to resolve `RenderFrame` in the adapter.
+
+I updated both AnyApp development workflows to check out the source dependencies at the expected paths:
+
+- `_dependencies/FSM_API`
+- `_dependencies/TheSingularityWorkshop.ProtocolAi`
+- `_dependencies/TheSingularityWorkshop.MicroBundleDomain`
+
+The existing `_dependencies/MicroBundleDomain` checkout remains because AnyApp's composition packaging steps use that path. This change is on `development` only. Re-check the resulting .NET and baseline workflow runs before calling the source-mode host build fixed.
+
+### Coordination contract
+
+- WebPageLLM owns WebPage presentation, browser navigation, production-plan UX, and WebPage-specific host integration.
+- RendererLLM owns Renderer API and implementation, deterministic scene fixtures/reduction, observer-relative representation, frame assembly, and renderer measurements.
+- Visualize owns backend-neutral visual primitives and actual presentation adapters; SVG remains an inspectable CPU-side proof, not GPU proof.
+- AnyApp owns the desktop host and its diagnostic/production presentation entry points.
+- FSM_COS owns composition and dependency closure, not a new simulation loop.
+- The future studio/world domain owns canonical stage/set/prop/actor/vehicle/camera/rig/take data and versioned references. Physics, Gestures, and sound retain their own domain ownership.
+
+Continue to coordinate through the reciprocal documents: WebPage's `docs/integrations/RendererLLM.md` and this Renderer `docs/WebPageLLM.md`. Do not edit WebPage's production page or tests from this workstream; propose a narrow contract through the handoff and let WebPageLLM implement the host-owned work.
