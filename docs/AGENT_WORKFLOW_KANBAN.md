@@ -29,7 +29,7 @@ The board is an index, not a second source of technical truth:
 | --- | --- | --- | --- |
 | Visualize crowd proof | **Verified** | CI passed; deterministic 24-instance SVG and JSON manifest artifact exists. Input is a hand-authored fixture, not Gestures output. | Get a pinned, provenance-bearing golden bake from the Gestures owner. |
 | Rendering capability boundary | **Contract discovered; implementation proof open** | MicroBundleDomain owns `IMicroBundle`; FSM_COS composes manifest roots through a catalog and returns `RuntimeAssembly`. WebPage's local Hub-level lifecycle shell still needs its bridge to the domain contract confirmed. | Implement the opt-in and rendering-free proof tracked in [Renderer #15](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/15); coordinate the WebPage bridge without editing its source. |
-| City rendering | **Partial proof** | CPU/SVG specimen demonstrates distant window draw-command omission only. No GPU or measured performance claim. | Build the observer-dependent vertical slice with WebPageLLM; keep ownership boundaries intact. |
+| City rendering | **Partial proof** | CPU/SVG specimen demonstrates distant window draw-command omission only. WebPageLLM handoff now records the owner-confirmed target of street, top-down, taxi/aerial, and laboratory-unlocked FPS views over the same world. No GPU or measured performance claim. | WebPageLLM owns camera/mode/input/navigation; Renderer/Visualize own representation and manifestation. Prove a real camera-ray surface hit → world-space destination → player movement slice before claiming FPS interaction. |
 | Visualize lighting | **Ready** | Issue #4 is scoped to deterministic light data, revisions/invalidation, and reference-scene tests. | Start the narrow testable slice. |
 | Renderer bucket arbitration | **Ready** | Issue #7 still needs implementation evidence for forge-time preparation versus runtime execution. | Add concrete tests and a configuration-free manifest path. |
 | Event Horizon continuity | **Needs verification** | Issue #9 references draft PR #8; the board does not yet record verified passing CI. | Check current PR and CI before changing status. |
@@ -98,11 +98,19 @@ The board is an index, not a second source of technical truth:
 - **Owner:** Visualize agent (specimen); Renderer agent (policy)
 - **Evidence:** [Visualize city-massing handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/SINGULARITY_CITY_RENDERING_HANDOFF.md) and [successful CI run / artifact](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39003350163)
 - **Status:** narrow CPU/SVG policy-consumption proof completed. It shows command-level omission of distant window-slot draws; it does **not** establish geometry compaction/reuse, complete city navigation, GPU execution, or a measured performance win.
-- **Next action:** do not expand the claim. The next city milestone is an actual observer-dependent vertical slice with stable identity and traceable frame output, coordinated with WebPageLLM.
+- **Next action:** do not expand the claim. The next city milestone is an actual observer-dependent vertical slice with stable identity and traceable frame output, coordinated with WebPageLLM. Spatial target and staged acceptance: [WebPageLLM handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#user-confirmed-singularity-city-spatial-modes-and-world-space-click-destination); coordination request: [Renderer Message 008](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/COORDINATION.md).
 
 ### Waiting
 
-#### WEBAPP-EXPERIENCES-01 — Integrate the manifest-driven WebApp host with microbundle-backed experiences
+##### CITY-SPATIAL-01 — Preserve one city across observer modes and world-space navigation
+- **Owner:** WebPage/WebApp for camera, discovery gate, picking, destination GUI and movement; Renderer/Visualize for observer-relative representation and backend manifestation.
+- **Reference:** [Visualize spatial-mode and click destination contract](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#user-confirmed-singularity-city-spatial-modes-and-world-space-click-destination); [Renderer coordination Message 008](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/COORDINATION.md).
+- **User-confirmed target:** street view, top-down, taxi/aerial top-down, and full 3D FPS over shared stable world identity. The FPS switch is a discoverable laboratory progression gate. In FPS, left-click projects through the active camera, validates a real surface hit, places the destination GUI in world space, and moves the player to that point.
+- **Status:** **Waiting on host evidence**. The requirement and ownership are documented; camera-ray picking, world-space destination GUI, taxi view, and full 3D FPS are not verified as implemented.
+- **Next action:** WebPageLLM identifies the existing camera/input/navigation state and host component for the laboratory switch, then proves one deterministic click → valid surface hit → world-space target → movement journey. Renderer/Visualize will integrate the shared-scene frame path without duplicating city state.
+- **Boundary:** no edits to WebPage-owned source/tests/workflows; no fake 3D label/screenshot swap; no GPU claims from SVG evidence.
+
+### WEBAPP-EXPERIENCES-01 — Integrate the manifest-driven WebApp host with microbundle-backed experiences
 - **Owner:** WebPage agent for host; each microbundle/experience remains with its source owner
 - **Reference:** [Renderer WebPageLLM handoff](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/WebPageLLM.md)
 - **Architecture update (2026-10-17):** WebPage is being restructured away from the monolithic-page direction into the web version of AnyApp. The host should load experiences through the manifest/microbundle model; the Experiences repository is the intermediate microbundle storage/distribution location.
