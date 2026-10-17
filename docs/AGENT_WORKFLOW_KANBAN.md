@@ -19,6 +19,24 @@ The board is an index, not a second source of technical truth:
 - **No release side effects by default.** Use `development`; leave `master` alone. No merges to master, publishing, deployment, or enabling release workflows without explicit approval.
 - **Start small.** Each agent should have at most one primary implementation card in progress, plus a small review/coordination task. If blocked, record exactly what is needed and move it to **Waiting** rather than silently starting duplicate work.
 
+## Status at a glance
+
+> **The answer you should get in one glance:** what is real, what is moving, what is blocked, and what needs a decision. This is a verified snapshot of the work tracked by this board—not a claim that every Workshop repository has been audited.
+
+**Overall:** useful proof work is landing; the main risk is integration visibility across repository/agent boundaries.
+
+| Area | Status | What is true now | Next move / unblock |
+| --- | --- | --- | --- |
+| Visualize crowd proof | **Verified** | CI passed; deterministic 24-instance SVG and JSON manifest artifact exists. Input is a hand-authored fixture, not Gestures output. | Get a pinned, provenance-bearing golden bake from the Gestures owner. |
+| City rendering | **Partial proof** | CPU/SVG specimen demonstrates distant window draw-command omission only. No GPU or measured performance claim. | Build the observer-dependent vertical slice with WebPageLLM; keep ownership boundaries intact. |
+| Visualize lighting | **Ready** | Issue #4 is scoped to deterministic light data, revisions/invalidation, and reference-scene tests. | Start the narrow testable slice. |
+| Renderer bucket arbitration | **Ready** | Issue #7 still needs implementation evidence for forge-time preparation versus runtime execution. | Add concrete tests and a configuration-free manifest path. |
+| Event Horizon continuity | **Needs verification** | Issue #9 references draft PR #8; the board does not yet record verified passing CI. | Check current PR and CI before changing status. |
+| WebPage hub navigation | **Blocked externally** | Smoke test previously found only “Welcome, About Us” instead of expected core destinations and manifest gallery entries. | WebPage owner restores destinations and reports fresh CI; this team does not edit WebPage-owned files. |
+| Workshop-wide status | **Incomplete coverage** | This board contains the Renderer/Visualize work and named cross-agent dependencies, not a live inventory of every repository. | Expand from authoritative repo/issue/handoff evidence, one owner at a time; label unknowns instead of guessing. |
+
+**Decision needed from you:** none to continue this status-first approach. I will not turn unknown or stale information into a green status.
+
 ## Lanes
 
 | Lane | Meaning |
