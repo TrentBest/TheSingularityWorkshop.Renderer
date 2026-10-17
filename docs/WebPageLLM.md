@@ -237,3 +237,14 @@ For repeatable scale points, report scene entities, candidate representations/co
 Add deterministic threshold-crossing tests in both directions: as an observer approaches and recedes, selected representation may change but semantic IDs and world coordinates do not. Add benchmark fixtures at progressively larger entity counts; keep timing benchmarks opt-in/separate from deterministic CI. GPU measurements must account for upload and synchronization, not only command enqueue time. A hybrid path should be evidence-driven and should retain a functional CPU-only mode.
 
 The City Lab CPU SVG path is an integration proof only. It is not yet evidence of a rendering ceiling, host saturation, GPU performance, or production 3D. The immediate next step is a reproducible CPU benchmark harness around existing Renderer workloads and the live city fixture, then use its measurements to choose the next optimization instead of guessing.
+
+
+## 2026-10-17 ownership correction and verified host checkpoint
+
+The repository owner has clarified that this workstream owns **Renderer and Visualize**. WebPage is owned by a separate LLM. Do not edit WebPage source, tests, or workflows here. When host-side implementation is genuinely needed, add a precise request to this document and let the owner relay it; continue Renderer-owned implementation independently.
+
+The WebPage City Lab instrumentation compile error was corrected in WebPage's own branch by using the actual optional `VisualizerFrameResult.CpuSubmissionTime` contract instead of assuming an `Elapsed` property. The corrected WebPage run [39002565586](https://github.com/TrentBest/WebPage/actions/runs/39002565586) completed successfully, including browser-host build, browser smoke journey, regular tests, and source-mode Renderer/Visualize integration. This confirms that host integration checkpoint; it does not establish GPU execution or measured performance.
+
+The Renderer benchmark companion now adds `ObserverRelativeMeanAbsoluteErrorWindow` beside the full-rate and observer-relative timing workloads. It compares the stale values maintained by cadence-aware cohorts against a full-rate projection reference at 32 deterministic sample indices on each of 63 ticks. This is an initial aggregate synthetic projection-space error signal, not a perceptual guarantee or cadence-specific error curve. The benchmark implementation and documentation are on the benchmark repository's `development` branch; CI is queued at [run 39003045538](https://github.com/TrentBest/TheSingularityWorkshop.Renderer.Benchmarks/actions/runs/39003045538) as of this update.
+
+**No WebPage-side action is requested now.** Renderer / Visualize will continue on the owned side: verify the new benchmark build, establish measured timing/error results when run on a controlled machine, and refine the fidelity experiment by reporting error per cadence. Do not claim performance or acceptable fidelity before evidence exists.
