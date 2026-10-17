@@ -38,7 +38,7 @@ The board is an index, not a second source of technical truth:
 - **Owner:** Visualize agent
 - **Repo / issue:** [Visualize #14](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/issues/14)
 - **Implementation commits:** [fixture project](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/9190629bc54cf447cff47d9a03b2a834c89043ea), [fixture program](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/fce826ee750698a063ab65447af01205c0a7776f), [CI generation and validation](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/b227c1b1cb800bd8720716614f423c4a3c7b558d).
-- **Current evidence:** code and CI workflow are on development; [workflow run 39060545845](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39060545845) was queued when this board was updated.
+- **Current evidence:** the first fixture run exposed a project-glob collision: the executable's top-level `Program.cs` was also compiled into the GUI.SVG library. Fixed by excluding `ExtremusCrowdProof/**/*.cs` from that library project. The corrected [CI run 39060642124](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39060642124) was queued at last check; the earlier failure is recorded, not hidden.
 - **Next action:** inspect CI, fix any failures, and only then move to Review / CI or Done.
 - **Acceptance:** repeatable SVG + JSON manifest; explicit resource-resolution assertions; CI artifact; honest CPU/SVG capability label.
 - **Dependency:** after this is green, request a pinned golden bake from the Gestures owner. Do not pretend the hand-authored fixture is already a Gestures integration.
