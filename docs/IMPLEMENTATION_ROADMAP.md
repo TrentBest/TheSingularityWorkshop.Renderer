@@ -205,3 +205,33 @@ The milestone is complete only when a deterministic city scene passes through ac
 
 The later sequence is plan-view navigation, spatially coherent district detail, aerial/street representations, live domain-state integration, and measured scaling against observer-relevant work. GPU backend selection and hardware performance claims remain separate evidence gates.
 
+
+
+## Natural migration proving ground — impossible-scale monarch phenomenon
+
+The next complementary scene should be a natural environment occupied by a monarch butterfly migration at a deliberately impossible population: far beyond what nature could sustain. The purpose is not to claim ecological realism at that density. It is to create an experiential instrument for understanding a phenomenon that is lost or inaccessible at ordinary human scale: the observer enters a landscape and discovers a living migration that exceeds anything they have seen.
+
+This is a proposed proving ground, not a currently implemented feature. It should stress the same Renderer/Visualize contracts as Singularity City while exercising motion, occlusion, changing density, light, depth, and attention in ways static building massing cannot.
+
+### What the proving ground must test
+
+- **One coherent population, many representations.** Each butterfly or deterministic cohort has stable identity/seed and reproducible state. Near individuals can reveal wing shape and phase; mid-range groups can preserve directional flow and density; distant swarms can become spatial/temporal aggregates without looking like a flat billboard or disappearing.
+- **Observer-relative detail.** Looking toward a sunlit swarm, approaching a tree, or tracking one butterfly should promote the relevant details while the migration continues around it. Attention may prioritize a tiny wing or dust/pollen motes in a sunbeam above a much larger low-priority region.
+- **Temporal cadence without a frozen world.** Wing phase, flight path, cohort flow, lighting response, vegetation, and ambient motion need not share one update rate. Lower-priority work may be reused or reconstructed, but motion must remain temporally coherent when the observer turns, approaches, or changes intent.
+- **Depth and partial occlusion.** Butterflies should pass through foreground, middle distance, and background, overlap vegetation and terrain, and reappear consistently. A representation transition must not expose a seam, duplicate a cohort, or reverse its flow.
+- **Illumination as a concentrated budget.** Sunbeams, translucency, wing shimmer, and airborne particles are candidate high-cost details to allocate only where the observer can perceive them. First establish a deterministic CPU reference; then compare alternative implementations using the same scenario and correctness gates.
+- **Scale beyond individual simulation.** Compare per-individual work, deterministic cohort/flow representations, and hybrid approaches. Aggregation is only valid when it preserves the cues the current observer can perceive; it must not become a count-only optimization that destroys the phenomenon.
+- **Reproducible evidence.** Given a seed, world state, observer trace, and policy, the same decisions and scene output should be reproducible. Record population represented, entities evaluated, individuals simulated, cohorts updated, geometry/instances emitted, refreshes, reuse/skips, allocations, and per-stage elapsed time.
+
+### Staged proof, not a premature production claim
+
+1. **Static density field:** deterministic terrain/vegetation and a spatial distribution of migration cohorts; establish stable IDs, units, bounds, and repeatable output.
+2. **Animated CPU reference:** wing phase and trajectories for a manageable sample, with a much larger population represented by deterministic cohorts; measure the full update-to-frame path.
+3. **Observer trace:** compare overview, walking through the swarm, looking into a sunbeam, and tracking a single butterfly. The same authoritative migration state must support every view.
+4. **Representation transitions:** prove promotion/demotion, source-revision invalidation, valid cached reuse, and no visible discontinuities at the same observer trace.
+5. **Scale experiments:** increase population by orders of magnitude and report actual work rather than inferring savings from the requested population size.
+6. **Backend comparison:** only after the CPU path and its measurements are credible, compare CPU and GPU manifestations of the same deterministic workload.
+
+A butterfly count is not itself the success metric. The gate is whether observer-relevant work grows more slowly than total represented population while motion, identity, density, depth, and visible transitions remain convincing. If it fails, the measurements should tell us whether the limiting factor is FSM dispatch, policy/scheduling, simulation, geometry generation, frame assembly, or presentation.
+
+Keep ecological truth separate from the artistic premise: this is intentionally impossible-scale spectacle inspired by monarch migration, not a claim that such a population is naturally sustainable.
