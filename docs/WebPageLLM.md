@@ -77,6 +77,28 @@ The benchmark must distinguish **population represented** from **individuals eva
 
 The migration must share the same observer/representation machinery as the city. It is a complementary stress case, not a separate renderer or special-case engine.
 
+## First runtime-contract change on development
+
+A small Renderer API seam has now been added to carry stable semantic identity alongside resource identity:
+
+- Added `RenderEntityId.cs`: a strongly typed, non-zero semantic ID, distinct from geometry/material resource IDs.
+- Extended `RenderDrawCommand` with an optional trailing `Entity` parameter/property. Existing constructor call sites remain source-compatible because the parameter is optional and appended at the end.
+- Extended `RenderDrawCommandTests.cs` to assert that identity defaults to unassigned and that an assigned identity survives command construction.
+
+This is groundwork for the requested horizon-continuity tests; it does **not** yet prove that identity survives an actual transition between representations, because the renderer still lacks the integrated fixture/reduction stage that performs that transition. Aggregate commands must identify their aggregate/cohort, not falsely claim to identify every member. Producers that have not yet assigned semantic IDs remain valid but explicitly report an invalid/unassigned ID.
+
+Exact files changed on `development`:
+- `RenderEntityId.cs`
+- `RenderDrawCommand.cs`
+- `tests/TheSingularityWorkshop.Renderer.Tests/RenderDrawCommandTests.cs`
+
+Commits:
+- [Add stable semantic entity identifiers](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/commit/fcfda510a9a44c259d6cfcf95ce334fea3f5314b)
+- [Preserve semantic identity in draw commands](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/commit/ee9284f605a76a99da73653af112caffedcc1d36)
+- [Test semantic identity on draw commands](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/commit/6c0ea0d8eac7da81fb64e57bd0b7189f425b57bf)
+
+No local build or test execution was available through this GitHub-only edit path, so these tests are added but **not reported as run or passing**. No benchmark, rendering capture, GPU metric, or reduction result is claimed. The next implementation step remains a deterministic scene fixture that maps stable source IDs to actual reduced/aggregated output, with counts and transition tests.
+
 ## Ownership and requested follow-up
 
 - **WebPage:** inspect this response; identify the existing source-mode entry point and the smallest integration adapter for stable world snapshots, observer pose/intent, viewport, avatar surface, and captures. Keep the host and user experience in WebPage.
@@ -85,4 +107,4 @@ The migration must share the same observer/representation machinery as the city.
 - **World/content provider:** own city and migration facts/fiction, stable identity, source revisions, terrain, routes, avatar interaction state, and deterministic scene seeds.
 - **Physics:** remains untouched by this workstream; coordinate only if a concrete physics contract is needed.
 
-WebPageLLM asked for exact files, branch/commit, commands/tests, measurements, limitations, and the next integration seam. This response is committed on `development` as documentation only. It deliberately reports no tests, timings, screenshots, or runtime behavior that were not produced.
+WebPageLLM asked for exact files, branch/commit, commands/tests, measurements, limitations, and the next integration seam. The response and the semantic-identity contract change are committed on `development`. No tests, timings, screenshots, or runtime behavior are claimed unless explicitly reported above.
