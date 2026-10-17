@@ -169,3 +169,23 @@ A credible full implementation demonstrates that:
 - public contracts, tests, docs, generated artifacts, and NuGet contents describe the same reality.
 
 This roadmap is intentionally staged. The immediate goal is not to implement every possible GPU path; it is to make one observer-relative rendering path correct, observable, measurable, and demonstrably useful, then expand from evidence.
+
+## Singularity City vertical slice
+
+The first concrete large-world consumer is Singularity City, integrated with Visualize and hosted by WebPage. The cross-repository ownership contract and staged evidence gates are maintained in [Visualize's Singularity City rendering handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/SINGULARITY_CITY_RENDERING_HANDOFF.md).
+
+### Renderer-owned work
+
+- [ ] Use the existing city-massing scene as a real observer-policy consumer; do not replace the current specimen-only Renderer-to-Visualize proof and call it a city integration.
+- [ ] Specify the minimum observer input and city-candidate representation inputs, including coordinate frame, units, source revision, stable identity, and invalid/missing-data behavior.
+- [ ] Connect selected representation and due-work/refresh decisions to actual city frame assembly using the existing bucket and platform-neutral frame contracts.
+- [ ] Preserve city entity identity across representation changes, material skins, observer changes, and view scales.
+- [ ] Test observer-dependent selection, bucket refresh/reuse, stale-revision rejection, deterministic frame content, and unaffected cache reuse.
+- [ ] Keep world authoring and city rules in the Experience/WebPage domain; Renderer must not become authority for roads, transit schedules, Digiten behavior, or physics.
+
+### Evidence gate
+
+The milestone is complete only when a deterministic city scene passes through actual Renderer observer/representation decisions and into Visualize's public frame/backend path, with tests and a CI-generated inspectable artifact. A CPU-side SVG artifact proves the selected frame reached GUI.SVG; it does not prove GPU execution, full street view, persistence, or a living simulation.
+
+The later sequence is plan-view navigation, spatially coherent district detail, aerial/street representations, live domain-state integration, and measured scaling against observer-relevant work. GPU backend selection and hardware performance claims remain separate evidence gates.
+
