@@ -48,7 +48,7 @@ jobs:
           set -euo pipefail
           dotnet run --project samples/FsmCosWithoutRendering/FsmCosWithoutRendering.csproj --configuration Release
           deps_file="samples/FsmCosWithoutRendering/bin/Release/net8.0/FsmCosWithoutRendering.deps.json"
-          if grep -qi 'TheSingularityWorkshop.Renderer\\|TheSingularityWorkshop.Visualize\\|GUI.SVG' "$deps_file"; then
+          if grep -Eqi 'TheSingularityWorkshop.Renderer|TheSingularityWorkshop.Visualize|GUI[.]SVG' "$deps_file"; then
             echo "The rendering-free consumer unexpectedly references a rendering assembly."
             exit 1
           fi
