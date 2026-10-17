@@ -33,6 +33,8 @@ FSM_COS consumes domain-owned `IMicroBundle` implementations through a host-supp
 
 FSM_COS does **not** own host manifestation or rendering. The host receives the assembly and decides how to manifest it.
 
+**RuntimeAssembly evidence boundary (2026-10-17):** the FSM_COS consuming guide documents runtime identity, loaded MicroBundles, convergence-round index, and lookup by bundle ID/type. The Minimal Consumer sample demonstrates dependency-first loading and stable arbitration. The inspected guide and sample do not establish a `RuntimeAssembly.Dispose`, a bundle unload callback, or an automatic resource cleanup owner. This is not proof that no cleanup API exists in uninspected source. Until source/tests confirm otherwise, do not claim automatic disposal; any rendering resources must have an explicitly owned host/adapter cleanup path.
+
 References:
 - [FSM_COS consuming MicroBundles](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/development/docs/CONSUMING_MICROBUNDLES.md)
 - [FSM_COS WebPage integration boundary](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/development/docs/WEBPAGE_INTEGRATION.md)
@@ -56,14 +58,14 @@ Do not start by making every host render. Start with one opt-in capability and o
 2. **Explicit adapter:** keep Renderer/Visualize/GUI.SVG/backend integration inside the rendering bundle or an implementation-owned adapter. Do not make FSM_COS reference those projects.
 3. **Opt-in manifest:** a small consumer requests the rendering bundle; a catalog resolves it; FSM_COS loads it and returns an assembly containing the selected bundle.
 4. **Rendering-free manifest:** a second consumer requests only a non-rendering capability and proves that Renderer, Visualize, GUI.SVG, and graphics-backend assemblies are neither required nor loaded.
-5. **Evidence:** automated tests assert resolved bundle identities, load/dispose lifecycle, and the absence of rendering references for the non-rendering sample. Record build/CI links before upgrading status.
+5. **Evidence:** automated tests assert resolved bundle identities, load/arbitration lifecycle, loaded-bundle visibility, an explicitly owned cleanup path (without assuming a domain teardown hook), and the absence of rendering references for the non-rendering sample. Record build/CI links before upgrading status.
 
 ## Current status at a glance
 
 | Area | Verified state | Next action |
 |---|---|---|
 | Domain contract | Canonical interface and lifecycle documented on MicroBundleDomain development. | Verify exact project reference/version and compile against it. |
-| Composition contract | FSM_COS documents manifest → catalog/dependency closure → load/arbitrate → RuntimeAssembly. | Verify current source/test API and add an opt-in consumer proof. |
+| Composition contract | FSM_COS documents manifest → catalog/dependency closure → load/arbitrate → RuntimeAssembly; the guide documents loaded-bundle visibility and lookup. Cleanup ownership is not established by the inspected guide/sample. | Verify current source/test API and add an opt-in consumer proof with an explicit host/adapter cleanup owner. |
 | WebPage host | Local Hub-level microbundle shell exists; the canonical-domain bridge is not established by the files inspected. | Ask WebPageLLM for bridge location and first experience trace; do not modify its source. |
 | Rendering capability | Architecture direction is recorded; no end-to-end bundle proof recorded. | Implement one rendering bundle and a separate rendering-free control sample. |
 | Workshop-wide status | This is a scoped integration snapshot, not a complete repository inventory. | Expand status only from authoritative repo/issue/handoff evidence. |
