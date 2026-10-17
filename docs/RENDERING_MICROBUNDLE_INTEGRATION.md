@@ -17,6 +17,8 @@ The canonical domain contract is owned by [TheSingularityWorkshop.MicroBundleDom
 - `IMicroBundleArbitrationContext` for inspecting the assembled composition;
 - `Load(...)` and `Arbitrate(...)` as capability lifecycle participation.
 
+The inspected `IMicroBundle` source declares `Descriptor`, `Id`, `Dependencies`, `Load(IMicroBundleLoadContext)`, and `Arbitrate(IMicroBundleArbitrationContext, int)`. It does **not** declare `IDisposable`, `Dispose`, `Unload`, or another teardown callback. Do not describe disposal as a MicroBundleDomain guarantee. The integration proof must inspect the actual FSM_COS `RuntimeAssembly` ownership/cleanup behavior; if it provides no cleanup hook, any rendering resources created by the adapter need an explicitly owned cleanup path outside the domain contract.
+
 The contract does not define rendering, a GUI, storage, or the composition engine. A rendering capability should implement this contract without making MicroBundleDomain depend on Renderer, Visualize, GUI.SVG, a graphics API, or a host.
 
 References:
