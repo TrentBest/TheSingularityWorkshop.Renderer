@@ -63,6 +63,8 @@ The tests exercise the current contracts and their edge cases; they do **not** p
 
 The first living documentation proof runs the real `RendererComputationMachine` through FSM_API and writes the resulting representation states into an SVG. The pulse is presentation-only; the state choices come from FSM transitions.
 
+A separate cross-repository proof now renders a deterministic three-skin city fixture through Visualize's CPU/SVG path and verifies that distant representations submit fewer face commands: [open the generated SVG/report artifact](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39003350163/artifacts/12089384831). This is command-level detail reduction—not GPU output, geometry-buffer compaction, or production city rendering.
+
 The broader [living Renderer composition explainer](docs/assets/renderer-composition.svg) shows how observer context, Event Horizons, independent work buckets, and frame assembly fit together. It is an animated architecture guide, not live telemetry; the end-to-end connected path is still a roadmap goal. See the [living Renderer guide](docs/LIVING_RENDERER.md) for the implementation evidence and next proofs.
 
 ![Living Event Horizons generated from FSM_API representation states](docs/assets/living-event-horizons.svg)
