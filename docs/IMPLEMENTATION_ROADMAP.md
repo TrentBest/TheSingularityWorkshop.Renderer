@@ -10,6 +10,20 @@ The world and experience own authoritative meaning/state. Renderer owns observer
 
 The central hypothesis is falsifiable: as world population grows, the work required to serve an observer should track observable consequence and required information more closely than total population. Avoiding work is not a success if the observer receives an incorrect, stale, unstable, or unreconstructable representation.
 
+### Perceptual continuity and the computation budget
+
+The optimization target is not simply fewer draw calls or fewer polygons. It is a convincing, coherent world under a finite computation budget. Renderer should spend work according to what the observer can notice, what could change their interpretation or actions, and what must remain consistent with authoritative state.
+
+- **Spend detail where attention and consequence concentrate.** A tiny, nearby effect can deserve more work than a vast distant district if the observer is looking directly at it or interacting with it.
+- **Reduce work without making the world feel dead.** Lower-priority activity may be aggregated, approximated, cached, or updated less often, while retaining enough motion and change to preserve the impression of a living world.
+- **Cadence is a perceptual decision, not a universal timer.** Required refresh frequency depends on motion, contrast, visibility, proximity, interaction, causal importance, and the likelihood that stale output will be noticed. Different systems and representations can have different clocks.
+- **Never confuse cheap output with correct output.** Reused work must remain valid for its source revision and observer needs. When the budget changes, promote important content and demote less important work without changing world identity or authoritative state.
+- **Treat sudden observer changes as invalidation events.** Looking directly at an object, approaching it, selecting it, entering a space, or switching from a city plan to street-level observation can sharply change what work is justified.
+- **Measure the illusion and the cost together.** Record work requested, work performed, work reused or skipped, allocations, elapsed time, freshness, and visible/semantic correctness. A faster frame that visibly breaks continuity is not a win.
+
+This is a policy objective, not a claim that these signals or perceptual guarantees are already implemented. Start with deterministic scenarios and explicit observer/workload traces; use measurements to decide whether string-backed FSM dispatch, scheduling, geometry generation, frame assembly, or presentation is the actual bottleneck. Integer-backed FSM state is a promising optimization path if measurements justify it, but it should be evaluated against a representative end-to-end workload rather than a single isolated timing.
+
+
 ## Current baseline from repository documentation
 
 The development README describes executable foundations for Event Horizon selection and buckets, observer geometry, semantic anchors, obstruction/sensor visibility contracts, and FSM-backed computational representation state. It also explicitly says some handoffs remain policy contracts or exploratory paths rather than one complete integrated pipeline.
