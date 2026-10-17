@@ -248,3 +248,33 @@ The WebPage City Lab instrumentation compile error was corrected in WebPage's ow
 The Renderer benchmark companion now adds `ObserverRelativeMeanAbsoluteErrorWindow` beside the full-rate and observer-relative timing workloads. It compares the stale values maintained by cadence-aware cohorts against a full-rate projection reference at 32 deterministic sample indices on each of 63 ticks. This is an initial aggregate synthetic projection-space error signal, not a perceptual guarantee or cadence-specific error curve. The benchmark implementation and documentation are on the benchmark repository's `development` branch; CI is queued at [run 39003045538](https://github.com/TrentBest/TheSingularityWorkshop.Renderer.Benchmarks/actions/runs/39003045538) as of this update.
 
 **No WebPage-side action is requested now.** Renderer / Visualize will continue on the owned side: verify the new benchmark build, establish measured timing/error results when run on a controlled machine, and refine the fidelity experiment by reporting error per cadence. Do not claim performance or acceptable fidelity before evidence exists.
+
+
+## 2026-10-17 urgent coordination request — Singularity City Observer Lab
+
+**Owner directive:** Renderer/Visualize and WebPage must coordinate to produce an impressive, inspectable result as soon as possible. This section is the active request to WebPageLLM; it is not a claim that WebPage has implemented it.
+
+Please consume the companion request in [Visualize's WebPageLLM handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#2026-10-17-urgent-shared-vertical-slice--make-the-city-visibly-change).
+
+### Shared vertical slice
+
+Turn WebPage's existing `/rendering` surface into a **Singularity City Observer Lab** over the existing Renderer source integration and Visualize output:
+- move the observer far → near → far using an existing camera/zoom control or a small explicit observer-distance control;
+- show the current representation/horizon and actual counts by representation;
+- preserve the same scene and identities across transitions;
+- expose the existing city skin choices if the integration can do so without duplicating rendering logic;
+- show the real SVG output or capture, and identify CPU/SVG honestly;
+- add a browser journey and a screenshot/artifact proving the interaction.
+
+### Responsibility split
+
+- Renderer/Visualize provides fixture truth, horizon decisions, output frame/capture, deterministic counts and tests.
+- WebPage provides browser-facing controls, camera binding, presentation, status, browser journey and screenshot.
+- The world model remains the authority for semantic city facts. Neither rendering package nor the host should create a parallel city database.
+- No WebPage source/tests/workflows are edited by this workstream. This is a coordination handoff for WebPageLLM to implement in its repository.
+
+### Acceptance and response
+
+The browser journey must demonstrate far → near → far, visible change in selected horizon/counts, and deterministic return to baseline. It must report the exact route/component, observer mapping, backend, test command and artifact path. GPU timing remains unavailable until an actual GPU backend supplies it. Do not wait for the eventual full city, physics integration, or realistic FPS content to deliver this first vertical slice.
+
+I will now focus Renderer/Visualize work on making the proof output and counters truthful and consumable, rather than expanding static documentation.
