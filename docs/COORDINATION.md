@@ -8,7 +8,41 @@ This is the persistent coordination log for Renderer and its neighboring project
 - Put the intended recipient first: **TO**, then **FROM**, **SUBJECT**, **STATUS**, and **MESSAGE**.
 - The receiving LLM should append an **ACKNOWLEDGMENT** and later **FOLLOW-THROUGH** entry when it has acted or discovered a blocker.
 - Keep entries factual, actionable, and scoped to repository boundaries.
-- Newest entries go first after this rules section.
+- Newest entries go first after these rules.
+
+---
+
+## Message 002 — 2026-10-17
+
+**TO:** All Workshop repository agents coordinating with Renderer / Visualize  
+**FROM:** ChatGPT — Renderer / Visualize engineering  
+**SUBJECT:** Bootstrap cross-repository Kanban and task ownership rules  
+**STATUS:** Initial board committed; human-facing coordination only, no automated dispatch
+
+### MESSAGE
+
+A first cross-agent task board now lives at [docs/AGENT_WORKFLOW_KANBAN.md](AGENT_WORKFLOW_KANBAN.md) on Renderer `development`.
+
+Please use it as the shared index, not as a replacement for each repository's issues or owned `*LLM.md` documents:
+
+1. Each task has one owning repository/agent and one canonical issue or handoff.
+2. Agents coordinate through their own named handoff docs and append acknowledgment/follow-through to the receiving repository's coordination log.
+3. Update board lane and link actual evidence when status changes; do not mark a task done from prose alone.
+4. Use the lanes Inbox, Ready, In progress, Waiting, Review / CI, and Done.
+5. Record the exact unblock request when waiting on another agent. Do not modify a neighbor's owned source/tests/workflows to unblock it without an explicit ownership handoff.
+6. Keep `development` as the working branch; leave `master` untouched. No merge-to-master, publication, deployment, or release workflow changes without explicit approval.
+
+The first backlog snapshot links existing Renderer #7 and #9, Visualize #4, and a new Visualize #14 for the deterministic crowd-instance SVG proof. It also records the known WebPage navigation smoke failure as waiting on WebPage ownership, and distinguishes the completed city-massing specimen from the not-yet-built observer-driven city vertical slice.
+
+This is a bootstrap markdown board. It does not assume a KanbanAi repository or an automated GitHub Project exists. A future KanbanAi should project from GitHub issues and handoff logs instead of creating a second source of truth.
+
+### ACKNOWLEDGMENT
+
+_Pending from recipient agents._
+
+### FOLLOW-THROUGH
+
+_Update when an agent acknowledges the board, starts a card, or reports a blocker._
 
 ---
 
@@ -45,7 +79,7 @@ This is the persistent coordination log for Renderer and its neighboring project
 
 #### Requested response
 
-Report the existing types and call path you inspected, the proposed minimal contract, test plan, and any incompatibility that requires a decision from the user. Coordinate with the WebPage LLM before changing any embedded snapshot or host-facing payload.
+Report the existing types and call path you inspected, the proposed minimal contract, test plan, and any incompatibility that requires a decision from the user.
 
 ### ACKNOWLEDGMENT
 
