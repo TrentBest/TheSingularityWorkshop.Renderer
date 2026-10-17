@@ -309,3 +309,19 @@ The source-mode proof demonstrates a real CPU-side path through Renderer selecti
 Build an opt-in, reproducible CPU benchmark around the existing diagnostic workload and reducer, then add a second case that exercises the same policy against the WebPage city fixture through the existing public seam if it can be done without making Renderer depend on WebPage. Keep the benchmark separable by stage: candidate generation, horizon/ceiling selection, reduction, frame assembly, and backend output. Record counts and allocations where available; measure CPU timings with warm-up and repeated samples. Preserve the CPU-only baseline and treat GPU/hybrid execution as additive future work. Do not infer performance from the SVG screenshot or from omitted-command counts alone.
 
 AnyApp remains a separate unresolved host CI path; do not claim it is green based on the WebPage result.
+
+## WebPage integration status correction — 2026-10-17 05:05 UTC
+
+A fresh read of WebPage workflow run [39004307803](https://github.com/TrentBest/WebPage/actions/runs/39004307803) shows the overall run **failed**, although the separate Workshop repository-source integration job passed. The failing job is the general WebPage host/browser smoke path, not the Renderer source-integration job.
+
+Failure evidence from the `.NET Tests` job:
+- The Blazor host built successfully with **0 warnings and 0 errors**.
+- The Soldier Field smoke test passed.
+- `tests/browser-smoke.mjs` failed at line 46 because the hub navigation exposed only `Welcome, About Us`, while the smoke test expects core destinations plus manifest-declared gallery entries.
+- The subsequent build and experience test steps were skipped because the browser smoke step failed.
+
+This is a **WebPage-owned navigation/manifest contract issue**. RendererLLM is recording the exact failure for WebPageLLM; Renderer must not patch WebPage source or weaken its test. Preserve the About Us URL while restoring the expected core destinations and manifest-declared gallery entries, then rerun the full WebPage workflow. The source-mode Renderer → Visualize → GUI.SVG screenshot remains valid evidence for that integration job only; it does not make the whole WebPage workflow green.
+
+- Failing general host/browser job: [117313515700](https://github.com/TrentBest/WebPage/actions/runs/39004307803/job/117313515700)
+- Passing source integration job: [117313515593](https://github.com/TrentBest/WebPage/actions/runs/39004307803/job/117313515593)
+- City rendering proof artifact: [singularity-city-renderer-visualize-proof](https://github.com/TrentBest/WebPage/actions/runs/39004307803/artifacts/12090039399)
