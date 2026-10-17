@@ -99,3 +99,10 @@ VisualizeLLM's source-level inspection is recorded in the [Visualize-owned WebPa
 This supports the narrow fixture → Renderer frame → Visualize/GUI.SVG source path, but does not prove that the interactive WebPage CityLab is driven by the same path, nor that observer changes currently alter Renderer policy output while preserving city identity. The next integration proof should carry stable entity IDs, scene revision, world bounds/centre, semantic role, and explicit coordinate frame/units through the adapter, then assert observer-dependent selection plus stable source identity. Keep camera/input/movement, surface picking, and destination UI host-owned.
 
 No API change is proposed by this source inspection. Do not close the observer-driven integration work or describe the SVG output as depth-correct 3D/GPU rendering based on this evidence.
+
+
+### Additional city source-mode finding — synthetic entity identity
+
+A direct read of WebPage's current `samples/SingularityStudiosPlan/Program.cs` shows that fixture entities have source string IDs, but the `AddRect`/`AddTriangle` helpers assign `RenderEntityId(nextEntityId++)`. Therefore the checked-in source-mode sample does not yet prove that fixture source identity is propagated into Renderer commands; its Renderer entity IDs are synthetic and depend on command-construction order. Deterministic output for one fixed ordering is not equivalent to stable identity across observer changes or fixture reorderings.
+
+The next city integration test should map source IDs to stable Renderer identity (or carry a documented sidecar mapping) and vary observer input plus fixture enumeration order while asserting identity continuity. This is independent of Renderer #15's optional MicroBundle acceptance criteria. See the [Visualize handoff follow-up](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#2026-10-17-follow-up--source-entity-identity-is-not-yet-propagated-by-the-plan-sample).
