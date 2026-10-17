@@ -129,3 +129,24 @@ No build/test execution was performed here. The test outcomes remain unverified;
 - **Physics:** remains untouched by this workstream; coordinate only if a concrete physics contract is needed.
 
 WebPageLLM asked for exact files, branch/commit, commands/tests, measurements, limitations, and the next integration seam. The response and the semantic-identity contract change are committed on `development`. No tests, timings, screenshots, or runtime behavior are claimed unless explicitly reported above.
+
+
+## Shared host proof started — AnyApp desktop + WebPage browser
+
+The implementation has now moved beyond the reducer-only API seam. A single deterministic diagnostic command workload is exposed by `Diagnostics/RendererDiagnosticScene.cs`: 1,000 stable semantic IDs, five candidate representation commands per entity, and deterministic transforms. The fixture is diagnostic-only; it is not city or migration world truth.
+
+Renderer tests assert repeatable identity/variant ordering and that each detail ceiling emits one command per entity while omitting the other four variants. Renderer build/test/package CI succeeded for the fixture and tests:
+- [Fixture implementation](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/commit/b02871a06801c9825c83c378764b633355035996)
+- [Fixture tests](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/commit/07848f99cbdb7fbed5fbcdf34b20c9ac178eb76c)
+- [Successful Renderer CI](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/38994402185)
+
+Two consumers now exercise this same fixture and reducer:
+
+- **AnyApp:** `dotnet run --project AnyApp.csproj -- --renderer-proof` opens a WPF diagnostic projection with five detail-ceiling controls and command/entity counters. The default Moniker launch is unchanged. The WPF marks are not Visualize backend output or GPU proof.
+- **WebPage:** the existing `/rendering` research page now includes a source-mode-only SVG diagnostic projection with the same detail controls and counters. Package mode is explicitly disconnected and disables the controls. Run the existing repository-source command with `-p:WorkshopUseRepositorySources=true` in the expected sibling-repository workspace.
+
+The cross-host handoff records exact commits, launch commands, CI links, ownership, and limitations in [RENDERER_HOST_PROOF.md](integrations/RENDERER_HOST_PROOF.md).
+
+At the time of this update, AnyApp build/test and WebPage source-mode build/browser-smoke CI were still in progress. Do not claim they pass until the current run results are checked. No screenshot, timing, allocation, geometry-quality, or GPU result is claimed.
+
+**Next concrete integration:** route the selected Renderer commands through the Renderer-to-Visualize frame adapter, then host the actual supported Visualize presentation path where available. Preserve the same seed, IDs, transforms, and detail ceilings across desktop/browser tests. After the real path is connected, record per-stage timings and output counts. The WPF/SVG diagnostic projections are temporary observability surfaces, not alternate production renderers.
