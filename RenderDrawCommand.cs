@@ -16,7 +16,8 @@ public readonly record struct RenderDrawCommand
         RendererRepresentation representation,
         RenderResourceId instances = default,
         int instanceCount = 1,
-        int firstInstance = 0)
+        int firstInstance = 0,
+        RenderEntityId entity = default)
     {
         if (!geometry.IsValid)
             throw new ArgumentException("A valid geometry resource is required.", nameof(geometry));
@@ -44,6 +45,7 @@ public readonly record struct RenderDrawCommand
         Instances = instances;
         InstanceCount = instanceCount;
         FirstInstance = firstInstance;
+        Entity = entity;
     }
 
     /// <summary>Gets the geometry resource identifier.</summary>
@@ -66,4 +68,9 @@ public readonly record struct RenderDrawCommand
     public int InstanceCount { get; }
     /// <summary>Gets the first instance in the instance-data resource.</summary>
     public int FirstInstance { get; }
+    /// <summary>
+    /// Gets the stable semantic subject represented by this command, or an invalid identifier
+    /// when the producer has not assigned one. This is not a geometry/material resource ID.
+    /// </summary>
+    public RenderEntityId Entity { get; }
 }
