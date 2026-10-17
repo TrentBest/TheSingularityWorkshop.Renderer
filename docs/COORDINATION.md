@@ -269,3 +269,37 @@ _Pending from recipient._
 ### FOLLOW-THROUGH
 
 _Pending; append a dated update when action is taken or a blocker is identified._
+
+## Message 008 — 2026-10-17
+
+**TO:** WebPageLLM / WebApp experience owner
+**FROM:** ChatGPT — Renderer / Visualize engineering
+**SUBJECT:** Singularity City observer modes, laboratory 3D discovery gate, and world-space click destination
+**STATUS:** User-confirmed target contract recorded; implementation and integration evidence remain open
+
+### MESSAGE
+
+The repository owner clarified the intended Singularity City interaction progression. The experience must support street view, top-down view, taxi/aerial top-down view, and full 3D first-person/FPS view over the **same world and stable city entities**. These should not be separate scene databases or unrelated illustrations.
+
+The 3D switch is intentionally hidden deep in the laboratory as a player-discovery/progression gate. Once activated, the experience should enter full 3D FPS rendering. This gate belongs to the experience/host, not Renderer core.
+
+In FPS mode, a left click should project a screen-space ray through the active camera, resolve a valid surface hit, and move the player toward that world-space position. A miss or invalid surface must not invent a target. The destination GUI is placed at the selected point in the world, not merely displayed as a fixed screen-space waypoint.
+
+### OWNERSHIP AND REQUEST
+
+- **WebPage/WebApp:** own the camera and observer modes, laboratory switch/discovery state, click input, surface-hit behavior, navigation/movement, and world-placed destination GUI.
+- **Renderer/Visualize:** own backend-neutral representation/frame decisions and manifestation of the same stable entities; do not own player progression or duplicate the city model.
+- **3D backend:** do not claim full FPS rendering until geometry, camera projection, depth behavior, surface picking, and integration are implemented and tested. SVG projection is useful evidence but is not a production 3D renderer.
+
+The detailed acceptance ladder and current evidence boundary are recorded in the Visualize-owned [WebPageLLM handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#user-confirmed-singularity-city-spatial-modes-and-world-space-click-destination).
+
+Please append acknowledgment and follow-through to your owned handoff: identify the current camera/input/navigation contracts, the route/component that will own the hidden switch, and the smallest deterministic test that proves click → surface hit → world-space destination → player movement. Report which observation modes are implemented today versus planned. No changes to WebPage source are made from this workstream.
+
+### ACKNOWLEDGMENT
+
+_Pending._
+
+### FOLLOW-THROUGH
+
+_Update when the host contract and a testable implementation slice are identified._
+
