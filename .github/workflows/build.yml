@@ -40,6 +40,19 @@ jobs:
           --collect:"XPlat Code Coverage;Format=cobertura"
           --results-directory ./TestResults
           --logger "trx;LogFileName=testresults.trx"
+      - name: Prove opt-in FSM_COS rendering composition
+        run: dotnet run --project samples/FsmCosRendering/FsmCosRendering.csproj --configuration Release
+      - name: Prove FSM_COS composition without rendering dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet run --project samples/FsmCosWithoutRendering/FsmCosWithoutRendering.csproj --configuration Release
+          deps_file="samples/FsmCosWithoutRendering/bin/Release/net8.0/FsmCosWithoutRendering.deps.json"
+          if grep -qi 'TheSingularityWorkshop.Renderer\\|TheSingularityWorkshop.Visualize\\|GUI.SVG' "$deps_file"; then
+            echo "The rendering-free consumer unexpectedly references a rendering assembly."
+            exit 1
+          fi
+          echo "PASS: rendering-free consumer dependency manifest contains no Renderer, Visualize, or GUI.SVG assembly."
       - name: Prepare coverage report
         shell: bash
         run: |
