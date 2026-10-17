@@ -3,7 +3,7 @@
 **Updated:** 2026-10-17  
 **Owner:** Renderer / Visualize integration  
 **Branch:** `development`  
-**Status:** Renderer-owned `RendererMicroBundle` and unit tests exist; end-to-end optional-load proof not implemented.
+**Status:** Renderer-owned `RendererMicroBundle` and unit tests exist; opt-in and rendering-free FSM_COS consumer samples are implemented on `development`, with CI verification pending.
 
 ## Verified contract boundaries
 
@@ -62,18 +62,18 @@ Do not start by making every host render. Start with one opt-in capability and o
 
 1. **Capability implementation (partially complete):** Renderer already contains `RendererMicroBundle`, implementing the domain contract with stable bundle ID `0x52454E4445520001`, provider ontology `Renderer`, no dependencies, opaque configuration, and load/arbitration state. Unit tests cover descriptor identity, opaque configuration, and no-op arbitration. Keep the provider's public payload host-neutral; do not leak concrete graphics-backend types into MicroBundleDomain or FSM_COS. The existing bundle currently exposes lifecycle metadata only; it does not itself prove that Visualize/backend resources are loaded or manifested.
 2. **Explicit adapter:** keep Renderer/Visualize/GUI.SVG/backend integration inside the rendering bundle or an implementation-owned adapter. Do not make FSM_COS reference those projects.
-3. **Opt-in manifest:** a small consumer requests the rendering bundle; a catalog resolves it; FSM_COS loads it and returns an assembly containing the selected bundle.
-4. **Rendering-free manifest:** a second consumer requests only a non-rendering capability and proves that Renderer, Visualize, GUI.SVG, and graphics-backend assemblies are neither required nor loaded.
-5. **Evidence:** automated tests assert resolved bundle identities, load/arbitration lifecycle, loaded-bundle visibility, an explicitly owned cleanup path (without assuming a domain teardown hook), and the absence of rendering references for the non-rendering sample. Record build/CI links before upgrading status.
+3. **Opt-in manifest (sample implemented; CI pending):** [`samples/FsmCosRendering`](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/FsmCosRendering) requests the Renderer bundle, resolves it through an in-memory catalog, executes FSM_COS, and asserts the returned `RuntimeAssembly` contains the exact instance and that `Load` received the expected runtime ID. This proves composition/lifecycle only; it does not activate Visualize or a graphics backend.
+4. **Rendering-free manifest (sample implemented; CI pending):** [`samples/FsmCosWithoutRendering`](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/FsmCosWithoutRendering) references FSM_COS without a Renderer project/package reference, composes a data-only capability, and asserts the load result. The workflow checks its generated `.deps.json` for Renderer, Visualize, and GUI.SVG assemblies.
+5. **Evidence and cleanup:** workflow steps now build/run both samples. A run is in progress; do not mark this acceptance criterion complete until it passes. The domain interface has no unload/dispose member, and these samples allocate no rendering resources, so they do not prove resource teardown. A future backend adapter must own and test cleanup explicitly.
 
 ## Current status at a glance
 
 | Area | Verified state | Next action |
 |---|---|---|
-| Domain contract | Canonical interface and lifecycle documented on MicroBundleDomain development. | Verify exact project reference/version and compile against it. |
-| Composition contract | FSM_COS documents manifest → catalog/dependency closure → load/arbitrate → RuntimeAssembly; the guide documents loaded-bundle visibility and lookup. Cleanup ownership is not established by the inspected guide/sample. | Verify current source/test API and add an opt-in consumer proof with an explicit host/adapter cleanup owner. |
+| Domain contract | Renderer and FSM_COS both target .NET 8 and reference MicroBundleDomain 1.0.1 in the inspected project files; consumer samples use FSM_COS 0.1.0-alpha.6. CI build evidence is pending. | Confirm successful restore/build against the current package graph. |
+| Composition contract | Opt-in and rendering-free consumer samples exist; CI now executes both and checks the rendering-free dependency manifest. Run is in progress, not yet verified passing. Cleanup ownership is not established by these samples. | Record passing CI; design/test explicit host/backend cleanup when real resources are introduced. |
 | WebPage host | Owner reported `WorkshopExperienceService.SwitchManifestAsync` → FSM_COS `Execute` → `RuntimeAssembly`; catalog registers WebPage-owned `RenderingMicroBundle` ID 4100. The Hub shell is separate; `MonikerMicroBundle` explicitly implements both contracts. The current rendering bundle is semantic/AI-facing placeholder, not actual Renderer loading. | Keep WebPage source untouched. Renderer must prove its own optional capability, rendering-free control, and cleanup ownership. |
-| Rendering capability | `RendererMicroBundle` exists in Renderer and has unit tests for descriptor, opaque configuration, and arbitration. It currently exposes lifecycle metadata only; no end-to-end FSM_COS opt-in or rendering-free control proof is recorded. | Add a minimal opt-in manifest/catalog consumer and a separate rendering-free control, then test cleanup ownership and dependency boundaries. |
+| Rendering capability | `RendererMicroBundle` has unit tests; two consumer samples now exercise opt-in composition and a separate rendering-free control. CI verification is pending. The bundle exposes lifecycle metadata only, not Visualize/backend activation. | Confirm CI; keep resource cleanup as an explicit future host/backend responsibility. |
 | Workshop-wide status | This is a scoped integration snapshot, not a complete repository inventory. | Expand status only from authoritative repo/issue/handoff evidence. |
 
 ## Coordination request
@@ -84,7 +84,7 @@ Please respond through the owning repository's handoff/coordination document wit
 - **WebPageLLM:** exact adapter/bridge between the local Hub contract and domain-owned `IMicroBundle`; first manifest → catalog → FSM_COS → RuntimeAssembly → host path and its test/CI evidence.
 - **Experiences / AnyApp:** nominate one small manifest-driven experience that can first run with rendering absent, then opt in to rendering.
 
-Until that evidence exists, status remains **contract discovered; integration proof open**.
+Until the new workflow run passes, status remains **samples implemented; integration proof awaiting CI**. Even after it passes, the result proves FSM_COS composition/lifecycle only—not actual rendering backend activation or resource teardown.
 
 ## Visualize frame contract findings — source inspection (2026-10-17)
 
