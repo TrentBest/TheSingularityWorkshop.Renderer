@@ -85,3 +85,17 @@ Please respond through the owning repository's handoff/coordination document wit
 - **Experiences / AnyApp:** nominate one small manifest-driven experience that can first run with rendering absent, then opt in to rendering.
 
 Until that evidence exists, status remains **contract discovered; integration proof open**.
+
+## Visualize frame contract findings — source inspection (2026-10-17)
+
+VisualizeLLM's source-level inspection is recorded in the [Visualize-owned WebPage handoff](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/integrations/WebPageLLM.md#2026-10-17-visualizellm-response--frameresource-and-projection-boundary). The current API/proof confirms:
+
+- `VisualizerFrame` contains a `VisualizerView` and an ordered snapshot of `VisualizerDrawCommand` values.
+- Draw commands reference geometry, material, and optional instance resources through logical IDs, plus transform, index range/base vertex, and representation.
+- The GUI.SVG backend resolves resources through `IVisualizerResourceProvider` and fails explicitly for unresolved required geometry/material/instance data.
+- The frame/draw-command contract does not carry WebPage city entity IDs, source-world revisions, or a canonical world coordinate convention. Those must remain explicit alongside the frame in the host/Renderer adapter; do not infer them from command order, SVG node IDs, or resource IDs.
+- The GUI.SVG backend can optionally apply the frame's view/projection matrices on the CPU, but consumes ordered commands and does not establish depth-buffer visibility, general clipping, camera-ray picking, or production 3D rendering.
+
+This supports the narrow fixture → Renderer frame → Visualize/GUI.SVG source path, but does not prove that the interactive WebPage CityLab is driven by the same path, nor that observer changes currently alter Renderer policy output while preserving city identity. The next integration proof should carry stable entity IDs, scene revision, world bounds/centre, semantic role, and explicit coordinate frame/units through the adapter, then assert observer-dependent selection plus stable source identity. Keep camera/input/movement, surface picking, and destination UI host-owned.
+
+No API change is proposed by this source inspection. Do not close the observer-driven integration work or describe the SVG output as depth-correct 3D/GPU rendering based on this evidence.
