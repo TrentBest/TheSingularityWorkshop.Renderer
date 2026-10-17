@@ -71,4 +71,16 @@ At the time of this handoff, the WebPage .NET workflow was still running, includ
 - **World providers:** own authoritative scene facts and identities. The shared diagnostic scene is test-only and must not become the city or monarch world model.
 - **Physics:** remains separately owned and untouched.
 
-The current acceptance result is deterministic command selection in one shared workload, with two host-specific diagnostic projections. It is not yet the finished Visualize/GPU vertical slice. That distinction is intentional: make the integration real first, then measure the real path.
+## Adapter path now connected in both host probes
+
+The next integration seam has been wired in source mode: both hosts now take the reduced Renderer commands, construct a platform-neutral `RenderFrame`, and call the real `RendererFrameAdapter` from Visualize's `integrations/RendererAdapter` project before projecting marks to WPF/SVG. Visualize now carries a backend-neutral `VisualizerEntityId`, and adapter tests assert stable semantic identity survives the boundary.
+
+- [Visualize semantic identity contract](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/cff7127bdf01f05e653ae7876f9052dda86c8cf1).
+- [Adapter identity mapping](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/commit/c4270808498b44cc766c21595200f83e9eb91645).
+- [Adapter identity test and passing Visualize CI](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/38994897809).
+- [AnyApp adapter wiring](https://github.com/TrentBest/AnyApp/commit/707191e16edcfc1f4107b456aa9b75e746d722d4).
+- [WebPage adapter wiring](https://github.com/TrentBest/WebPage/commit/4a4518a36cf27cee71e2c600d12027f3ce59b7f5) and [browser smoke assertion](https://github.com/TrentBest/WebPage/commit/352c8c954888052487263b850e8934af80dd4d8e).
+
+This closes the Renderer-to-Visualize **frame adaptation** seam in both source-mode host probes. The host marks still use diagnostic WPF/SVG drawing rather than a production Visualize backend, and there is still no GPU claim. The current WebPage source-mode build/browser smoke and AnyApp build/baseline workflows for the newest commits are still running; verify their final status before calling host integration green.
+
+The current acceptance result is deterministic command selection plus identity-preserving Renderer-to-Visualize frame adaptation in one shared workload, with two host-specific diagnostic projections. It is not yet the finished Visualize/GPU vertical slice. That distinction is intentional: make the integration real first, then measure the real path.
