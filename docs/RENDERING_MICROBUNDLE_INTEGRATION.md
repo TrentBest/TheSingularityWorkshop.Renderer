@@ -39,16 +39,22 @@ References:
 - [FSM_COS consuming MicroBundles](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/development/docs/CONSUMING_MICROBUNDLES.md)
 - [FSM_COS WebPage integration boundary](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/development/docs/WEBPAGE_INTEGRATION.md)
 
-## Important WebPage integration observation
+## WebPage manifest/composition path — owner response (source inspection, 2026-10-17)
 
-The current WebPage development source includes a local `Workshop.MicroBundles.MicroBundle` that implements `TheSingularityWorkshop.SingularityHub.IMicroBundle` (and a Hub alias), with its own lifecycle FSM. The WebPage microbundle README says the canonical runtime contract belongs to MicroBundleDomain and FSM_COS consumes that contract.
+WebPageLLM reported the current development call path in its response on [Renderer issue #15](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/15#issuecomment-6239963342):
 
-This may be an intentional adapter/transition or a remaining contract seam; source inspection alone does not establish which. **Do not edit WebPage-owned code from this repository.** Ask WebPageLLM to identify the current bridge from its Hub-level contract to the domain-owned `TheSingularityWorkshop.MicroBundleDomain.IMicroBundle` contract and whether its first manifest-driven experience actually traverses FSM_COS.
+- `WorkshopExperienceService.SwitchManifestAsync` converts manifest root entries to `RuntimeManifest`, calls `_compositionSystem.Execute(...)`, verifies selected bundles in the returned `RuntimeAssembly`, and activates only after candidate composition succeeds.
+- `WorkshopCompositionCatalog` is typed against canonical `TheSingularityWorkshop.MicroBundleDomain.IMicroBundle` and registers a `RenderingMicroBundle` factory for ID `4100`.
+- That `TheSingularityWorkshop.Workshop.Rendering.RenderingMicroBundle` is WebPage-owned, version `0.1.0`, and declares ProtocolAi + GrammarAi dependencies.
+- The Hub-level `TheSingularityWorkshop.Workshop.MicroBundles.MicroBundle` is a separate local lifecycle shell implementing `TheSingularityWorkshop.SingularityHub.IMicroBundle`; it is not the type consumed by the FSM_COS catalog. `MonikerMicroBundle` explicitly implements both contracts, so there is no general automatic bridge: dual-interface behavior is implemented per bundle where needed.
+- The reported WebPage rendering bundle is a semantic/AI-facing placeholder, **not** proof that Renderer/Visualize is loaded or that rendering/GPU work occurs.
+
+This clarifies the host composition path by owner report/source inspection, but it does not complete Renderer #15. The Renderer-owned capability, rendering-free control, and explicit cleanup ownership still need executable proof. **Do not edit WebPage-owned code from this repository.**
 
 References:
 - [WebPage MicroBundles README](https://github.com/TrentBest/WebPage/blob/development/TheSingularityWorkshop/Workshop/MicroBundles/README.md)
 - [WebPage local lifecycle shell](https://github.com/TrentBest/WebPage/blob/development/TheSingularityWorkshop/Workshop/MicroBundles/MicroBundle.cs)
-- [WebPage Pong experience candidate](https://github.com/TrentBest/WebPage/blob/development/TheSingularityWorkshop/Workshop/MicroBundles/PongMicroBundle.cs)
+- [WebPage issue #15 owner response](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/15#issuecomment-6239963342)
 
 ## Smallest responsible rendering proof
 
@@ -66,7 +72,7 @@ Do not start by making every host render. Start with one opt-in capability and o
 |---|---|---|
 | Domain contract | Canonical interface and lifecycle documented on MicroBundleDomain development. | Verify exact project reference/version and compile against it. |
 | Composition contract | FSM_COS documents manifest → catalog/dependency closure → load/arbitrate → RuntimeAssembly; the guide documents loaded-bundle visibility and lookup. Cleanup ownership is not established by the inspected guide/sample. | Verify current source/test API and add an opt-in consumer proof with an explicit host/adapter cleanup owner. |
-| WebPage host | Local Hub-level microbundle shell exists; the canonical-domain bridge is not established by the files inspected. | Ask WebPageLLM for bridge location and first experience trace; do not modify its source. |
+| WebPage host | Owner reported `WorkshopExperienceService.SwitchManifestAsync` → FSM_COS `Execute` → `RuntimeAssembly`; catalog registers WebPage-owned `RenderingMicroBundle` ID 4100. The Hub shell is separate; `MonikerMicroBundle` explicitly implements both contracts. The current rendering bundle is semantic/AI-facing placeholder, not actual Renderer loading. | Keep WebPage source untouched. Renderer must prove its own optional capability, rendering-free control, and cleanup ownership. |
 | Rendering capability | Architecture direction is recorded; no end-to-end bundle proof recorded. | Implement one rendering bundle and a separate rendering-free control sample. |
 | Workshop-wide status | This is a scoped integration snapshot, not a complete repository inventory. | Expand status only from authoritative repo/issue/handoff evidence. |
 
