@@ -320,3 +320,24 @@ Writing a completely new production GPU driver is a different project with opera
 But we should absolutely investigate how thin our native transport can become, what hardware information is available, and how much of the GPU's exposed capability we can use from C#.
 
 That investigation is now part of the Renderer roadmap.
+
+## Visualize integration contract
+
+The current source integration is split deliberately:
+
+- **Renderer core** owns observer-relative representation selection and emits immutable `RenderFrame` command snapshots. It must not reference Visualize, WPF, Vulkan, Direct3D, WebGPU, or native handles.
+- **Visualize core** owns backend-neutral frame/resource contracts and validates command ranges against the resource provider.
+- **Renderer.VisualizeAdapter** maps frame fields, command order, transforms, index ranges, base vertex, instance metadata, representation, and entity identity. It is an adapter, not a geometry/material upload system.
+- **Visualize backend / host adapter** will own concrete GPU resources and presentation after a backend is selected by evidence.
+
+### Important resource distinction
+
+The adapter currently preserves the numeric values of Renderer geometry/material/instance IDs when creating Visualize IDs. That is a naming convention only: it does **not** transfer resource contents, prove that the corresponding Visualize resources exist, or guarantee matching lifetime/revision semantics. A real end-to-end GPU proof must explicitly populate or resolve Visualize-side resource descriptions and must fail clearly for unresolved IDs.
+
+Before production integration, define and test the bridge from Renderer resource identity and revisions to CPU-side geometry/material/instance descriptions and Visualize resource revisions. Avoid putting GPU handles in either core package, and do not make Renderer depend upward on Visualize to solve this. The bridge belongs in the adapter/integration layer, with ownership and disposal documented by the host.
+
+### Current proof boundary
+
+The current AnyApp `--renderer-proof` view is a WPF diagnostic projection, not GPU output. Visualize's SVG and perspective-mesh proofs validate other layers, not native GPU presentation. The native API choice is still open; the Visualize strategy is to compare candidates against an equivalent array-first workload before extending any specific prototype.
+
+The first cross-repository acceptance test is therefore not just “a frame object converted successfully.” It is: a known Renderer frame resolves to known resource data, is submitted to the selected backend, produces a real presented image, and reports backend/device identity—without adding an upward dependency or leaking platform handles into Renderer.
