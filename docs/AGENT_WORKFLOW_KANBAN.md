@@ -23,7 +23,7 @@ The board is an index, not a second source of technical truth:
 
 > **The answer you should get in one glance:** what is real, what is moving, what is blocked, and what needs a decision. This is a verified snapshot of the work tracked by this board—not a claim that every Workshop repository has been audited.
 
-**Overall:** useful proof work is landing; the main risk is integration visibility across repository/agent boundaries.
+**Overall:** useful proof work is landing; the main risk is integration visibility across repository/agent boundaries. WebPage is undergoing a deliberate host-architecture transition; its next status must be measured against the manifest → microbundle/Experience loading path, not legacy monolithic-page assumptions.
 
 | Area | Status | What is true now | Next move / unblock |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ The board is an index, not a second source of technical truth:
 | Visualize lighting | **Ready** | Issue #4 is scoped to deterministic light data, revisions/invalidation, and reference-scene tests. | Start the narrow testable slice. |
 | Renderer bucket arbitration | **Ready** | Issue #7 still needs implementation evidence for forge-time preparation versus runtime execution. | Add concrete tests and a configuration-free manifest path. |
 | Event Horizon continuity | **Needs verification** | Issue #9 references draft PR #8; the board does not yet record verified passing CI. | Check current PR and CI before changing status. |
-| WebPage hub navigation | **Blocked externally** | Smoke test previously found only “Welcome, About Us” instead of expected core destinations and manifest gallery entries. | WebPage owner restores destinations and reports fresh CI; this team does not edit WebPage-owned files. |
+| WebPage / WebApp restructuring | **Transition in progress (external owner)** | WebPage is being restructured from a monolithic-page direction into the web counterpart of manifest-based AnyApp. Capabilities and experiences are expected to arrive through microbundles/Experiences, rather than accumulating in the host. The earlier navigation smoke failure is historical context, not an instruction to patch the restructuring branch blindly. | Await WebPageLLM's manifest/experience loading contract and the first microbundle-backed experience; then verify host discovery/loading and CI against the new architecture. |
 | Workshop-wide status | **Incomplete coverage** | This board contains the Renderer/Visualize work and named cross-agent dependencies, not a live inventory of every repository. | Expand from authoritative repo/issue/handoff evidence, one owner at a time; label unknowns instead of guessing. |
 
 **Decision needed from you:** none to continue this status-first approach. I will not turn unknown or stale information into a green status.
@@ -92,11 +92,12 @@ The board is an index, not a second source of technical truth:
 
 ### Waiting
 
-#### WEBPAGE-NAV-01 — Restore expected hub destinations
-- **Owner:** WebPage agent
+#### WEBAPP-EXPERIENCES-01 — Integrate the manifest-driven WebApp host with microbundle-backed experiences
+- **Owner:** WebPage agent for host; each microbundle/experience remains with its source owner
 - **Reference:** [Renderer WebPageLLM handoff](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/WebPageLLM.md)
-- **Known failure:** browser smoke reported only “Welcome, About Us” where core destinations plus manifest-declared gallery entries were expected; preserve `/about-us` and do not weaken the test.
-- **Unblock request:** WebPage owner restores the navigation destinations in WebPage-owned source and reports the new CI result. Renderer/Visualize will not edit WebPage source, tests, or workflows.
+- **Architecture update (2026-10-17):** WebPage is being restructured away from the monolithic-page direction into the web version of AnyApp. The host should load experiences through the manifest/microbundle model; the Experiences repository is the intermediate microbundle storage/distribution location.
+- **Status:** Waiting for WebPageLLM's current host contract and a concrete first experience path. The previously observed navigation smoke failure is historical evidence only; do not treat it as a mandate to restore hard-coded destinations or interfere with the restructuring.
+- **Unblock request:** publish the current manifest schema/loading contract and identify one microbundle-backed experience end-to-end. Renderer/Visualize will not edit WebPage source, tests, or workflows.
 
 ### Done
 
