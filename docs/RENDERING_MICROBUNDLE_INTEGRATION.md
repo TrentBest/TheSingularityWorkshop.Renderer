@@ -3,7 +3,7 @@
 **Updated:** 2026-10-17  
 **Owner:** Renderer / Visualize integration  
 **Branch:** `development`  
-**Status:** Renderer-owned `RendererMicroBundle` and unit tests exist; opt-in and rendering-free FSM_COS consumer samples are implemented on `development`, with CI verification pending.
+**Status:** Renderer-owned `RendererMicroBundle` and unit tests exist; opt-in and rendering-free FSM_COS consumer samples are implemented and passed CI on 2026-10-17 ([run #39069183165](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39069183165)).
 
 ## Verified contract boundaries
 
@@ -64,16 +64,16 @@ Do not start by making every host render. Start with one opt-in capability and o
 2. **Explicit adapter:** keep Renderer/Visualize/GUI.SVG/backend integration inside the rendering bundle or an implementation-owned adapter. Do not make FSM_COS reference those projects.
 3. **Opt-in manifest (sample implemented; CI pending):** [`samples/FsmCosRendering`](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/FsmCosRendering) requests the Renderer bundle, resolves it through an in-memory catalog, executes FSM_COS, and asserts the returned `RuntimeAssembly` contains the exact instance and that `Load` received the expected runtime ID. This proves composition/lifecycle only; it does not activate Visualize or a graphics backend.
 4. **Rendering-free manifest (sample implemented; CI pending):** [`samples/FsmCosWithoutRendering`](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/FsmCosWithoutRendering) references FSM_COS without a Renderer project/package reference, composes a data-only capability, and asserts the load result. The workflow checks its generated `.deps.json` for Renderer, Visualize, and GUI.SVG assemblies.
-5. **Evidence and cleanup:** workflow steps now build/run both samples. A run is in progress; do not mark this acceptance criterion complete until it passes. The domain interface has no unload/dispose member, and these samples allocate no rendering resources, so they do not prove resource teardown. A future backend adapter must own and test cleanup explicitly.
+5. **Evidence and cleanup:** [CI run #39069183165](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39069183165) passed both `build-and-test` and `repository-source-integration`. The existing solution build/tests, both consumer samples, dependency-manifest exclusion, living SVG reproducibility, and package artifact creation succeeded; publish was skipped. The domain interface has no unload/dispose member, and these samples allocate no rendering resources, so they do not prove resource teardown. A future backend adapter must own and test cleanup explicitly.
 
 ## Current status at a glance
 
 | Area | Verified state | Next action |
 |---|---|---|
-| Domain contract | Renderer and FSM_COS both target .NET 8 and reference MicroBundleDomain 1.0.1 in the inspected project files; consumer samples use FSM_COS 0.1.0-alpha.6. CI build evidence is pending. | Confirm successful restore/build against the current package graph. |
-| Composition contract | Opt-in and rendering-free consumer samples exist; CI now executes both and checks the rendering-free dependency manifest. Run is in progress, not yet verified passing. Cleanup ownership is not established by these samples. | Record passing CI; design/test explicit host/backend cleanup when real resources are introduced. |
+| Domain contract | Renderer and FSM_COS both target .NET 8 and reference MicroBundleDomain 1.0.1 in the inspected project files; consumer samples use FSM_COS 0.1.0-alpha.6. The package-reference and repository-source builds/tests passed in [CI run #39069183165](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39069183165). | Re-run as source or package versions evolve. |
+| Composition contract | Opt-in and rendering-free consumer samples passed in CI; the rendering-free dependency-manifest check passed. Cleanup ownership is not established by these samples. | Design/test explicit host/backend cleanup when real resources are introduced. |
 | WebPage host | Owner reported `WorkshopExperienceService.SwitchManifestAsync` → FSM_COS `Execute` → `RuntimeAssembly`; catalog registers WebPage-owned `RenderingMicroBundle` ID 4100. The Hub shell is separate; `MonikerMicroBundle` explicitly implements both contracts. The current rendering bundle is semantic/AI-facing placeholder, not actual Renderer loading. | Keep WebPage source untouched. Renderer must prove its own optional capability, rendering-free control, and cleanup ownership. |
-| Rendering capability | `RendererMicroBundle` has unit tests; two consumer samples now exercise opt-in composition and a separate rendering-free control. CI verification is pending. The bundle exposes lifecycle metadata only, not Visualize/backend activation. | Confirm CI; keep resource cleanup as an explicit future host/backend responsibility. |
+| Rendering capability | `RendererMicroBundle` unit tests and both consumer samples passed CI. The bundle exposes lifecycle metadata only, not Visualize/backend activation. | Keep resource cleanup as an explicit future host/backend responsibility; add real backend activation only behind a separately tested host adapter. |
 | Workshop-wide status | This is a scoped integration snapshot, not a complete repository inventory. | Expand status only from authoritative repo/issue/handoff evidence. |
 
 ## Coordination request
@@ -84,7 +84,7 @@ Please respond through the owning repository's handoff/coordination document wit
 - **WebPageLLM:** exact adapter/bridge between the local Hub contract and domain-owned `IMicroBundle`; first manifest → catalog → FSM_COS → RuntimeAssembly → host path and its test/CI evidence.
 - **Experiences / AnyApp:** nominate one small manifest-driven experience that can first run with rendering absent, then opt in to rendering.
 
-Until the new workflow run passes, status remains **samples implemented; integration proof awaiting CI**. Even after it passes, the result proves FSM_COS composition/lifecycle only—not actual rendering backend activation or resource teardown.
+The sample/CI acceptance criteria are verified by [run #39069183165](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39069183165). Status is **FSM_COS composition/lifecycle proof passed; backend manifestation and resource teardown remain open**. This does not prove actual rendering backend activation or resource disposal.
 
 ## Visualize frame contract findings — source inspection (2026-10-17)
 
