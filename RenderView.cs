@@ -9,7 +9,11 @@ public readonly record struct RenderView
     public RenderView(Vector3 observerPosition, Matrix4x4 view, Matrix4x4 projection)
     {
         if (!float.IsFinite(observerPosition.X) || !float.IsFinite(observerPosition.Y) || !float.IsFinite(observerPosition.Z))
-            throw new ArgumentOutOfRangeException(nameof(observerPosition));
+            throw new ArgumentOutOfRangeException(nameof(observerPosition), "Observer position components must be finite.");
+        if (!RenderMatrixValidation.IsFinite(view))
+            throw new ArgumentOutOfRangeException(nameof(view), "View matrix components must be finite.");
+        if (!RenderMatrixValidation.IsFinite(projection))
+            throw new ArgumentOutOfRangeException(nameof(projection), "Projection matrix components must be finite.");
 
         ObserverPosition = observerPosition;
         View = view;
