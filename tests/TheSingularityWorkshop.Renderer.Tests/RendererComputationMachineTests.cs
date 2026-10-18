@@ -2,6 +2,7 @@ using Xunit;
 
 namespace TheSingularityWorkshop.Renderer.Tests;
 
+[Collection(FsmApiSharedRegistryCollection.Name)]
 public sealed class RendererComputationMachineTests
 {
     [Fact]
