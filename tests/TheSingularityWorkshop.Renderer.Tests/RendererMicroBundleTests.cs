@@ -11,7 +11,7 @@ public sealed class RendererMicroBundleTests
     {
         var bundle = new RendererMicroBundle();
 
-        Assert.Equal(RendererMicroBundle.BundleId, bundle.Id);
+        Assert.Equal(RendererMicroBundle.BundleId, bundle.Descriptor.Id);
         Assert.Equal(RendererMicroBundle.Ontology, bundle.Descriptor.Providers.Single().Id);
         Assert.Empty(bundle.Dependencies);
         Assert.Equal("0.1.0-alpha.2", bundle.Descriptor.Version);
