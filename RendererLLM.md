@@ -31,3 +31,20 @@ A deeper FSM_API source read narrows the failure mechanism. `Create.CreateInstan
 The exception from `List<T>.RemoveAt` inside `List<T>.Remove` is consistent with concurrent mutation between index discovery and removal. This is the leading hypothesis, not yet a reproduced root cause. The next discriminating check is test parallelization: run the source-integration suite serially and then with normal parallelism. If serialization eliminates the failure, identify the parallel tests sharing FSM_API static state and decide whether the intended contract is main-thread-only or registry-wide thread safety. Do not suppress the disposal exception or replace destruction with `IsValid = false`.
 
 FSM_API cross-repository notes: [RendererLLM.md on FSM_API development](https://github.com/TrentBest/FSM_API/blob/development/RendererLLM.md). This finding is documentation/investigation only; no runtime fix or successful reproduction is claimed.
+
+
+## 2026-10-18: Exact FSM_API revision comparison changes the leading explanation
+
+The workflow logs identify the precise sibling source revisions:
+
+- Original failing source-integration job `117555449357`: FSM_API `da2e05ba41ff33aeb1429433b70593e271b1fd3b`.
+- Successful rerun job `117593029298`: FSM_API `f5a89641eaca216f5466af59b2dc4a983fe9511c`.
+- The passing revision is 38 commits ahead of the failing revision.
+
+A relevant runtime behavior changed in `FSM_API.Internal.cs`'s `ResetAPI` non-hard-reset path. At the failed revision, an invalid context caused `ResetAPI` to call `DestroyInstance(handle)`; at the successful revision, invalidity is treated as deactivation and the registered handle is retained. The later source also includes a test proving that a handle can resume after its context becomes valid again.
+
+This is a concrete candidate explanation for the failure and supports the user's suggestion that FSM_API work may already have fixed it. It does not conclusively establish causation because 38 commits separate the two revisions and the workflow did not isolate this change in a controlled A/B run. The successful rerun is real evidence that the current combination passes; it is not proof that all concurrency risks are gone.
+
+Next: keep the current Renderer disposal path intact, run the source-integration test against the current FSM_API development revision, and only pursue registry-wide synchronization if the failure reproduces or a focused stress test establishes concurrent mutation as the cause. Do not suppress disposal exceptions or replace explicit destruction with `IsValid = false`.
+
+Evidence: [Renderer workflow and reruns](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39086967875); [FSM_API comparison](https://github.com/TrentBest/FSM_API/compare/da2e05ba41ff33aeb1429433b70593e271b1fd3b...f5a89641eaca216f5466af59b2dc4a983fe9511c).
