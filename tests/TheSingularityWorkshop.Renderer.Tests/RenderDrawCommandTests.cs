@@ -10,11 +10,12 @@ public sealed class RenderDrawCommandTests
         RenderResourceId instances = default,
         int instanceCount = 1,
         int firstInstance = 0,
-        RenderEntityId entity = default) =>
+        RenderEntityId entity = default,
+        Matrix4x4? worldTransform = null) =>
         new(
             new RenderResourceId(1),
             new RenderResourceId(2),
-            Matrix4x4.Identity,
+            worldTransform ?? Matrix4x4.Identity,
             indexCount: 36,
             firstIndex: 0,
             baseVertex: 0,
@@ -68,5 +69,17 @@ public sealed class RenderDrawCommandTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => Create(new RenderResourceId(3), instanceCount: 0));
         Assert.Throws<ArgumentOutOfRangeException>(() => Create(new RenderResourceId(3), firstInstance: -1));
+    }
+
+    [Fact]
+    public void RejectsNonFiniteWorldTransform()
+    {
+        var transform = Matrix4x4.Identity;
+        transform.M34 = float.PositiveInfinity;
+
+        var error = Assert.Throws<ArgumentOutOfRangeException>(() => Create(worldTransform: transform));
+
+        Assert.Equal("worldTransform", error.ParamName);
+        Assert.Contains("finite", error.Message);
     }
 }
