@@ -54,3 +54,10 @@ Evidence: [Renderer workflow and reruns](https://github.com/TrentBest/TheSingula
 The latest rerun of Renderer workflow run [39086967875](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39086967875) completed successfully. Source-integration job `117594490093` checked out FSM_API `development` at `69949dc499c39f28d5b85d554d3f6006c7e9286d`; restore and build succeeded, and the Renderer test assembly reported **115 tests passed, 0 failed**. The independent `build-and-test` job also passed, including composition checks and living-SVG reproducibility. NuGet publishing was skipped.
 
 This is positive evidence that the current cross-repository source combination no longer reproduces the previously observed disposal failure. It does not isolate which FSM_API commit/change explains the earlier failure, and it does not prove registry-wide concurrent mutation is safe. Keep the current disposal path; do not add speculative locking or suppress destruction exceptions without a reproducible failure or a contract-backed concurrency test.
+
+
+## 2026-10-18: Apply FSM_API's documented main-thread mutation contract
+
+FSM_API's README states its supported model as **main-thread operations with deferred mutation handling**. Source inspection distinguishes the APIs: Interaction.MoveInstance queues a structural change, while Interaction.DestroyInstance synchronously reaches Internal.DestroyInstance and mutates the shared instance list. Do not assume destruction is deferred just because the API supports deferred mutation elsewhere.
+
+The current Renderer source-integration run passes **115/115 tests** against FSM_API development commit 69949dc499c39f28d5b85d554d3f6006c7e9286d. No Renderer runtime change is justified from the old failure alone. Before introducing locks or changing disposal semantics, verify that calls to RendererComputationMachine.Dispose() and FSM_API destruction occur on the intended owning/main thread and are not overlapping ticking or other structural operations. If that check is inconclusive, compare serial and normal-parallel test runs; report the exact outcomes and do not infer root cause from a single pass.
