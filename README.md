@@ -465,6 +465,7 @@ Start here:
 - [Start Here](docs/START_HERE.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Event Horizons](docs/EVENT_HORIZONS.md)
+- [Observable Phenomena and Effect Budgets](docs/OBSERVABLE_PHENOMENA_AND_EFFECT_BUDGETS.md)
 - [Rendering Model](docs/RENDERING_MODEL.md)
 - [Representation](docs/REPRESENTATION.md)
 - [Update Frequency](docs/UPDATE_FREQUENCY.md)
