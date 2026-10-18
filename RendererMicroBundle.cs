@@ -30,10 +30,19 @@ public sealed class RendererMicroBundle : IMicroBundle
         Dependencies = Array.Empty<MicroBundleDependencyRequest>();
     }
 
+    /// <summary>Gets the descriptor advertised for this Renderer capability bundle.</summary>
     public MicroBundleDescriptor Descriptor { get; }
+
+    /// <summary>Gets the dependency requests required by this bundle.</summary>
     public IReadOnlyList<MicroBundleDependencyRequest> Dependencies { get; }
+
+    /// <summary>Gets the runtime identity assigned by the composition host during loading.</summary>
     public ulong RuntimeId { get; private set; }
+
+    /// <summary>Gets the configuration bytes supplied for this bundle, or an empty value when none were supplied.</summary>
     public ReadOnlyMemory<byte> Configuration { get; private set; }
+
+    /// <summary>Gets a value indicating whether this bundle has been loaded into a runtime.</summary>
     public bool IsLoaded { get; private set; }
 
     /// <inheritdoc />
