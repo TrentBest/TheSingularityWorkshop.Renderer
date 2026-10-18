@@ -61,3 +61,12 @@ This is positive evidence that the current cross-repository source combination n
 FSM_API's README states its supported model as **main-thread operations with deferred mutation handling**. Source inspection distinguishes the APIs: Interaction.MoveInstance queues a structural change, while Interaction.DestroyInstance synchronously reaches Internal.DestroyInstance and mutates the shared instance list. Do not assume destruction is deferred just because the API supports deferred mutation elsewhere.
 
 The current Renderer source-integration run passes **115/115 tests** against FSM_API development commit 69949dc499c39f28d5b85d554d3f6006c7e9286d. No Renderer runtime change is justified from the old failure alone. Before introducing locks or changing disposal semantics, verify that calls to RendererComputationMachine.Dispose() and FSM_API destruction occur on the intended owning/main thread and are not overlapping ticking or other structural operations. If that check is inconclusive, compare serial and normal-parallel test runs; report the exact outcomes and do not infer root cause from a single pass.
+
+
+## 2026-10-18: Isolate FSM_API-backed tests from xUnit parallel execution
+
+The source-integration workflow exposed a test-harness risk worth addressing without changing runtime behavior. Renderer tests create and destroy FSM_API instances through a shared static registry, while FSM_API documents a main-thread operations model. xUnit may execute different test classes concurrently on separate worker threads; coordinator-local locks do not serialize independent tests.
+
+Added `FsmApiSharedRegistryCollection` with `DisableParallelization = true` and assigned both `RendererComputationMachineTests` and `ObserverRepresentationCoordinatorTests` to that collection. This serializes the tests that exercise the shared FSM_API registry while leaving unrelated Renderer tests free to run in parallel.
+
+This is a test-isolation correction aligned with the documented API contract, not proof that the original exception was caused by test parallelism and not a runtime fix. No production disposal code was changed. Verification workflow: [run 39101008220](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39101008220) (triggered by commit `17a37cae7fe503c71341cf4ef45e0f2992beaeb3`); outcome must be checked before claiming the change passes.
