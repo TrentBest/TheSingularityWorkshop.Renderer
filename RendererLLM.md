@@ -20,3 +20,14 @@ Relevant source context:
 Reproduction target: rerun Renderer workflow's `Test from sibling repository sources` with current FSM_API `development` source checked out. Verify whether the defect reproduces in FSM_API's own tests or is triggered by Renderer lifecycle usage. Fix the owning FSM_API registry/destruction logic if confirmed, then rerun both FSM_API and Renderer source-integration suites.
 
 No Renderer API change is recommended based on this evidence.
+
+
+## 2026-10-18: Focused disposal-race hypothesis from FSM_API source
+
+A deeper FSM_API source read narrows the failure mechanism. `Create.CreateInstance` reads the shared `bucket.Instances.Count` and immediately calls `bucket.Instances.Add(handle)`; `Internal.DestroyInstance` immediately calls `bucket.Instances.Remove(handle)`. `Internal.MoveInstance` also mutates these lists, while group/definition teardown can clear or remove them. These operations do not share a visible registry-wide synchronization gate.
+
+`RendererComputationMachine.Dispose()` is idempotent per machine, and `ObserverRepresentationCoordinator` serializes its own Evaluate/Dispose calls. But each coordinator owns a different `_gate`; it does not synchronize separate coordinators or any other consumer using FSM_API's static `Renderer` processing group and `Renderer.Representation` definition. Therefore, coordinator-local locking does not eliminate a shared-registry race.
+
+The exception from `List<T>.RemoveAt` inside `List<T>.Remove` is consistent with concurrent mutation between index discovery and removal. This is the leading hypothesis, not yet a reproduced root cause. The next discriminating check is test parallelization: run the source-integration suite serially and then with normal parallelism. If serialization eliminates the failure, identify the parallel tests sharing FSM_API static state and decide whether the intended contract is main-thread-only or registry-wide thread safety. Do not suppress the disposal exception or replace destruction with `IsValid = false`.
+
+FSM_API cross-repository notes: [RendererLLM.md on FSM_API development](https://github.com/TrentBest/FSM_API/blob/development/RendererLLM.md). This finding is documentation/investigation only; no runtime fix or successful reproduction is claimed.
