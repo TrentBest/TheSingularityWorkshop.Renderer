@@ -73,4 +73,34 @@ public sealed class ObserverDistanceDeterminismTests
 
         Assert.Equal(before, after);
     }
+
+    [Theory]
+    [InlineData(-0.001)]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
+    public void Select_RejectsInvalidObserverDistances(double distance)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => ObserverDistance.Select(distance, CreatePolicy()));
+    }
+
+    [Fact]
+    public void Select_RejectsNullAndEmptyPolicies()
+    {
+        Assert.Throws<ArgumentNullException>(() => ObserverDistance.Select(1, null!));
+        Assert.Throws<ArgumentException>(() => ObserverDistance.Select(1, Array.Empty<EventHorizon>()));
+    }
+
+    [Fact]
+    public void Select_RejectsPoliciesNotOrderedByMaximumDistance()
+    {
+        EventHorizon[] unordered =
+        [
+            new EventHorizon("Near", 100, 30),
+            new EventHorizon("Far", 1_000, 1),
+            new EventHorizon("OutOfOrder", 500, 2)
+        ];
+
+        Assert.Throws<ArgumentException>(() => ObserverDistance.Select(50, unordered));
+    }
 }
