@@ -189,3 +189,72 @@ These are proposed tests until code and measurements exist. Existing Event Horiz
 ---
 
 *The Singularity Workshop — Tools for the curious, the bold, and the systemically inclined.*
+
+
+## 13. Natural phenomena stress the observer model
+
+The Renderer domain must be broad enough for natural phenomena whose parts evolve at different rates and whose importance changes with observer position, intent, and environmental state. These are not simply collections of particles.
+
+| Phenomenon | Potential representations | Horizon and correctness considerations |
+| --- | --- | --- |
+| Volcanic eruption | source event, near-vent ejecta, lava flow, ash/gas field, regional plume, persistent cooled deposits | preserve eruption/source identity and flow/deposit state while far-field appearance aggregates |
+| Fire / wildfire | ignition event, local flame front, ember trajectories, smoke field, regional heat/smoke summary, burned-area state | flame visuals may fade before residual heat/smoke or burned terrain state; suppressing detail must not stop the fire model |
+| Lightning / electrical storm | strike event, branching path, brief light contribution, cloud flash, thunder arrival event | immediate latency and temporal stability matter; light response spans far beyond the visible bolt |
+| Severe weather | local wind/rain/snow, storm cells, cloud field, flood/visibility summaries | simulation and visual update rates can differ; observer-critical hazards need timely summaries |
+| Rivers, waves, floods, waterfalls | local surface/foam/spray, coarse flow field, shoreline/flood extent, underwater volume | use high detail near interaction/camera and regional state for routing or hazard decisions |
+| Landslides / avalanches / earthquakes | fracture/impact events, debris trajectories, dust plume, displaced terrain, regional event summaries | persistent geometry/state must outlive transient debris and dust; impact semantics remain authoritative |
+| Aurora, eclipse, meteor shower | sky-scale field, high-salience transient, observer-dependent celestial alignment | large projected coverage can justify work despite distance; multi-view/camera consistency matters |
+| Geysers, fumaroles, steam vents | pressure-release event, jet, droplets, steam volume, wet/mineral deposits | source event, field transport, and persistent deposit have independent lifecycles |
+| Ocean/underwater | surface waves, caustic approximation, bubbles, turbidity, current field, depth-dependent visibility | medium changes lighting and visibility; particle count alone cannot represent water's optical state |
+| Biological/environmental clouds | spores, pollen, insects, seed dispersal, fungal gas, dust | retain source identity and hazard/interaction semantics while aggregating visible populations |
+
+These examples define stress cases for representation policy, not scientific models implemented by Renderer. The domain owner supplies state and confidence; Renderer selects consumer-appropriate representations and fidelity.
+
+## 14. Lighting and illumination are cross-cutting phenomena
+
+Renderer should express the need for lighting work and the relevance of its dependencies without owning shader code or light transport implementation. Illumination can be a scene-wide field, a local interaction, a transient event, or an observer-sensitive post-process. It can also affect other representations, not just pixels.
+
+Examples:
+- **Volcanic glow:** near-field lava detail, emissive surface, local light contribution, reflection in nearby water, heat shimmer, and a regional glow can have different update budgets.
+- **Lightning flash:** one event triggers bolt presentation and a brief illumination change across clouds and terrain; temporal accumulation must not create a stale flash.
+- **Fire:** visible flames, emissive embers, shadow-casting behavior, flicker, smoke, and persistent scorched surfaces may use different horizons.
+- **Fog or ash:** the medium changes scene visibility and light transmission even if its individual particles are aggregated or not drawn.
+- **Sun shafts and cloud shadows:** the effect depends on light direction, media/occluder structure, view, and update cadence; a horizon decision must account for large screen coverage.
+- **Underwater scenes:** depth, turbidity, surface waves, bubbles, light attenuation, and caustic-like patterns form a coupled composition.
+- **Wetness, snow, ash, soot, and cooled lava:** surface state persists independently of the particles or event that created it and can alter later lighting/material work.
+- **Eclipses, sunrise, twilight, aurora:** celestial or atmospheric events may be low-frequency but globally visible, making simple distance-based culling inappropriate.
+
+The policy interface should be able to express dependency and invalidation: a changed light may invalidate shadows or temporal lighting history; a changed density field may invalidate volume integration; a camera cut may invalidate view-dependent history; a surface-state update may invalidate material/lighting caches. The exact invalidation graph belongs to the implementation and must be measured.
+
+## 15. Representation budget is a vector, not a single quality number
+
+A phenomenon's budget should distinguish at least:
+- observer-visible representation and projected coverage;
+- authoritative domain update requirement (reported by the owner, never inferred from visual LOD);
+- CPU selection/preparation and allocation cost;
+- GPU execution, bandwidth, and synchronization cost;
+- memory residency and reconstruction cost;
+- data freshness, latency deadline, and tolerated staleness;
+- temporal history and invalidation cost;
+- interaction/query precision needed by each consumer;
+- optional audio/haptic/semantic observation requests;
+- uncertainty, approximation error, and fallback quality.
+
+A single “low/medium/high” quality value hides important contradictions. For example, a distant volcanic ash plume can be visually coarse but still require a current regional visibility estimate for navigation. Conversely, a close decorative ember may need crisp pixels but have no authoritative interaction requirement. Track these axes independently and explain which constraint caused each reduction.
+
+## 16. Required natural-phenomena proof suite
+
+The following suite is proposed; it is not evidence of existing implementation.
+
+1. **Event fan-out:** one source event requests visual, illumination, environmental-field and optional sensory products through independent capability contracts.
+2. **Persistent aftermath:** eruption/fire/impact creates a durable surface-state change that remains after transient particles expire.
+3. **Field continuity:** plume or water field remains coherent when representation changes between near, medium and far horizons.
+4. **Lighting invalidation:** moving light, flash, density change, camera cut and material-state change invalidate only required derived data.
+5. **Multi-observer consistency:** nearby player, distant camera and AI/map observer receive different representations derived from the same authoritative revision.
+6. **Crowd stress:** dozens to thousands of sources share compatible resources and batches while source identity and field provenance remain inspectable.
+7. **Budget conflict:** inject GPU pressure and verify graceful visual degradation without suppressing domain updates or critical observer information.
+8. **Reconstruction:** unload/reload a region and rebuild representations from durable state without persisting device objects.
+9. **GPU evidence:** prove actual submitted GPU work and report CPU selection, upload, synchronization, GPU execution, memory and presentation separately.
+10. **Modular composition:** remove volumetrics, particles, advanced lighting, or post-process independently and verify the experience retains a declared fallback.
+
+The goal is not to maximize every effect at all times. It is to support the full vocabulary of natural phenomena and choose the strongest correct representation that the current observer and hardware can afford.
