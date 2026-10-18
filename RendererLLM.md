@@ -48,3 +48,9 @@ This is a concrete candidate explanation for the failure and supports the user's
 Next: keep the current Renderer disposal path intact, run the source-integration test against the current FSM_API development revision, and only pursue registry-wide synchronization if the failure reproduces or a focused stress test establishes concurrent mutation as the cause. Do not suppress disposal exceptions or replace explicit destruction with `IsValid = false`.
 
 Evidence: [Renderer workflow and reruns](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39086967875); [FSM_API comparison](https://github.com/TrentBest/FSM_API/compare/da2e05ba41ff33aeb1429433b70593e271b1fd3b...f5a89641eaca216f5466af59b2dc4a983fe9511c).
+
+## 2026-10-18: Current-source disposal verification passed
+
+The latest rerun of Renderer workflow run [39086967875](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/39086967875) completed successfully. Source-integration job `117594490093` checked out FSM_API `development` at `69949dc499c39f28d5b85d554d3f6006c7e9286d`; restore and build succeeded, and the Renderer test assembly reported **115 tests passed, 0 failed**. The independent `build-and-test` job also passed, including composition checks and living-SVG reproducibility. NuGet publishing was skipped.
+
+This is positive evidence that the current cross-repository source combination no longer reproduces the previously observed disposal failure. It does not isolate which FSM_API commit/change explains the earlier failure, and it does not prove registry-wide concurrent mutation is safe. Keep the current disposal path; do not add speculative locking or suppress destruction exceptions without a reproducible failure or a contract-backed concurrency test.
