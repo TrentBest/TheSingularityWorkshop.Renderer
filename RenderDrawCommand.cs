@@ -23,6 +23,8 @@ public readonly record struct RenderDrawCommand
             throw new ArgumentException("A valid geometry resource is required.", nameof(geometry));
         if (!material.IsValid)
             throw new ArgumentException("A valid material resource is required.", nameof(material));
+        if (!RenderMatrixValidation.IsFinite(worldTransform))
+            throw new ArgumentOutOfRangeException(nameof(worldTransform), "World transform components must be finite.");
         if (indexCount <= 0)
             throw new ArgumentOutOfRangeException(nameof(indexCount));
         if (firstIndex < 0)
