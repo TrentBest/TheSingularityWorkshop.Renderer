@@ -36,13 +36,27 @@ dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --co
 
 CI regenerates both Renderer-owned SVGs and fails if their checked-in outputs drift from the executable samples.
 
-## 3. Composition picture: understand the intended ownership
+## 3. Observer-driven policy-to-frame proof
+
+The observer-driven sample uses the actual `ObserverDistance.Select` policy primitive to select a horizon for each subject, maps the selected horizon to a representation, and builds a `RenderFrame` containing those representation decisions. It compares two observer positions and asserts that both the selected representations and total selected index counts change.
+
+This proves causal observer input → policy selection → CPU-side frame-command metadata for this deterministic fixture. It does not prove GPU submission, rendered pixels, timing, allocations, or a production scene pipeline.
+
+Run it with custom observer X coordinates:
+
+```bash
+dotnet run --project samples/ObserverDrivenFrameProof/ObserverDrivenFrameProof.csproj --configuration Release -- artifacts/observer-driven-frame-proof.svg 0 50
+```
+
+The optional final arguments are the first and second observer X positions. The default comparison uses 0 and 50. CI generates both forward and reversed comparisons and uploads them as the `renderer-observer-driven-frame-proof` artifact.
+
+## 4. Composition picture: understand the intended ownership
 
 ![Renderer composition explainer](assets/renderer-composition.svg)
 
 This animated architecture illustration explains how observer context, Event Horizons, independent work buckets, and frame assembly are intended to fit together. It is a conceptual guide—not live telemetry and not proof that every stage is wired into one end-to-end renderer.
 
-## 4. Cross-repository proof: follow a real frame downstream
+## 5. Cross-repository proof: follow a real frame downstream
 
 [Open the Visualize living SVG guide](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/SVG_LIVING_DOCUMENTATION.md).
 
