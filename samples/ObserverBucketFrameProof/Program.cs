@@ -23,7 +23,8 @@ var subjects = new[]
 {
     new Subject(501, "Survey drone", new Vector3(2, 0, 0)),
     new Subject(502, "Cargo lifter", new Vector3(10, 0, 0)),
-    new Subject(503, "Landing beacon", new Vector3(30, 0, 0))
+    new Subject(503, "Landing beacon", new Vector3(30, 0, 0)),
+    new Subject(504, "Relay mast", new Vector3(80, 0, 0))
 };
 var states = subjects.Select(subject => new SubjectState(
     subject,
@@ -50,7 +51,7 @@ foreach (var row in second.Rows)
 
 var svg = new StringBuilder();
 svg.AppendLine("""<?xml version="1.0" encoding="UTF-8"?>""");
-svg.AppendLine("""<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="770" viewBox="0 0 1180 770" role="img" aria-labelledby="title desc">""");
+svg.AppendLine("""<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="840" viewBox="0 0 1180 840" role="img" aria-labelledby="title desc">""");
 svg.AppendLine("""  <title id="title">Observer movement through bucket invalidation into a new frame</title>""");
 svg.AppendLine("""  <desc id="desc">A deterministic CPU-side proof uses real observer distance selection, actual EventHorizonBucket and dependency graph APIs, and real RenderFrame snapshots. Only subjects whose representation changes invalidate their representation and dependent shadow buckets; unchanged buckets record reuse. It is not GPU output.</desc>""");
 svg.AppendLine("""  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101c2a"/><stop offset="1" stop-color="#070b12"/></linearGradient></defs>""");
@@ -83,13 +84,13 @@ for (var i = 0; i < second.Rows.Count; i++)
     svg.AppendLine($"""  <text x="810" y="{y + 49}" fill="#9fb6cc" font-family="Consolas, monospace" font-size="11">entity {row.Subject.Id} · {row.IndexCount:N0} fixture indices</text>""");
     svg.AppendLine($"""  <text x="52" y="{y + 76}" fill="#9fb6cc" font-family="Consolas, monospace" font-size="10">distance {F(row.Distance)} · {row.HorizonName} horizon</text>""");
 }
-svg.AppendLine("""  <path d="M34 552 H1146" stroke="#294257"/>""");
-svg.AppendLine($"""  <text x="34" y="579" fill="#f4f8ff" font-family="Consolas, monospace" font-size="14">Frame index-work fixture: {first.Frame.Commands.Sum(c => c.IndexCount):N0} → {second.Frame.Commands.Sum(c => c.IndexCount):N0}</text>""");
-svg.AppendLine($"""  <text x="34" y="603" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Changed paths: {second.Rows.Count(row => row.Changed)} · unchanged paths explicitly reused: {second.Rows.Count(row => !row.Changed)}</text>""");
-svg.AppendLine("""  <text x="34" y="637" fill="#f4f8ff" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700">Evidence boundary</text>""");
-svg.AppendLine("""  <text x="34" y="660" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Real policy selection, bucket invalidation/reuse metrics, dependency propagation, and RenderFrame snapshots are exercised.</text>""");
-svg.AppendLine("""  <text x="34" y="681" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Index counts are sample workload values, not GPU measurements. No GPU submission, pixels, timing, or allocation savings are claimed.</text>""");
-svg.AppendLine("""  <text x="34" y="728" fill="#7fe0ee" font-family="Consolas, monospace" font-size="12">The trace connects existing policy and bucket primitives; it does not claim a production renderer scheduler.</text>""");
+svg.AppendLine("""  <path d="M34 658 H1146" stroke="#294257"/>""");
+svg.AppendLine($"""  <text x="34" y="685" fill="#f4f8ff" font-family="Consolas, monospace" font-size="14">Frame index-work fixture: {first.Frame.Commands.Sum(c => c.IndexCount):N0} → {second.Frame.Commands.Sum(c => c.IndexCount):N0}</text>""");
+svg.AppendLine($"""  <text x="34" y="709" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Changed paths: {second.Rows.Count(row => row.Changed)} · unchanged paths explicitly reused: {second.Rows.Count(row => !row.Changed)}</text>""");
+svg.AppendLine("""  <text x="34" y="743" fill="#f4f8ff" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700">Evidence boundary</text>""");
+svg.AppendLine("""  <text x="34" y="766" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Real policy selection, bucket invalidation/reuse metrics, dependency propagation, and RenderFrame snapshots are exercised.</text>""");
+svg.AppendLine("""  <text x="34" y="787" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="12">Index counts are sample workload values, not GPU measurements. No GPU submission, pixels, timing, or allocation savings are claimed.</text>""");
+svg.AppendLine("""  <text x="34" y="810" fill="#7fe0ee" font-family="Consolas, monospace" font-size="12">The trace connects existing policy and bucket primitives; it does not claim a production renderer scheduler.</text>""");
 svg.AppendLine("</svg>");
 
 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
