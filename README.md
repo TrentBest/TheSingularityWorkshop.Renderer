@@ -69,6 +69,14 @@ The broader [living Renderer composition explainer](docs/assets/renderer-composi
 
 ![Living Event Horizons generated from FSM_API representation states](docs/assets/living-event-horizons.svg)
 
+![RenderFrame inspector generated from actual ordered Renderer frame commands](docs/assets/render-frame-inspector.svg)
+
+The frame inspector is generated from a real `RenderFrame` instance. It shows observer position, command order, representation decisions, semantic entity IDs, resource IDs, and index ranges; it does not claim to render geometry or produce GPU pixels. Regenerate it with:
+
+~~~bash
+dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --configuration Release -- docs/assets/render-frame-inspector.svg
+~~~
+
 Regenerate it from the repository root with:
 
 ~~~bash
