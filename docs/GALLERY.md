@@ -29,7 +29,15 @@ The new executable proof compares two observer positions against the same entity
 **Recipe:** [Observer-driven frame proof](gallery/observer-driven-frame.md). CI uploads the generated comparison as the `renderer-observer-driven-frame-proof` artifact.
 
 
-## 04 — Composition: where responsibilities live
+## 04 — Bucket invalidation and cache reuse
+
+This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucketDependencyGraph` APIs. It changes a source revision, verifies that the changed bucket and its declared dependent are invalidated, confirms unrelated lighting and distant-motion buckets remain reusable, then accepts replacement refreshes. The SVG reports actual bucket metrics.
+
+**Evidence boundary:** deterministic CPU-side invalidation, refresh-ticket, and explicit-reuse behavior. It does not measure GPU work avoided, timing, allocations, or rendered pixels.
+
+**Recipe:** [Bucket invalidation and reuse proof](gallery/bucket-invalidation-and-reuse.md). CI uploads the generated SVG as `renderer-bucket-invalidation-reuse-proof`.
+
+## 05 — Composition: where responsibilities live
 
 ![Renderer composition illustration](assets/renderer-composition.svg)
 
@@ -37,7 +45,7 @@ The new executable proof compares two observer positions against the same entity
 
 **Recipe:** [Composition and ownership recipe](gallery/composition-ownership.md).
 
-## 05 — Renderer → Visualize → GUI.SVG
+## 06 — Renderer → Visualize → GUI.SVG
 
 The city-massing fixture in Visualize consumes a real Renderer frame, preserves ordered command identity through the adapter, and emits three material skins.
 
