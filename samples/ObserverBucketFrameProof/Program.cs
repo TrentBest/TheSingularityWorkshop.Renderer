@@ -36,6 +36,11 @@ foreach (var state in states)
     dependencies.AddDependency(state.RepresentationBucket, state.ShadowBucket);
 
 var first = Evaluate(firstObserverX, epoch, initialize: true);
+foreach (var state in states)
+{
+    state.InitialRepresentationInvalidations = state.RepresentationBucket.Metrics.Invalidations;
+    state.InitialShadowInvalidations = state.ShadowBucket.Metrics.Invalidations;
+}
 var second = Evaluate(secondObserverX, epoch.AddMilliseconds(10), initialize: false);
 if (!second.Rows.Any(row => row.Changed))
     throw new InvalidOperationException("Observer movement did not change any selected representation.");
@@ -43,8 +48,9 @@ foreach (var row in second.Rows)
 {
     if (!row.RepresentationValid || !row.ShadowValid)
         throw new InvalidOperationException($"Expected valid refreshed output for {row.Subject.Name}.");
-    if (row.Changed && (row.RepresentationMetrics.Invalidations == 0 || row.ShadowMetrics.Invalidations == 0))
-        throw new InvalidOperationException($"Expected observer invalidation and dependency propagation for {row.Subject.Name}.");
+    if (row.Changed && (row.RepresentationMetrics.Invalidations <= row.InitialRepresentationInvalidations ||
+        row.ShadowMetrics.Invalidations <= row.InitialShadowInvalidations))
+        throw new InvalidOperationException($"Expected this observer move to invalidate {row.Subject.Name} and propagate to its shadow.");
     if (!row.Changed && (row.RepresentationMetrics.ReuseCount == 0 || row.ShadowMetrics.ReuseCount == 0))
         throw new InvalidOperationException($"Expected explicit reuse for unchanged {row.Subject.Name} buckets.");
 }
@@ -160,7 +166,8 @@ FrameSnapshot Evaluate(float observerX, DateTimeOffset now, bool initialize)
 
         state.LastRepresentation = representation;
         rows.Add(new FrameRow(state.Subject, distance, horizon.Name, before, representation, indexCount, changed,
-            state.RepresentationBucket.Metrics, state.ShadowBucket.Metrics, state.RepresentationBucket.HasValidRepresentation,
+            state.RepresentationBucket.Metrics, state.ShadowBucket.Metrics, state.InitialRepresentationInvalidations,
+            state.InitialShadowInvalidations, state.RepresentationBucket.HasValidRepresentation,
             state.ShadowBucket.HasValidRepresentation));
         commands.Add(new RenderDrawCommand(
             new RenderResourceId((ulong)(100 + state.Subject.Id)),
@@ -186,8 +193,11 @@ sealed record Subject(ulong Id, string Name, Vector3 Position);
 sealed record SubjectState(Subject Subject, EventHorizonBucket RepresentationBucket, EventHorizonBucket ShadowBucket)
 {
     public RendererRepresentation? LastRepresentation { get; set; }
+    public long InitialRepresentationInvalidations { get; set; }
+    public long InitialShadowInvalidations { get; set; }
 }
 sealed record FrameRow(Subject Subject, double Distance, string HorizonName, string Before, RendererRepresentation After, int IndexCount,
     bool Changed, EventHorizonBucketMetrics RepresentationMetrics, EventHorizonBucketMetrics ShadowMetrics,
+    long InitialRepresentationInvalidations, long InitialShadowInvalidations,
     bool RepresentationValid, bool ShadowValid);
 sealed record FrameSnapshot(RenderFrame Frame, IReadOnlyList<FrameRow> Rows);
