@@ -1,46 +1,58 @@
 # SVG living documentation
 
-**Purpose:** use SVG as a visible, inspectable proof surface for Renderer behavior—not as a substitute for execution evidence.
+**Purpose:** use generated SVGs as a visible, inspectable proof surface for Renderer behavior—not as a substitute for execution evidence.
 
-## Current executable evidence
+## 1. Living Event Horizons: state transitions made visible
 
-### 1. Renderer-owned state proof
+![Living Event Horizons generated from FSM_API representation states](assets/living-event-horizons.svg)
 
-`samples/LivingRenderer/Program.cs` creates five real `RendererComputationMachine` instances, advances each through FSM_API, reads `CurrentRepresentation`, and writes `docs/assets/living-event-horizons.svg`.
+**What you're seeing:** five real `RendererComputationMachine` instances are created and advanced through FSM_API; the sample reads each machine's `CurrentRepresentation` and writes the SVG. The representation state comes from executed FSM transitions. Glow, pulse, layout, and animation are SVG presentation.
 
-Run from the repository root:
+**What it proves:** the sample can execute the FSM-backed representation-state path and expose its resulting state in an inspectable snapshot.
+
+**What it does not prove:** this is not live telemetry, a running world, or a frame-time/performance benchmark.
+
+Run from the Renderer repository root:
 
 ```bash
 dotnet run --project samples/LivingRenderer/LivingRenderer.csproj --configuration Release -- docs/assets/living-event-horizons.svg
 ```
 
-The state markers come from the executed FSM transitions. Glow, pulse, layout, and animation are SVG presentation. This is a generated snapshot, not live telemetry.
+## 2. RenderFrame inspector: inspect the actual command contract
 
-### 2. Renderer frame inspector
+![RenderFrame inspector generated from actual ordered Renderer frame commands](assets/render-frame-inspector.svg)
 
-[Open the generated RenderFrame inspector](assets/render-frame-inspector.svg). The runnable sample constructs a real `RenderFrame`, then reads `RenderFrame.View` and the ordered `RenderFrame.Commands` to produce a diagnostic SVG containing observer position, representation choice, entity ID, geometry/material IDs, and index/instance ranges.
+**What you're seeing:** a runnable sample constructs a real `RenderFrame`, then reads `RenderFrame.View` and its ordered `RenderFrame.Commands`. The SVG exposes observer position, command order, representation, entity ID, geometry/material resource IDs, and index/instance ranges.
 
-Run from the repository root:
+**What it proves:** the CPU-side frame contract contains inspectable, ordered command metadata that a downstream backend can consume.
+
+**What it does not prove:** the inspector does not draw the geometry, submit GPU work, or claim to show rendered pixels.
+
+Run from the Renderer repository root:
 
 ```bash
 dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --configuration Release -- docs/assets/render-frame-inspector.svg
 ```
 
-This demonstrates the public CPU-side frame contract that a downstream backend can consume. The diagram does not draw the geometry, submit GPU work, or claim to show rendered pixels. CI regenerates both Renderer-owned SVGs and fails if their checked-in outputs drift from the executable samples.
+CI regenerates both Renderer-owned SVGs and fails if their checked-in outputs drift from the executable samples.
 
-### 3. Cross-repository frame-to-SVG proof
+## 3. Composition picture: understand the intended ownership
 
-[Visualize's CityMassingProof](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/tree/development/integrations/GuiSvg/CityMassingProof) exercises a fuller consumer path:
+![Renderer composition explainer](assets/renderer-composition.svg)
+
+This animated architecture illustration explains how observer context, Event Horizons, independent work buckets, and frame assembly are intended to fit together. It is a conceptual guide—not live telemetry and not proof that every stage is wired into one end-to-end renderer.
+
+## 4. Cross-repository proof: follow a real frame downstream
+
+[Open the Visualize living SVG guide](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/SVG_LIVING_DOCUMENTATION.md).
+
+The Visualize `CityMassingProof` fixture exercises:
 
 `ObserverRepresentationPolicy` → selected face commands → Renderer `RenderFrame` → `RendererFrameAdapter` → Visualizer frame/resources → optional GUI.SVG backend → SVG files and a JSON report.
 
-The fixture emits three visual skins and checks that distant policy omits window-detail face commands while preserving the shared source buffers. This is command-level work reduction; it is not GPU rendering, geometry-buffer compaction, or a production city renderer. Run it from a Visualize checkout with its documented source dependencies:
+Open the [Visualize proof workflow](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39369513107), then its **Artifacts** section and download `visualize-city-massing-proof` to see the three skins and report.
 
-```bash
-dotnet run --project integrations/GuiSvg/CityMassingProof/CityMassingProof.csproj --configuration Release
-```
-
-See the [Visualize living SVG guide](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/SVG_LIVING_DOCUMENTATION.md) for the presentation-side proof matrix.
+The executable assertion checks that command count/order and each command's geometry/material IDs, world transform, index range, representation, and entity ID survive the adapter. The distant representation omits selected window-detail face commands. This is command-level work reduction—not GPU rendering, geometry-buffer compaction, or a production city renderer.
 
 ## Ownership boundaries
 
@@ -53,11 +65,10 @@ Renderer must remain independently usable: **do not add a Visualize or GUI.SVG d
 
 ## Next proof progression
 
-1. **Frame inspector:** implemented as `samples/RenderFrameSvgProof`; it reads an actual Renderer `RenderFrame` and visualizes ordered command metadata without claiming to rasterize geometry.
-2. **Policy-to-frame:** make the inputs and outputs of a deterministic observer/policy fixture visible together; assert representation counts and command order.
-3. **Bucket invalidation:** execute the actual dependency graph, change one source, and visualize invalidated versus reusable buckets.
-4. **Observer changes:** change the observer and compare actual selected representations and frame counts.
-5. **Consumer proof:** keep Visualize's GUI.SVG output as an optional downstream manifestation of real frame/resource contracts.
-6. **GPU proof:** label separately and require a real selected backend, submitted work, and verified GPU-produced pixels.
+1. **Policy-to-frame:** expose deterministic observer/policy inputs and representation counts together, with assertions on command order.
+2. **Bucket invalidation:** execute the actual dependency graph, change one source, and visualize invalidated versus reusable buckets.
+3. **Observer changes:** change the observer and compare actual selected representations and frame counts.
+4. **Consumer proof:** keep Visualize's GUI.SVG output as an optional downstream manifestation of real frame/resource contracts.
+5. **GPU proof:** label separately and require a real selected backend, submitted work, and verified GPU-produced pixels.
 
 Each proof should be generated by a runnable C# sample or test, checked in or published as a CI artifact, and compared in CI where deterministic. A diagram may explain an intended path, but must be labeled conceptual until executable evidence supports it.
