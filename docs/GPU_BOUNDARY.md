@@ -222,47 +222,23 @@ That is the useful boundary.
 
 ## Hardware discovery and capability specialization
 
-The next layer is not a generic backend. It is **hardware discovery**.
-
-The Renderer should be able to establish a hardware profile before selecting its GPU execution path:
+The next layer is **host compatibility and runtime capability discovery**. Identify the execution environment first, initialize a compatible implementation, then query the actual adapter/device/runtime. Do not infer a browser's underlying API from its brand or choose a path from GPU vendor identity.
 
 ```text
-physical GPU
+host compatibility
     ↓
-adapter/device discovery
+available backend implementations
     ↓
-vendor + architecture + device identity
+actual runtime/device initialization
     ↓
-capability profile
+capabilities + limits + constraints
     ↓
-Workshop GPU strategy
+required-feature fit / optional extensions
     ↓
-hardware-specific execution
+explicit execution path + diagnostics
 ```
 
-A generic baseline remains necessary so the Renderer can run broadly, but it must not become the ceiling. The capability model should be additive: a GPU that exposes more useful hardware should allow the Renderer to do more useful work.
-
-Conceptually:
-
-```text
-                    Workshop GPU
-                         |
-             +-----------+-----------+
-             |                       |
-        baseline path           capability path
-             |                       |
-       common operations       detected features
-                                     |
-                         +-----------+-----------+
-                         |           |           |
-                      vendor      memory      execution
-                      features    model        features
-                         |           |           |
-                         +-----------+-----------+
-                                     |
-                                     v
-                              specialized path
-```
+Vendor, architecture, driver, and device identifiers are useful diagnostic and benchmark metadata. They are not the primary backend-selection rule. A generic baseline remains necessary but must not become the ceiling: capability discovery is additive, and explicitly requested extensions may use the features a runtime actually exposes. Missing required features must fail clearly or select another compatible path; optional paths and fallbacks must be visible. This applies equally to native and browser hosts, whose available APIs and lifecycle rules differ.
 
 ## C# should reach as close to the metal as practical
 
@@ -287,7 +263,7 @@ The goal is not to pretend native APIs are managed objects. The goal is to make 
 
 NVIDIA CUDA should be treated as an important example of specialization rather than as the generic rendering architecture.
 
-Where NVIDIA hardware is detected and CUDA provides leverage for a workload, the Renderer can eventually select a CUDA-backed compute path while preserving the same Workshop-level model.
+Where a runtime exposes CUDA and a measured workload benefits from it, a separately implemented compute extension may use that capability. The decision is based on runtime capability and workload evidence, not on NVIDIA identity alone. Renderer core must not take a CUDA dependency.
 
 ```text
 Workshop GPU model
@@ -323,6 +299,8 @@ That investigation is now part of the Renderer roadmap.
 
 ## Visualize integration contract
 
+Renderer and Visualize are coordinated GPU beneficiaries, with deliberately separate ownership. Renderer can benefit first by reducing CPU work and producing fewer, more relevant commands; Visualize benefits by executing the selected work efficiently. Later, eligible data-parallel Renderer workloads—such as bulk visibility, aggregation, or reconstruction—may be offloaded through a neutral optional compute-provider boundary after a concrete workload proves the need. Do not prematurely add GPU API objects or make Renderer depend on Visualize to achieve this.
+
 The current source integration is split deliberately:
 
 - **Renderer core** owns observer-relative representation selection and emits immutable `RenderFrame` command snapshots. It must not reference Visualize, WPF, Vulkan, Direct3D, WebGPU, or native handles.
@@ -340,4 +318,6 @@ Before production integration, define and test the bridge from Renderer resource
 
 The current AnyApp `--renderer-proof` view is a WPF diagnostic projection, not GPU output. Visualize's SVG and perspective-mesh proofs validate other layers, not native GPU presentation. The native API choice is still open; the Visualize strategy is to compare candidates against an equivalent array-first workload before extending any specific prototype.
 
-The first cross-repository acceptance test is therefore not just “a frame object converted successfully.” It is: a known Renderer frame resolves to known resource data, is submitted to the selected backend, produces a real presented image, and reports backend/device identity—without adding an upward dependency or leaking platform handles into Renderer.
+The first cross-repository acceptance test is therefore not just “a frame object converted successfully.” It is: a known Renderer frame resolves to known resource data, is submitted to the selected backend, produces a real presented image, and reports backend/device/runtime identity and capabilities—without adding an upward dependency or leaking platform handles into Renderer.
+
+Use one deterministic array-first workload and observer trace across the CPU/SVG reference, browser WebGPU execution where available, and any later native backend. Renderer must supply actual horizon/bucket invalidation and reuse decisions rather than a sample-owned timer. Visualize must resolve logical IDs to real resource data and report upload/reuse accounting. Compare equivalent work and preserve output assertions; never treat a browser API's existence, a successful build, or a software adapter as proof of physical-GPU performance.
