@@ -9,6 +9,8 @@
 
 TheSingularityWorkshop.Renderer is a graphics-API-independent set of observer, representation, visibility, and computational-detail foundations. Its central idea is the **Event Horizon**: a boundary where the work needed to represent something can change with the observer and context.
 
+**[Gallery](docs/GALLERY.md)** — short visual index · [Detailed SVG proof guide](docs/SVG_LIVING_DOCUMENTATION.md)
+
 ~~~mermaid
 flowchart TD
     W["World / experience state"] --> O["Observer context"]
@@ -65,9 +67,17 @@ The first living documentation proof runs the real `RendererComputationMachine` 
 
 A separate cross-repository proof now renders a deterministic three-skin city fixture through Visualize's CPU/SVG path and verifies that distant representations submit fewer face commands: [open the generated SVG/report artifact](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39003350163/artifacts/12089384831). This is command-level detail reduction—not GPU output, geometry-buffer compaction, or production city rendering.
 
-The broader [living Renderer composition explainer](docs/assets/renderer-composition.svg) shows how observer context, Event Horizons, independent work buckets, and frame assembly fit together. It is an animated architecture guide, not live telemetry; the end-to-end connected path is still a roadmap goal. See the [living Renderer guide](docs/LIVING_RENDERER.md) for the implementation evidence and next proofs.
+The broader [living Renderer composition explainer](docs/assets/renderer-composition.svg) shows how observer context, Event Horizons, independent work buckets, and frame assembly fit together. It is an animated architecture guide, not live telemetry; the end-to-end connected path is still a roadmap goal. See the [living Renderer guide](docs/LIVING_RENDERER.md) for the implementation evidence and next proofs. The [SVG living-documentation guide](docs/SVG_LIVING_DOCUMENTATION.md) maps each generated visual to its executable source, command, and evidence boundary.
 
 ![Living Event Horizons generated from FSM_API representation states](docs/assets/living-event-horizons.svg)
+
+![RenderFrame inspector generated from actual ordered Renderer frame commands](docs/assets/render-frame-inspector.svg)
+
+The frame inspector is generated from a real `RenderFrame` instance. It shows observer position, command order, representation decisions, semantic entity IDs, resource IDs, and index ranges; it does not claim to render geometry or produce GPU pixels. Regenerate it with:
+
+~~~bash
+dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --configuration Release -- docs/assets/render-frame-inspector.svg
+~~~
 
 Regenerate it from the repository root with:
 
