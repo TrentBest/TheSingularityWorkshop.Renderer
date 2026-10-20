@@ -81,6 +81,13 @@ jobs:
         run: |
           dotnet run --project samples/ObserverDrivenFrameProof/ObserverDrivenFrameProof.csproj --configuration Release -- artifacts/observer-driven-frame-proof.svg 0 50
           dotnet run --project samples/ObserverDrivenFrameProof/ObserverDrivenFrameProof.csproj --configuration Release -- artifacts/observer-driven-frame-proof-reversed.svg 50 0
+      - name: Generate bucket invalidation and reuse proof
+        run: dotnet run --project samples/BucketInvalidationReuseProof/BucketInvalidationReuseProof.csproj --configuration Release -- artifacts/bucket-invalidation-reuse-proof.svg
+      - name: Upload bucket invalidation and reuse proof
+        uses: actions/upload-artifact@v7
+        with:
+          name: renderer-bucket-invalidation-reuse-proof
+          path: artifacts/bucket-invalidation-reuse-proof.svg
       - name: Upload observer-driven frame proof
         uses: actions/upload-artifact@v7
         with:
