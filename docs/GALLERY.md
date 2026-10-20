@@ -20,7 +20,7 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 **Recipe:** [RenderFrame inspector recipe and run command](gallery/render-frame-inspector.md).
 
-## 03 — Composition: where responsibilities live
+## 04 — Composition: where responsibilities live
 
 ![Renderer composition illustration](assets/renderer-composition.svg)
 
@@ -28,15 +28,20 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 **Recipe:** [Composition and ownership recipe](gallery/composition-ownership.md).
 
-## 04 — Renderer → Visualize → GUI.SVG
+## 05 — Renderer → Visualize → GUI.SVG
 
 The city-massing fixture in Visualize consumes a real Renderer frame, preserves ordered command identity through the adapter, and emits three material skins.
 
 **See:** [Cross-repository proof path](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/SVG_LIVING_DOCUMENTATION.md#more-advanced-proof-outputs-generated-by-ci) · [Visualize Gallery](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/GALLERY.md).
 
-## The next living proof
+## 03 — Observer moves: policy-to-frame proof
 
-The current gallery makes Renderer state and command contracts inspectable, but it does not yet make the renderer itself live. The next exhibit should let the user change observer position or policy input and watch **real** selected representations, command counts, and work buckets change. The SVG should be driven by those outputs; timing and allocation data should be recorded alongside them. No pre-scripted animation should be described as live behavior.
+The new executable proof compares two observer positions against the same entity fixture. It calls Renderer’s real `ObserverDistance.Select`, builds real `RenderFrame` command snapshots, and asserts that selected representations and total index work change.
+
+**Evidence boundary:** this is a deterministic CPU-side policy/frame proof. It does not submit GPU work, render pixels, or measure timing/allocations.
+
+**Recipe:** [Observer-driven frame proof](gallery/observer-driven-frame.md). CI uploads the generated comparison as the `renderer-observer-driven-frame-proof` artifact.
+
 
 Run the current generated samples and inspect the evidence rules in the [full guide](SVG_LIVING_DOCUMENTATION.md).
 
