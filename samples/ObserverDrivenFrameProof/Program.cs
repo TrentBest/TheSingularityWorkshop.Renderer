@@ -129,7 +129,6 @@ static float Parse(string value) =>
         ? parsed
         : throw new ArgumentException($"'{value}' is not a finite observer X coordinate.");
 
-static string F(float value) => value.ToString("0.##", CultureInfo.InvariantCulture);
 static string F(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
 static string Esc(string value) => SecurityElement.Escape(value) ?? value;
 
