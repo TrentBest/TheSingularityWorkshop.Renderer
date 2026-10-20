@@ -9,6 +9,8 @@
 
 TheSingularityWorkshop.Renderer is a graphics-API-independent set of observer, representation, visibility, and computational-detail foundations. Its central idea is the **Event Horizon**: a boundary where the work needed to represent something can change with the observer and context.
 
+**[Gallery](docs/GALLERY.md)** — short visual index · [Detailed SVG proof guide](docs/SVG_LIVING_DOCUMENTATION.md)
+
 ~~~mermaid
 flowchart TD
     W["World / experience state"] --> O["Observer context"]
