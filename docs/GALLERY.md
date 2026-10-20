@@ -2,7 +2,7 @@
 
 **Choose the right work for the observer before handing it to presentation.**
 
-This is the brief index. Each exhibit links to the document that explains its recipe, source, and evidence. The current SVGs are generated snapshots; they are not live telemetry. The [SVG living-documentation guide](SVG_LIVING_DOCUMENTATION.md) contains the full technical explanation.
+This is the brief index. Each exhibit links to the document that explains its recipe, source, and evidence. The current SVGs are generated snapshots; they are not live telemetry. The [SVG living-documentation guide](SVG_LIVING_DOCUMENTATION.md) contains the full technical explanation. The [per-file UML source index](UML/README.md) tracks audited C# types and explicitly lists coverage still pending.
 
 ## 01 — Event Horizons: representation states
 
