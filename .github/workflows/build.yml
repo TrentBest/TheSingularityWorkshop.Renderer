@@ -77,6 +77,15 @@ jobs:
           dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --configuration Release -- docs/assets/render-frame-inspector.svg
       - name: Verify living SVGs are reproducible
         run: git diff --exit-code -- docs/assets/living-event-horizons.svg docs/assets/render-frame-inspector.svg
+      - name: Generate observer-driven policy-to-frame proof
+        run: |
+          dotnet run --project samples/ObserverDrivenFrameProof/ObserverDrivenFrameProof.csproj --configuration Release -- artifacts/observer-driven-frame-proof.svg 0 50
+          dotnet run --project samples/ObserverDrivenFrameProof/ObserverDrivenFrameProof.csproj --configuration Release -- artifacts/observer-driven-frame-proof-reversed.svg 50 0
+      - name: Upload observer-driven frame proof
+        uses: actions/upload-artifact@v7
+        with:
+          name: renderer-observer-driven-frame-proof
+          path: artifacts/observer-driven-frame-proof*.svg
       - name: Pack
         run: dotnet pack TheSingularityWorkshop.Renderer.csproj --configuration Release --no-build --output ./artifacts
       - name: Upload NuGet package artifact
