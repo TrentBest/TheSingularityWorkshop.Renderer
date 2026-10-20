@@ -28,8 +28,15 @@ The new executable proof compares two observer positions against the same entity
 
 **Recipe:** [Observer-driven frame proof](gallery/observer-driven-frame.md). CI uploads the generated comparison as the `renderer-observer-driven-frame-proof` artifact.
 
+## 04 — Observer → buckets → frame
 
-## 04 — Bucket invalidation and cache reuse
+This connected executable proof joins observer-distance selection, per-subject bucket invalidation, declared shadow dependencies, explicit reuse of unchanged buckets, and the resulting ordered `RenderFrame` commands. It asserts that changed representations refresh their dependent outputs while a subject that remains in the same representation records reuse.
+
+**Evidence boundary:** actual CPU-side policy and bucket APIs plus real frame snapshots. It does not prove GPU submission, rendered pixels, production scheduling, or performance savings.
+
+**Recipe:** [Observer-to-bucket-to-frame causal proof](gallery/observer-bucket-frame.md). CI uploads the SVG as the `renderer-observer-bucket-frame-proof` artifact.
+
+## 05 — Bucket invalidation and cache reuse
 
 This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucketDependencyGraph` APIs. It changes a source revision, verifies that the changed bucket and its declared dependent are invalidated, confirms unrelated lighting and distant-motion buckets remain reusable, then accepts replacement refreshes. The SVG reports actual bucket metrics.
 
@@ -37,7 +44,7 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 
 **Recipe:** [Bucket invalidation and reuse proof](gallery/bucket-invalidation-and-reuse.md). CI uploads the generated SVG as `renderer-bucket-invalidation-reuse-proof`.
 
-## 05 — Composition: where responsibilities live
+## 06 — Composition: where responsibilities live
 
 ![Renderer composition illustration](assets/renderer-composition.svg)
 
@@ -45,7 +52,7 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 
 **Recipe:** [Composition and ownership recipe](gallery/composition-ownership.md).
 
-## 06 — Renderer → Visualize → GUI.SVG
+## 07 — Renderer → Visualize → GUI.SVG
 
 The city-massing fixture in Visualize consumes a real Renderer frame, preserves ordered command identity through the adapter, and emits three material skins.
 
