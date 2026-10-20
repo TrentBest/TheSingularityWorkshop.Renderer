@@ -95,9 +95,11 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Living Renderer guide](docs/LIVING_RENDERER.md) — visual teaching path, what is executable today, and the next evidence milestones.
 - [What Event Horizons mean](docs/EVENT_HORIZON_THEORY.md) — the conceptual rationale behind observer-relative computational detail.
 - [Event Horizon contracts](docs/EVENT_HORIZONS.md) and [bucket model](docs/EVENT_HORIZON_BUCKETS.md) — selection and grouping behavior, with the policy boundaries made explicit.
+- [Observable phenomena and effect budgets](docs/OBSERVABLE_PHENOMENA_AND_EFFECT_BUDGETS.md) — observer-relative representation budgets and perceptual effects, with implementation limits stated explicitly.
 - [Architecture](docs/ARCHITECTURE.md) — component ownership and dependency direction.
 - [Rendering model](docs/RENDERING_MODEL.md) and [representation](docs/REPRESENTATION.md) — how stable identity can outlive a particular materialized form.
-- [Observation model](docs/OBSERVATION_MODEL.md) and [obstruction/sensor visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md) — observer geometry and channel-specific visibility contracts.\n- [Semantic observation](docs/SEMANTIC_OBSERVATION.md) — Event Horizons as structured observations for AI/FSM agents, including horizon summaries, relations, uncertainty, and freshness.
+- [Observation model](docs/OBSERVATION_MODEL.md) and [obstruction/sensor visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md) — observer geometry and channel-specific visibility contracts.
+- [Semantic observation](docs/SEMANTIC_OBSERVATION.md) — Event Horizons as structured observations for AI/FSM agents, including horizon summaries, relations, uncertainty, and freshness.
 - [Spatial semantics and affordances](docs/SPATIAL_SEMANTICS_AND_AFFORDANCES.md) — spatially grounded concepts, named geometry anchors, visible widgets, and pose-aware interactions.
 - [FSM integration](docs/FSM_INTEGRATION.md) and [scheduling model](docs/FSM_SCHEDULING_MODEL.md) — where FSM_API fits without making it a graphics engine.
 - [GPU boundary](docs/GPU_BOUNDARY.md) — the intended division between CPU-side meaning/policy and GPU-facing execution.
