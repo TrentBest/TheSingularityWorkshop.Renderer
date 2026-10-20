@@ -16,7 +16,19 @@ dotnet run --project samples/LivingRenderer/LivingRenderer.csproj --configuratio
 
 The state markers come from the executed FSM transitions. Glow, pulse, layout, and animation are SVG presentation. This is a generated snapshot, not live telemetry.
 
-### 2. Cross-repository frame-to-SVG proof
+### 2. Renderer frame inspector
+
+[Open the generated RenderFrame inspector](assets/render-frame-inspector.svg). The runnable sample constructs a real `RenderFrame`, then reads `RenderFrame.View` and the ordered `RenderFrame.Commands` to produce a diagnostic SVG containing observer position, representation choice, entity ID, geometry/material IDs, and index/instance ranges.
+
+Run from the repository root:
+
+```bash
+dotnet run --project samples/RenderFrameSvgProof/RenderFrameSvgProof.csproj --configuration Release -- docs/assets/render-frame-inspector.svg
+```
+
+This demonstrates the public CPU-side frame contract that a downstream backend can consume. The diagram does not draw the geometry, submit GPU work, or claim to show rendered pixels. CI regenerates both Renderer-owned SVGs and fails if their checked-in outputs drift from the executable samples.
+
+### 3. Cross-repository frame-to-SVG proof
 
 [Visualize's CityMassingProof](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/tree/development/integrations/GuiSvg/CityMassingProof) exercises a fuller consumer path:
 
@@ -41,7 +53,7 @@ Renderer must remain independently usable: **do not add a Visualize or GUI.SVG d
 
 ## Next proof progression
 
-1. **Frame inspector:** emit an SVG diagnostic from an actual Renderer `RenderFrame`, showing its view and ordered command metadata without claiming to rasterize geometry.
+1. **Frame inspector:** implemented as `samples/RenderFrameSvgProof`; it reads an actual Renderer `RenderFrame` and visualizes ordered command metadata without claiming to rasterize geometry.
 2. **Policy-to-frame:** make the inputs and outputs of a deterministic observer/policy fixture visible together; assert representation counts and command order.
 3. **Bucket invalidation:** execute the actual dependency graph, change one source, and visualize invalidated versus reusable buckets.
 4. **Observer changes:** change the observer and compare actual selected representations and frame counts.
