@@ -73,9 +73,9 @@ for (var i = 0; i < buckets.Length; i++)
     var bucket = buckets[i];
     var metrics = bucket.Metrics;
     var y = 226 + i * 88;
-    var dirty = !bucket.HasValidRepresentation;
-    var state = dirty ? "INVALIDATED → REFRESHED" : "VALID / REUSABLE";
-    var color = dirty ? "#ffcf74" : "#7ee0a1";
+    var wasInvalidated = metrics.Invalidations > 0;
+    var state = wasInvalidated ? "INVALIDATED → REFRESHED" : "VALID / REUSABLE";
+    var color = wasInvalidated ? "#ffcf74" : "#7ee0a1";
     svg.AppendLine($"""  <rect x="36" y="{y}" width="1048" height="74" rx="10" fill="#14283a" stroke="#294257"/>""");
     svg.AppendLine($"""  <text x="54" y="{y + 24}" fill="#f4f8ff" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700">{Esc(bucket.Name)}</text>""");
     svg.AppendLine($"""  <text x="54" y="{y + 48}" fill="#9fb6cc" font-family="Consolas, monospace" font-size="12">{F(bucket.UpdatesPerSecond)} updates/s · {bucket.Horizon.Name} horizon</text>""");
