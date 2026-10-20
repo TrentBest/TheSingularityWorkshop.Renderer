@@ -10,7 +10,7 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 **See:** five FSM-backed computation machines advanced through actual state transitions; the generated SVG reads their resulting representation values. The glow, pulse, and motion are SVG presentation, not a live world.
 
-**Recipe:** [Event Horizon state proof](SVG_LIVING_DOCUMENTATION.md#1-living-event-horizons-state-transitions-made-visible).
+**Recipe:** [Event Horizon state proof recipe](gallery/event-horizons.md).
 
 ## 02 — RenderFrame inspector: ordered work
 
@@ -18,7 +18,7 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 **See:** observer position and the ordered CPU-side commands that downstream presentation can consume, including representation, entity, resource IDs, and draw ranges.
 
-**Recipe:** [RenderFrame inspector and run command](SVG_LIVING_DOCUMENTATION.md#2-renderframe-inspector-inspect-the-actual-command-contract).
+**Recipe:** [RenderFrame inspector recipe and run command](gallery/render-frame-inspector.md).
 
 ## 03 — Composition: where responsibilities live
 
@@ -26,7 +26,7 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 **See:** the intended relationship between observer context, Event Horizons, work buckets, and frame assembly. This is an architecture illustration, not proof that all stages currently run end to end.
 
-**Recipe:** [Composition and ownership boundaries](SVG_LIVING_DOCUMENTATION.md#3-composition-picture-understand-the-intended-ownership).
+**Recipe:** [Composition and ownership recipe](gallery/composition-ownership.md).
 
 ## 04 — Renderer → Visualize → GUI.SVG
 
