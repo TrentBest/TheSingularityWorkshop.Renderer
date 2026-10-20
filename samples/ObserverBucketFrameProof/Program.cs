@@ -55,7 +55,7 @@ svg.AppendLine("""<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="8
 svg.AppendLine("""  <title id="title">Observer movement through bucket invalidation into a new frame</title>""");
 svg.AppendLine("""  <desc id="desc">A deterministic CPU-side proof uses real observer distance selection, actual EventHorizonBucket and dependency graph APIs, and real RenderFrame snapshots. Only subjects whose representation changes invalidate their representation and dependent shadow buckets; unchanged buckets record reuse. It is not GPU output.</desc>""");
 svg.AppendLine("""  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101c2a"/><stop offset="1" stop-color="#070b12"/></linearGradient></defs>""");
-svg.AppendLine("""  <rect width="1180" height="770" rx="20" fill="url(#bg)"/>""");
+svg.AppendLine("""  <rect width="1180" height="840" rx="20" fill="url(#bg)"/>""");
 svg.AppendLine("""  <text x="34" y="42" fill="#f4f8ff" font-family="Segoe UI, sans-serif" font-size="24" font-weight="700">Observer → policy → buckets → frame</text>""");
 svg.AppendLine("""  <text x="34" y="68" fill="#9fb6cc" font-family="Segoe UI, sans-serif" font-size="13">Actual Renderer APIs · deterministic CPU-side causal trace · no GPU submission</text>""");
 svg.AppendLine($"""  <rect x="34" y="88" width="1112" height="70" rx="10" fill="#14283a" stroke="#31516a"/>""");
