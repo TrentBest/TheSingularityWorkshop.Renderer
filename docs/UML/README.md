@@ -6,7 +6,7 @@ This folder contains source-backed UML for individual C# files. Every page must 
 
 | Source file | UML page | Coverage |
 |---|---|---|
-| `RenderFrame.cs` | [RenderFrame.cs.md](RenderFrame.cs.md) | Documented |
+| `RenderFrame.cs` | [RenderFrame.cs.md](RenderFrame.cs.md) · [RenderFrameUML.md](RenderFrameUML.md) | Documented |
 | `RenderDrawCommand.cs` | [RenderDrawCommand.cs.md](RenderDrawCommand.cs.md) | Documented |
 | `RenderView.cs` | [RenderView.cs.md](RenderView.cs.md) | Documented |
 | `RendererComputationMachine.cs` | [RendererComputationMachine.cs.md](RendererComputationMachine.cs.md) | Documented |
