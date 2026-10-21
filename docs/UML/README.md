@@ -8,6 +8,7 @@ This folder contains source-backed UML for individual C# files. Every page must 
 |---|---|---|
 | `RenderFrame.cs` | [RenderFrame.cs.md](RenderFrame.cs.md) · [RenderFrameUML.md](RenderFrameUML.md) | Documented |
 | `RenderDrawCommand.cs` | [RenderDrawCommand.cs.md](RenderDrawCommand.cs.md) · [RenderDrawCommandUML.md](RenderDrawCommandUML.md) | Documented |
+| `ObserverRepresentationPolicy.cs` | [ObserverRepresentationPolicy.cs.md](ObserverRepresentationPolicy.cs.md) · [ObserverRepresentationPolicyUML.md](ObserverRepresentationPolicyUML.md) | Documented |
 | `RenderView.cs` | [RenderView.cs.md](RenderView.cs.md) | Documented |
 | `RendererComputationMachine.cs` | [RendererComputationMachine.cs.md](RendererComputationMachine.cs.md) | Documented |
 | Other production, sample, and test `.cs` files | Not yet documented | Pending |
