@@ -3,7 +3,7 @@
 **Purpose:** Carry the observer-relative view and ordered rendering commands for one frame across the platform-neutral Renderer boundary.
 
 **Implementation source:** [`RenderFrame.cs`](../../RenderFrame.cs)  
-**Class diagram:** [`RenderFrame.cs.svg`](RenderFrame.cs.svg)  
+**Class diagram:** [RenderFrameUML.md](RenderFrameUML.md)  
 **Tests and executable evidence:** [Renderer test suite](../../tests) · [observer-driven frame proof](../gallery/observer-driven-frame.md)
 
 ## Class card
