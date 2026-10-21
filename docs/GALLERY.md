@@ -4,6 +4,17 @@
 
 This is the brief index. Each exhibit links to the document that explains its recipe, source, and evidence. The current SVGs are generated snapshots; they are not live telemetry. The [SVG living-documentation guide](SVG_LIVING_DOCUMENTATION.md) contains the full technical explanation. The [per-file UML source index](UML/README.md) tracks audited C# types and explicitly lists coverage still pending.
 
+## Start here — One observer, two worlds
+
+A single change of observer position has two complementary views: Renderer exposes the decision as structured, inspectable frame data; Visualize and GUI.SVG manifest that decision as a picture. Follow the input through the computation and into the output rather than treating the SVG as decoration.
+
+- **Renderer evidence:** [Observer moves: policy-to-frame](gallery/observer-driven-frame.md) shows the selected representation and index-work change for a deterministic fixture.
+- **Downstream manifestation:** [Observer-driven presentation proof](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/gallery/observer-driven-presentation.md) runs the observer policy at X=0 and X=50, adapts two real Renderer frames, and generates two SVGs plus a machine-readable report.
+- **Inspect the source:** [Visualize proof program](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/integrations/GuiSvg/ObserverFrameProof/Program.cs) · [Renderer frame contracts](../src/).
+- **Understand the boundary:** Renderer owns observer-relative decisions and platform-neutral commands; Visualize consumes frame/resource contracts; GUI.SVG serializes the optional SVG manifestation. This is CPU/SVG integration evidence, not GPU-produced pixels or a performance benchmark.
+
+The exhibit is useful because the causal chain is testable: move the observer → policy selects different representations → frame commands carry those decisions → the adapter preserves identity and representation → the SVG output changes. The fixture geometry is deliberately simple; do not mistake it for a universal LOD policy or a production scene scheduler.
+
 ## 01 — Event Horizons: representation states
 
 ![Event Horizon representation-state snapshot](assets/living-event-horizons.svg)
@@ -22,7 +33,7 @@ This is the brief index. Each exhibit links to the document that explains its re
 
 ## 03 — Observer moves: policy-to-frame proof
 
-The new executable proof compares two observer positions against the same entity fixture. It calls Renderer’s real `ObserverDistance.Select`, builds real `RenderFrame` command snapshots, and asserts that selected representations and total index work change.
+The executable proof compares two observer positions against the same entity fixture. It calls Renderer’s real `ObserverDistance.Select`, builds real `RenderFrame` command snapshots, and asserts that selected representations and total index work change.
 
 **Evidence boundary:** this is a deterministic CPU-side policy/frame proof. It does not submit GPU work, render pixels, or measure timing/allocations.
 
@@ -51,14 +62,6 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 **See:** the intended relationship between observer context, Event Horizons, work buckets, and frame assembly. This is an architecture illustration, not proof that all stages currently run end to end.
 
 **Recipe:** [Composition and ownership recipe](gallery/composition-ownership.md).
-
-## 07 — Renderer → Visualize → GUI.SVG
-
-The city-massing fixture in Visualize consumes a real Renderer frame, preserves ordered command identity through the adapter, and emits three material skins.
-
-**See:** [Cross-repository proof path](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/SVG_LIVING_DOCUMENTATION.md#more-advanced-proof-outputs-generated-by-ci) · [Visualize Gallery](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/GALLERY.md).
-
-Run the current generated samples and inspect the evidence rules in the [full guide](SVG_LIVING_DOCUMENTATION.md).
 
 ---
 
