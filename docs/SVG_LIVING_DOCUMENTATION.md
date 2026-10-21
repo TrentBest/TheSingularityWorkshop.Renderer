@@ -2,6 +2,32 @@
 
 **Purpose:** use generated SVGs as a visible, inspectable proof surface for Renderer behavior—not as a substitute for execution evidence.
 
+## Start here — One observer, two worlds
+
+The same observer change can be examined as **structured computation** and as **visual manifestation**. Renderer decides which representation and draw commands belong in the frame; Visualize consumes that frame and its resources; GUI.SVG optionally serializes the resulting scene to SVG. The two views complement one another: a picture shows the result, while the command data and assertions explain why it changed.
+
+### World 1: inspect the Renderer decision
+
+![RenderFrame inspector generated from actual ordered Renderer frame commands](assets/render-frame-inspector.svg)
+
+The [RenderFrame inspector recipe](gallery/render-frame-inspector.md) constructs a real frame and exposes observer position, ordered commands, representation, entity ID, resource IDs, and draw ranges. This is structured CPU-side evidence—not rendered pixels.
+
+### World 2: inspect the downstream manifestation
+
+The Visualize repository maintains an executable [observer-driven presentation proof](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/gallery/observer-driven-presentation.md). It evaluates the actual `ObserverDistance.Select` policy for observer X=0 and X=50, builds two Renderer frames, adapts them through `RendererFrameAdapter`, and generates two SVGs plus a machine-readable report.
+
+- [Proof source](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/integrations/GuiSvg/ObserverFrameProof/Program.cs)
+- [Proof project](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/integrations/GuiSvg/ObserverFrameProof/ObserverFrameProof.csproj)
+- Run from the Visualize repository root, with the Renderer and GUI source repositories available:
+
+```bash
+dotnet run --project integrations/GuiSvg/ObserverFrameProof/ObserverFrameProof.csproj --configuration Release -- ./artifacts/observer-frame
+```
+
+The program asserts that observer movement changes representation decisions, that both frames retain one command per stable subject, and that the adapter preserves command count, entity identity, and representation. It records selected index counts and backend status in its report.
+
+**Evidence boundary:** this is a CPU/SVG integration proof. Its marker geometry is a small fixture; its selected index counts are fixture workload values. It does not submit GPU commands, measure GPU-produced pixels, establish production scheduling/cache behavior, or benchmark timing and allocations.
+
 ## 1. Living Event Horizons: state transitions made visible
 
 ![Living Event Horizons generated from FSM_API representation states](assets/living-event-horizons.svg)
@@ -19,8 +45,6 @@ dotnet run --project samples/LivingRenderer/LivingRenderer.csproj --configuratio
 ```
 
 ## 2. RenderFrame inspector: inspect the actual command contract
-
-![RenderFrame inspector generated from actual ordered Renderer frame commands](assets/render-frame-inspector.svg)
 
 **What you're seeing:** a runnable sample constructs a real `RenderFrame`, then reads `RenderFrame.View` and its ordered `RenderFrame.Commands`. The SVG exposes observer position, command order, representation, entity ID, geometry/material resource IDs, and index/instance ranges.
 
@@ -71,18 +95,6 @@ CI uploads the generated SVG as `renderer-bucket-invalidation-reuse-proof`.
 ![Renderer composition explainer](assets/renderer-composition.svg)
 
 This animated architecture illustration explains how observer context, Event Horizons, independent work buckets, and frame assembly are intended to fit together. It is a conceptual guide—not live telemetry and not proof that every stage is wired into one end-to-end renderer.
-
-## 6. Cross-repository proof: follow a real frame downstream
-
-[Open the Visualize living SVG guide](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/work/svg-living-docs/docs/SVG_LIVING_DOCUMENTATION.md).
-
-The Visualize `CityMassingProof` fixture exercises:
-
-`ObserverRepresentationPolicy` → selected face commands → Renderer `RenderFrame` → `RendererFrameAdapter` → Visualizer frame/resources → optional GUI.SVG backend → SVG files and a JSON report.
-
-Open the [Visualize proof workflow](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/actions/runs/39369513107), then its **Artifacts** section and download `visualize-city-massing-proof` to see the three skins and report.
-
-The executable assertion checks that command count/order and each command's geometry/material IDs, world transform, index range, representation, and entity ID survive the adapter. The distant representation omits selected window-detail face commands. This is command-level work reduction—not GPU rendering, geometry-buffer compaction, or a production city renderer.
 
 ## Ownership boundaries
 
