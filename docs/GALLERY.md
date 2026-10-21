@@ -10,7 +10,7 @@ A single change of observer position has two complementary views: Renderer expos
 
 - **Renderer evidence:** [Observer moves: policy-to-frame](gallery/observer-driven-frame.md) shows the selected representation and index-work change for a deterministic fixture.
 - **Downstream manifestation:** [Observer-driven presentation proof](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/docs/gallery/observer-driven-presentation.md) runs the observer policy at X=0 and X=50, adapts two real Renderer frames, and generates two SVGs plus a machine-readable report.
-- **Inspect the source:** [Visualize proof program](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/integrations/GuiSvg/ObserverFrameProof/Program.cs) · [Renderer frame contracts](../src/).
+- **Inspect the source:** [Visualize proof program](https://github.com/TrentBest/TheSingularityWorkshop.Visualize/blob/development/integrations/GuiSvg/ObserverFrameProof/Program.cs).
 - **Understand the boundary:** Renderer owns observer-relative decisions and platform-neutral commands; Visualize consumes frame/resource contracts; GUI.SVG serializes the optional SVG manifestation. This is CPU/SVG integration evidence, not GPU-produced pixels or a performance benchmark.
 
 The exhibit is useful because the causal chain is testable: move the observer → policy selects different representations → frame commands carry those decisions → the adapter preserves identity and representation → the SVG output changes. The fixture geometry is deliberately simple; do not mistake it for a universal LOD policy or a production scene scheduler.
