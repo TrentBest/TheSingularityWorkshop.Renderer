@@ -26,6 +26,10 @@
     <WorkshopSourceRoot Condition="'$(WorkshopSourceRoot)' == ''">$(MSBuildThisFileDirectory)..</WorkshopSourceRoot>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(WorkshopUseRepositorySources)' == 'true'">
+    <DefineConstants>$(DefineConstants);WORKSHOP_USE_REPOSITORY_SOURCES</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(WorkshopUseRepositorySources)' != 'true'">
     <PackageReference Include="TheSingularityWorkshop.FSM_API" Version="1.0.13" />
     <PackageReference Include="TheSingularityWorkshop.ProtocolAi" Version="0.1.0-alpha.2" />
