@@ -64,7 +64,6 @@ public sealed class RendererMicroBundle : IMicroBundle
         IsLoaded = true;
     }
 
-    /// <inheritdoc />
 #if WORKSHOP_USE_REPOSITORY_SOURCES
     /// <summary>
     /// Exports the exact configuration bytes restored by Load for publish-resolved execution.
@@ -72,6 +71,7 @@ public sealed class RendererMicroBundle : IMicroBundle
     public ReadOnlyMemory<byte> ExportResolvedConfiguration() => Configuration.ToArray();
 #endif
 
+    /// <inheritdoc />
     public bool Arbitrate(IMicroBundleArbitrationContext context, int roundIndex)
     {
         ArgumentNullException.ThrowIfNull(context);
