@@ -11,7 +11,11 @@ namespace TheSingularityWorkshop.Renderer;
 /// dependency on the Renderer package. Additional rendering capabilities can arrive as
 /// separate MicroBundles without making the composition kernel aware of them.
 /// </remarks>
+#if WORKSHOP_USE_REPOSITORY_SOURCES
 public sealed class RendererMicroBundle : IMicroBundle, IMicroBundleResolvedConfiguration
+#else
+public sealed class RendererMicroBundle : IMicroBundle
+#endif
 {
     /// <summary>Stable ontology name for the core rendering capability family.</summary>
     public const string Ontology = "Renderer";
@@ -61,10 +65,12 @@ public sealed class RendererMicroBundle : IMicroBundle, IMicroBundleResolvedConf
     }
 
     /// <inheritdoc />
+#if WORKSHOP_USE_REPOSITORY_SOURCES
     /// <summary>
     /// Exports the exact configuration bytes restored by Load for publish-resolved execution.
     /// </summary>
     public ReadOnlyMemory<byte> ExportResolvedConfiguration() => Configuration.ToArray();
+#endif
 
     public bool Arbitrate(IMicroBundleArbitrationContext context, int roundIndex)
     {
