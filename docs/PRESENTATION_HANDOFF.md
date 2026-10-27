@@ -39,14 +39,23 @@ Renderer must not acquire a dependency on Visualize, GUI.Core, GUI.SVG, WPF, bro
 
 Renderer should provide a stable representation/frame snapshot. A consumer or adapter may then map that snapshot to one or more panel targets.
 
-The target identity and layout are not Renderer concepts. Renderer should not carry docking rules, tab state, window handles, GUI node IDs, or platform controls. If viewport dimensions or camera matrices affect representation selection, they must be supplied as explicit observer/view inputs rather than inferred from a GUI widget.
+**Every projection has a source rectangle.** Treat the source rectangle as explicit presentation input: it identifies the logical GUI/content region being projected, independently of where that content is ultimately displayed. It must not be inferred from a destination panel's dimensions. A host may map the same source rectangle to a screen panel, a window, a texture, or a world-space surface.
+
+Keep these concepts separate:
+
+- **Source rectangle:** the region of logical GUI content to project.
+- **Destination surface:** the output surface or panel receiving that region.
+- **Projection transform:** the mapping from source coordinates to destination coordinates. A world-space destination may require position, orientation, scale, and perspective; those are destination/projection concerns, not Renderer policy.
+
+The target identity and layout are not Renderer concepts. Renderer should not carry docking rules, tab state, window handles, GUI node IDs, or platform controls. If viewport dimensions or camera matrices affect representation selection, they must be supplied as explicit observer/view inputs rather than inferred from a GUI widget. The source rectangle remains part of the presentation contract even when a destination changes.
 
 The intended handoff should make these questions answerable without binding Renderer to a UI framework:
 
 - Which observer/view produced this snapshot?
 - What ordered commands and resource identities does it contain?
 - Which representation was selected, and what evidence or policy produced it?
-- Which view/projection/viewport inputs apply?
+- What source rectangle is being projected, and what view/projection/viewport inputs apply?
+- Which destination surface receives the projection, and is its mapping screen-space or world-space?
 - Is the snapshot complete, stale, cancelled, or invalid?
 - Can the consumer route it to one panel, several panels, a non-visual observer, or a file artifact?
 
@@ -68,6 +77,6 @@ If the question is *what must be represented for this observer?*, ask Renderer.
 
 If the question is *how do I convert this frame into GUI nodes, SVG, native controls, or GPU work?*, ask a presentation adapter.
 
-If the question is *which panel should display it and how should that panel be arranged?*, ask GUI or the application host.
+If the question is *which source rectangle should be projected to which destination, and how should that destination be arranged?*, ask the presentation adapter and GUI/application host.
 
 TheSingularityWorkshop
