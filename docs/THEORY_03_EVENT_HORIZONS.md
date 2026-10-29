@@ -45,7 +45,7 @@ A representation transition must preserve the identity of its source. A consumer
 
 ## Implementation and evidence
 
-**Source-checked:** [EventHorizon.cs](EventHorizon.cs), [ObserverRepresentationPolicy.cs](ObserverRepresentationPolicy.cs), and [HorizonRepresentationHandoff.cs](HorizonRepresentationHandoff.cs) cover a horizon contract, a concrete selection policy, and a prepared-representation handoff. Focused evidence is in [EventHorizonTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonTests.cs), [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs), and [HorizonRepresentationHandoffTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/HorizonRepresentationHandoffTests.cs).
+**Source-checked:** [EventHorizon.cs](../EventHorizon.cs), [ObserverRepresentationPolicy.cs](../ObserverRepresentationPolicy.cs), and [HorizonRepresentationHandoff.cs](../HorizonRepresentationHandoff.cs) cover a horizon contract, a concrete selection policy, and a prepared-representation handoff. Focused evidence is in [EventHorizonTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonTests.cs), [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs), and [HorizonRepresentationHandoffTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/HorizonRepresentationHandoffTests.cs).
 
 **Limit:** these are separate bounded contracts. They do not by themselves implement a universal multidimensional optimizer, calculate all observer coverage, or run a full world-to-GPU lifecycle.
 
