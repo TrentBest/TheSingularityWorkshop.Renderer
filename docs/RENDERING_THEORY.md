@@ -206,6 +206,7 @@ Use these existing guides as the source of implementation detail and evidence:
 - [Presentation handoff](PRESENTATION_HANDOFF.md) — neutral handoff and source-rectangle invariant.
 - [GPU boundary](GPU_BOUNDARY.md) — frame description versus execution.
 - [Benchmarking](BENCHMARKING.md) — measurement conditions and interpretation.
+- [Theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md) — public contracts, focused tests, limitations, and the next vertical proof.
 - [Implementation roadmap](IMPLEMENTATION_ROADMAP.md) — remaining integration and proof milestones.
 
 For every public capability, the implementation record should eventually name the owning type/member, input contract, output contract, tests, sample, benchmark (where meaningful), limitations, and consuming repository. If one of these is absent, record it as a gap rather than implying completeness.
