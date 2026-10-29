@@ -22,7 +22,7 @@ This boundary makes Renderer reusable. Visualize may realize scene or image outp
 
 ## Implementation and evidence
 
-**Source-checked:** [RenderView.cs](RenderView.cs), [RenderDrawCommand.cs](RenderDrawCommand.cs), and [RenderFrame.cs](RenderFrame.cs) describe the platform-neutral handoff. [GpuBoundaryTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/GpuBoundaryTests.cs) protects the explicit distinction between CPU-side frame contracts and GPU execution. The [RenderFrame SVG proof](gallery/render-frame-inspector.md) inspects an actual frame instance.
+**Source-checked:** [RenderView.cs](../RenderView.cs), [RenderDrawCommand.cs](../RenderDrawCommand.cs), and [RenderFrame.cs](../RenderFrame.cs) describe the platform-neutral handoff. [GpuBoundaryTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/GpuBoundaryTests.cs) protects the explicit distinction between CPU-side frame contracts and GPU execution. The [RenderFrame SVG proof](gallery/render-frame-inspector.md) inspects an actual frame instance.
 
 **Limit:** a frame is not a graphics API, a GPU submission, a rasterized image, or proof of clipping/shader correctness. Projection into a destination must preserve the explicit source rectangle invariant described in [Presentation Handoff](PRESENTATION_HANDOFF.md).
 
