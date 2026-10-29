@@ -25,7 +25,7 @@ public sealed record RepresentationHorizonRule
     public RepresentationTarget Representation { get; }
 }
 
-/// <summary>A stable result from observer-distance representation selection.</summary>
+/// <summary>A stable result from observer representation selection.</summary>
 /// <param name="Distance">Observer-to-entity distance in the caller's world units.</param>
 /// <param name="Horizon">The selected horizon object, retained for downstream bucket and cadence selection.</param>
 /// <param name="Representation">Representation requested by the selected rule.</param>
@@ -46,16 +46,21 @@ public readonly record struct ObserverRepresentationDecision(
 }
 
 /// <summary>
-/// Selects an explicit representation rule for an observer distance using Renderer Event Horizon policies.
+/// Selects an explicit representation rule for an observer using distance and an optional
+/// minimum representation requirement.
 /// </summary>
 /// <remarks>
-/// This policy composes existing distance selection with an explicit horizon-to-representation mapping.
-/// It does not advance FSM_API, schedule bucket refreshes, determine occlusion, or create a RenderFrame.
-/// Those responsibilities remain separate so a host can inspect the decision before executing work.
+/// Distance provides the baseline horizon. A caller-supplied minimum representation is an
+/// independent observer/experience signal: it may promote a distant entity when interaction,
+/// inspection, or another correctness requirement needs richer output. The selected rule's
+/// horizon and cadence travel together, so a promotion also selects a compatible bucket/cadence.
+/// This policy does not infer intent or domain importance; the caller owns those facts.
+/// It does not advance FSM_API, schedule refreshes, determine occlusion, or create a RenderFrame.
 /// </remarks>
 public sealed class ObserverRepresentationPolicy
 {
     private readonly EventHorizon[] _horizons;
+    private readonly RepresentationHorizonRule[] _rules;
     private readonly Dictionary<EventHorizon, RepresentationHorizonRule> _ruleByHorizon;
 
     /// <summary>Creates a policy from horizons ordered from nearest to farthest.</summary>
@@ -67,6 +72,7 @@ public sealed class ObserverRepresentationPolicy
             throw new ArgumentException("At least one representation horizon rule is required.", nameof(rules));
 
         _horizons = new EventHorizon[rules.Count];
+        _rules = new RepresentationHorizonRule[rules.Count];
         _ruleByHorizon = new Dictionary<EventHorizon, RepresentationHorizonRule>();
         var previousMaximum = -1d;
 
@@ -87,17 +93,60 @@ public sealed class ObserverRepresentationPolicy
                     nameof(rules));
 
             _horizons[i] = horizon;
+            _rules[i] = rule;
             previousMaximum = horizon.MaximumDistance;
         }
     }
 
     /// <summary>Selects the horizon and its mapped representation for one observer distance.</summary>
     /// <param name="distance">Distance from the observer in world units.</param>
-    /// <returns>The selected horizon name, desired representation, and preferred evaluation cadence.</returns>
+    /// <returns>The selected horizon, desired representation, and preferred evaluation cadence.</returns>
     public ObserverRepresentationDecision Select(double distance)
     {
         var horizon = ObserverDistance.Select(distance, _horizons);
         var rule = _ruleByHorizon[horizon];
         return new ObserverRepresentationDecision(distance, horizon, rule.Representation);
+    }
+
+    /// <summary>
+    /// Selects using distance while honoring a caller-supplied minimum representation requirement.
+    /// </summary>
+    /// <param name="distance">Distance from the observer in world units.</param>
+    /// <param name="minimumRepresentation">
+    /// The least detailed representation acceptable to the caller. This is an input requirement,
+    /// not an inferred property of distance or a guarantee of interaction semantics.
+    /// </param>
+    /// <returns>
+    /// The distance-selected rule when it satisfies the requirement; otherwise the nearest rule
+    /// in policy order that satisfies it. The selected horizon determines cadence and bucket identity.
+    /// </returns>
+    public ObserverRepresentationDecision Select(
+        double distance,
+        RepresentationTarget minimumRepresentation)
+    {
+        if (!Enum.IsDefined(minimumRepresentation))
+            throw new ArgumentOutOfRangeException(nameof(minimumRepresentation));
+
+        var distanceDecision = Select(distance);
+        if ((int)distanceDecision.Representation >= (int)minimumRepresentation)
+            return distanceDecision;
+
+        for (var i = 0; i < _rules.Length; i++)
+        {
+            if ((int)_rules[i].Representation >= (int)minimumRepresentation)
+                return new ObserverRepresentationDecision(
+                    distance, _rules[i].Horizon, _rules[i].Representation);
+        }
+
+        // This policy cannot satisfy the requested floor. Return its most detailed available
+        // rule rather than claiming that an unsupported representation exists.
+        var best = _rules[0];
+        for (var i = 1; i < _rules.Length; i++)
+        {
+            if ((int)_rules[i].Representation > (int)best.Representation)
+                best = _rules[i];
+        }
+
+        return new ObserverRepresentationDecision(distance, best.Horizon, best.Representation);
     }
 }
