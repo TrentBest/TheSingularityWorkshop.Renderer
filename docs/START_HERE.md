@@ -88,7 +88,7 @@ The dependency direction must remain downward and compositional. Renderer must n
 
 ## Documentation
 
-- [Renderer Theory textbook](RENDERER_THEORY.md) — a teachable chapter set explaining the problem, observer model, Event Horizons, budgets, freshness, work dependencies, presentation handoff, and proof methodology.
+- [Rendering Theory textbook](RENDERING_THEORY.md) — a teachable chapter set explaining the problem, observer model, Event Horizons, budgets, freshness, work dependencies, presentation handoff, and proof methodology.
 - [Living Renderer guide](LIVING_RENDERER.md)
 - [Architecture](ARCHITECTURE.md)
 - [Event Horizons](EVENT_HORIZONS.md)
