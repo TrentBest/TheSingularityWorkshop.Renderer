@@ -34,7 +34,7 @@ Confusing these layers creates bugs. A distant mesh may be simplified without de
 
 ## Implementation and evidence
 
-**Source-checked:** [ObserverDistance.cs](ObserverDistance.cs) and [ObserverRepresentationPolicy.cs](ObserverRepresentationPolicy.cs) provide a concrete distance-to-representation path. The focused checks are [ObserverDistanceDeterminismTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverDistanceDeterminismTests.cs) and [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs).
+**Source-checked:** [ObserverDistance.cs](../ObserverDistance.cs) and [ObserverRepresentationPolicy.cs](../ObserverRepresentationPolicy.cs) provide a concrete distance-to-representation path. The focused checks are [ObserverDistanceDeterminismTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverDistanceDeterminismTests.cs) and [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs).
 
 **Limit:** these policies do not establish a universal optimality theorem or a complete production pipeline from authoritative world state to device output. They establish bounded behavior for the current contracts.
 
