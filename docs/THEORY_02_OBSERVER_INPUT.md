@@ -35,7 +35,7 @@ The correct answer is not simply “far means low detail.” It is “which info
 
 ## Implementation and evidence
 
-**Source-checked:** [ObserverRepresentationPolicy.cs](ObserverRepresentationPolicy.cs) and [ObserverDistance.cs](ObserverDistance.cs) make policy inputs and representation selection explicit. See [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs) and [ObserverDistanceDeterminismTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverDistanceDeterminismTests.cs).
+**Source-checked:** [ObserverRepresentationPolicy.cs](../ObserverRepresentationPolicy.cs) and [ObserverDistance.cs](../ObserverDistance.cs) make policy inputs and representation selection explicit. See [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs) and [ObserverDistanceDeterminismTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverDistanceDeterminismTests.cs).
 
 **Limit:** the current bridge is not proof that every signal named in the theory—intent, occlusion, semantic relevance, freshness, or resource pressure—is integrated into one decision function.
 
