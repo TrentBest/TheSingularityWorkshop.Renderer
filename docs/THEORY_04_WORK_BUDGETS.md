@@ -27,3 +27,11 @@ When resources are scarce, prefer reducing optional presentation fidelity before
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> · <a href="RENDERING_THEORY.md">Theory index</a>
 </p>
+
+## Implementation and evidence
+
+**Source-checked:** [RendererPerformanceModel.cs](RendererPerformanceModel.cs) provides cost-model vocabulary and [RendererPerformanceModelTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/RendererPerformanceModelTests.cs) covers its current contract. [Benchmarking](BENCHMARKING.md) describes measurement discipline and interpretation.
+
+**Limit:** a model estimate, asymptotic analysis, and wall-clock benchmark are different evidence classes. No universal budget or performance improvement follows from the existence of the model.
+
+**Continue:** [Benchmarking](BENCHMARKING.md) and [Chapter 9 — Proving the theory](THEORY_09_PROOF_AND_EVIDENCE.md).
