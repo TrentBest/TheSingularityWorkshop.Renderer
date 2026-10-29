@@ -26,6 +26,47 @@ public sealed class ObserverRepresentationPolicyTests
         Assert.Equal(expectedCadence, decision.UpdatesPerSecond);
     }
 
+    [Theory]
+    [InlineData(500.0, RepresentationTarget.Interactive, "Interactive", RepresentationTarget.Interactive, 10)]
+    [InlineData(500.0, RepresentationTarget.Near, "Near", RepresentationTarget.Near, 8)]
+    [InlineData(8.0, RepresentationTarget.Semantic, "Distant", RepresentationTarget.Distant, 4)]
+    public void Select_WithMinimumRepresentationCombinesDistanceAndCallerRequirement(
+        double distance,
+        RepresentationTarget minimumRepresentation,
+        string expectedHorizon,
+        RepresentationTarget expectedRepresentation,
+        double expectedCadence)
+    {
+        var decision = CreatePolicy().Select(distance, minimumRepresentation);
+
+        Assert.Equal(distance, decision.Distance);
+        Assert.Equal(expectedHorizon, decision.HorizonName);
+        Assert.Equal(expectedRepresentation, decision.Representation);
+        Assert.Equal(expectedCadence, decision.UpdatesPerSecond);
+    }
+
+    [Fact]
+    public void Select_WithMinimumRepresentationRejectsUndefinedTarget()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            CreatePolicy().Select(500, (RepresentationTarget)99));
+    }
+
+    [Fact]
+    public void Select_WithUnsupportedMinimumUsesMostDetailedAvailableRule()
+    {
+        var policy = new ObserverRepresentationPolicy(
+        [
+            new RepresentationHorizonRule(new EventHorizon("Distant", 100, 1), RepresentationTarget.Distant),
+            new RepresentationHorizonRule(new EventHorizon("Semantic", 500, 0.5), RepresentationTarget.Semantic)
+        ]);
+
+        var decision = policy.Select(500, RepresentationTarget.Interactive);
+
+        Assert.Equal("Distant", decision.HorizonName);
+        Assert.Equal(RepresentationTarget.Distant, decision.Representation);
+    }
+
     [Fact]
     public void Constructor_RejectsEmptyRules()
     {
