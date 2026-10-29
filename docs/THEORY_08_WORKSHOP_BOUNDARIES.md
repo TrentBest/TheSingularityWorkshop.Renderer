@@ -30,7 +30,7 @@ These are responsibility boundaries, not necessarily mandatory direct package de
 
 ## Implementation and evidence
 
-**Source-checked:** [Architecture](ARCHITECTURE.md) records the allowed responsibility direction. [RendererMicroBundle.cs](RendererMicroBundle.cs) and [RendererMicroBundleTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/RendererMicroBundleTests.cs) cover the capability boundary, while [FSM_COS](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS) owns runtime composition.
+**Source-checked:** [Architecture](ARCHITECTURE.md) records the allowed responsibility direction. [RendererMicroBundle.cs](../RendererMicroBundle.cs) and [RendererMicroBundleTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/RendererMicroBundleTests.cs) cover the capability boundary, while [FSM_COS](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS) owns runtime composition.
 
 **Limit:** a composable Renderer capability does not mean Renderer depends on FSM_COS, that a host loads the capability, or that a production backend is active. Experience state and rules, GUI intent, Visualize manifestation, and host lifecycle remain separate responsibilities.
 
