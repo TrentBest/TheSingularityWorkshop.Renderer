@@ -22,7 +22,7 @@ Semantic observation is not visual LOD. An AI agent should receive structured fa
 
 ## Implementation and evidence
 
-**Source-checked:** [ObstructionVisibility.cs](ObstructionVisibility.cs) defines visibility-related policy output; [SemanticAnchor.cs](SemanticAnchor.cs) and [SemanticForm.cs](SemanticForm.cs) describe semantic structure. Focused checks include [ObstructionVisibilityTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObstructionVisibilityTests.cs) and [SemanticFormTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/SemanticFormTests.cs).
+**Source-checked:** [ObstructionVisibility.cs](../ObstructionVisibility.cs) defines visibility-related policy output; [SemanticAnchor.cs](../SemanticAnchor.cs) and [SemanticForm.cs](../SemanticForm.cs) describe semantic structure. Focused checks include [ObstructionVisibilityTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObstructionVisibilityTests.cs) and [SemanticFormTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/SemanticFormTests.cs).
 
 **Limit:** visibility depends on supplied geometry/sensor evidence and freshness policy. Semantic structure does not automatically constitute a complete AI observation pipeline, and a stale result must not be treated as current truth.
 
