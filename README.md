@@ -9,7 +9,7 @@
 
 TheSingularityWorkshop.Renderer is a graphics-API-independent set of observer, representation, visibility, and computational-detail foundations. Its central idea is the **Event Horizon**: a boundary where the work needed to represent something can change with the observer and context.
 
-**[Theory textbook](docs/RENDERER_THEORY.md)** — teachable chapters from first principles to evidence · **[Gallery](docs/GALLERY.md)** — short visual index · [Detailed SVG proof guide](docs/SVG_LIVING_DOCUMENTATION.md) · [Presentation handoff](docs/PRESENTATION_HANDOFF.md) — Renderer’s boundary with Visualize and GUI
+**[Theory textbook](docs/RENDERING_THEORY.md)** — teachable chapters from first principles to evidence · **[Gallery](docs/GALLERY.md)** — short visual index · [Detailed SVG proof guide](docs/SVG_LIVING_DOCUMENTATION.md) · [Presentation handoff](docs/PRESENTATION_HANDOFF.md) — Renderer’s boundary with Visualize and GUI
 
 ~~~mermaid
 flowchart TD
@@ -91,7 +91,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 
 ## 🟪 05 Available documentation and theory
 
-- [Renderer Theory textbook](docs/RENDERER_THEORY.md) — chapter-based theory, worked example, exercises, domain ownership, and traceability from concepts to implementation evidence.
+- [Rendering Theory textbook](docs/RENDERING_THEORY.md) — chapter-based theory, worked example, exercises, domain ownership, and traceability from concepts to implementation evidence.
 - [Start here](docs/START_HERE.md) — a guided explanation of the model and its place in the Workshop.
 - [Living Renderer guide](docs/LIVING_RENDERER.md) — visual teaching path, what is executable today, and the next evidence milestones.
 - [What Event Horizons mean](docs/EVENT_HORIZON_THEORY.md) — the conceptual rationale behind observer-relative computational detail.
