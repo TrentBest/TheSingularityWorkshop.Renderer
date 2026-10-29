@@ -26,3 +26,11 @@ This scenario forces the architecture to answer hard questions: what is authorit
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> · <a href="RENDERING_THEORY.md">Theory index</a>
 </p>
+
+## Implementation and evidence
+
+**Status: conceptual worked scenario.** The ash-cloud example is a reasoning exercise, not a captured simulation trace or a claim that Renderer currently implements every policy described here. It illustrates how authoritative source revisions, observer context, independent representation choices, invalidation, and a required hazard summary should be traced through the architecture.
+
+To turn it into executable evidence, define a deterministic source fixture, stable entity/revision identifiers, observer inputs, expected representation choices, dependency changes, expected frame commands, and a reproducible run. Then link the resulting tests/sample and state the remaining limitations in the [theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md).
+
+**Continue:** [Theory Practice and Traceability](THEORY_PRACTICE_AND_TRACEABILITY.md) and the [Renderer Gallery](GALLERY.md).
