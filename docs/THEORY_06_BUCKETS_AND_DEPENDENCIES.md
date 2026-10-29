@@ -26,3 +26,11 @@ Renderer should not create a second universal scheduler. It describes renderer-r
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> · <a href="RENDERING_THEORY.md">Theory index</a>
 </p>
+
+## Implementation and evidence
+
+**Source-checked:** [EventHorizonBucket.cs](EventHorizonBucket.cs), [EventHorizonBucketDependencyGraph.cs](EventHorizonBucketDependencyGraph.cs), and [EventHorizonBucketMembershipIndex.cs](EventHorizonBucketMembershipIndex.cs) provide explicit bucket validity, declared invalidation dependencies, and membership lookup. Focused tests include [EventHorizonBucketTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonBucketTests.cs), [EventHorizonBucketDependencyGraphTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonBucketDependencyGraphTests.cs), and [EventHorizonBucketMembershipIndexTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonBucketMembershipIndexTests.cs). The [bucket invalidation/reuse proof](gallery/bucket-invalidation-and-reuse.md) connects those APIs in a runnable fixture.
+
+**Limit:** dependencies must be declared; the graph does not discover arbitrary data dependencies or prove that a host scheduled the work. Fixture-level reuse is not a measured production speedup.
+
+**Continue:** [Event Horizon buckets](EVENT_HORIZON_BUCKETS.md) and [Chapter 9 — Proving the theory](THEORY_09_PROOF_AND_EVIDENCE.md).
