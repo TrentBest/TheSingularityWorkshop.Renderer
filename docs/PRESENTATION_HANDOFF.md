@@ -61,6 +61,22 @@ The intended handoff should make these questions answerable without binding Rend
 
 These are design questions for the contract audit, not assertions that every field or status currently exists in the public API.
 
+### Frame availability is not the same as frame contents
+
+An empty `RenderFrame` is a valid snapshot containing zero draw commands. It is not evidence that upstream observation completed successfully, that every required source was available, or that the result is current. Likewise, a missing frame, a cancelled preparation, an invalid result, and a failed source must not be silently converted into an empty frame: those states communicate different things to a consumer.
+
+The current `RenderFrame` contract snapshots an ordered command sequence and rejects a null sequence. It does **not** carry an explicit completeness, freshness, provenance, cancellation, or failure status. Consumers must not infer those guarantees from `Commands.Count`, and producers must not describe this model as providing them. A future end-to-end contract should preserve at least these distinctions:
+
+| Condition | Meaning for the consumer | Current `RenderFrame` support |
+|---|---|---|
+| Complete, non-empty snapshot | The reported commands are the produced frame contents | Command snapshot only; completeness is not encoded |
+| Complete, empty snapshot | The producer intentionally produced no draw commands | Valid empty frame |
+| Missing or cancelled output | No frame was delivered for this request | No explicit status |
+| Stale output | A frame exists but refers to an older source or observer revision | Not encoded on `RenderFrame` |
+| Partial or failed source data | The frame may omit required inputs or be unsuitable for display | Not encoded on `RenderFrame` |
+
+This is a contract gap, not a request to add speculative fields to the public API. Define ownership, revision/provenance rules, and consumer behavior first; then implement and test the smallest API that expresses those semantics.
+
 ## 4. Evidence boundaries
 
 **Implemented foundations:** Event Horizon selection and buckets, observer geometry, representation state, semantic anchors, visibility/sensor contracts, and renderer-neutral frame/command models exist in the repository.
