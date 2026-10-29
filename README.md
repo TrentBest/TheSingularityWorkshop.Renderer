@@ -91,7 +91,9 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 
 ## 🟪 05 Available documentation and theory
 
-- [Rendering Theory textbook](docs/RENDERING_THEORY.md) — chapter-based theory, worked example, exercises, domain ownership, and traceability from concepts to implementation evidence.
+- [Rendering Theory index](docs/RENDERING_THEORY.md) — a modular ten-chapter learning path with independent chapter pages.
+- [Documentation index](docs/DOCUMENTATION_INDEX.md) — the map for learning, using, and verifying Renderer.
+- [Theory practice and traceability](docs/THEORY_PRACTICE_AND_TRACEABILITY.md) — exercises and the theory-to-evidence discipline.
 - [Start here](docs/START_HERE.md) — a guided explanation of the model and its place in the Workshop.
 - [Living Renderer guide](docs/LIVING_RENDERER.md) — visual teaching path, what is executable today, and the next evidence milestones.
 - [What Event Horizons mean](docs/EVENT_HORIZON_THEORY.md) — the conceptual rationale behind observer-relative computational detail.
@@ -107,7 +109,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Rendering mathematics](docs/RENDERING_MATH.md) and [benchmarking](docs/BENCHMARKING.md) — cost hypotheses, measurements, and how to interpret their limits.
 - [Theory-to-implementation map](docs/THEORY_IMPLEMENTATION_MAP.md) — source-backed links from core concepts to public types, tests, samples, and remaining evidence gaps.
 - [MicroBundle boundary](docs/MICROBUNDLE.md) — how Renderer capabilities may participate in composition without requiring FSM_COS.
-- [Documentation index](docs/START_HERE.md) — use Start Here as the front door to the focused guides.
+- [Start Here](docs/START_HERE.md) — a concise orientation to the model and Workshop boundaries.
 - [Implementation roadmap](docs/IMPLEMENTATION_ROADMAP.md) — prioritized completeness criteria, integration proofs, and benchmark milestones.
 
 ## Current status and evidence

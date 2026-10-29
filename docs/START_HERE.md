@@ -88,9 +88,10 @@ The dependency direction must remain downward and compositional. Renderer must n
 
 ## Documentation
 
-- [Rendering Theory textbook](RENDERING_THEORY.md) — a teachable chapter set explaining the problem, observer model, Event Horizons, budgets, freshness, work dependencies, presentation handoff, and proof methodology.
+- [Documentation index](DOCUMENTATION_INDEX.md) — the complete map of learning, contracts, runnable proof, UML coverage, and current limitations.
+- [Rendering Theory index](RENDERING_THEORY.md) — the modular ten-chapter learning path.
+- [Theory practice and traceability](THEORY_PRACTICE_AND_TRACEABILITY.md) — exercises and evidence discipline.
 - [Living Renderer guide](LIVING_RENDERER.md)
-- [Rendering Theory](RENDERING_THEORY.md) — textbook chapters and worked examples.
 - [Theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md) — the current public contracts and their focused tests.
 - [Architecture](ARCHITECTURE.md)
 - [Event Horizons](EVENT_HORIZONS.md)
