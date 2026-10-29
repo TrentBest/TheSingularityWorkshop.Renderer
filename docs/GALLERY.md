@@ -65,4 +65,4 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 
 ---
 
-[Architecture and ownership](../README.md) · [Development workflow](DEVELOPMENT.md)
+[Architecture and ownership](../README.md) · [Repository-source development workflow](REPOSITORY-SOURCE-DEVELOPMENT.md)
