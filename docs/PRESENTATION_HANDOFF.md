@@ -49,6 +49,16 @@ Keep these concepts separate:
 
 The target identity and layout are not Renderer concepts. Renderer should not carry docking rules, tab state, window handles, GUI node IDs, or platform controls. If viewport dimensions or camera matrices affect representation selection, they must be supplied as explicit observer/view inputs rather than inferred from a GUI widget. The source rectangle remains part of the presentation contract even when a destination changes.
 
+### What the current public frame actually carries
+
+The current public types make a deliberately narrower promise than the full handoff above:
+
+- `RenderView` carries the finite observer world position plus view and projection matrices. It does not carry a source rectangle, destination surface, panel identity, viewport dimensions, or explicit coordinate-unit metadata.
+- `RenderDrawCommand` carries geometry/material resource IDs, a finite world transform, index range, representation, optional instance range, and an optional semantic entity ID. It does not own the referenced resource lifetime or prove those resources exist in a backend.
+- `RenderFrame` snapshots the ordered command sequence and pairs it with the view. It does not encode source revision, observer revision, completeness, freshness, cancellation, or failure.
+
+That means an adapter cannot truthfully derive the missing presentation and lifecycle facts from the frame alone. It must receive those inputs from its owning host/producer, or the contract must be extended later after ownership and revision semantics are specified. Keep source-rectangle and destination mapping at the presentation boundary; do not add panel layout or backend state to Renderer just to make the handoff diagram appear complete.
+
 The intended handoff should make these questions answerable without binding Renderer to a UI framework:
 
 - Which observer/view produced this snapshot?
