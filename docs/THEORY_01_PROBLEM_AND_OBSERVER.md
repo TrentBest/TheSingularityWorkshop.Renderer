@@ -31,3 +31,11 @@ Confusing these layers creates bugs. A distant mesh may be simplified without de
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> · <a href="RENDERING_THEORY.md">Theory index</a>
 </p>
+
+## Implementation and evidence
+
+**Source-checked:** [ObserverDistance.cs](ObserverDistance.cs) and [ObserverRepresentationPolicy.cs](ObserverRepresentationPolicy.cs) provide a concrete distance-to-representation path. The focused checks are [ObserverDistanceDeterminismTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverDistanceDeterminismTests.cs) and [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs).
+
+**Limit:** these policies do not establish a universal optimality theorem or a complete production pipeline from authoritative world state to device output. They establish bounded behavior for the current contracts.
+
+**Continue:** [Chapter 2 — The observer is part of the input](THEORY_02_OBSERVER_INPUT.md) and the [theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md).
