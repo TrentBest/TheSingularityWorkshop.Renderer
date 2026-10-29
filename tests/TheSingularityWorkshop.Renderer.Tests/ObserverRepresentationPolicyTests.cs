@@ -46,6 +46,23 @@ public sealed class ObserverRepresentationPolicyTests
     }
 
     [Fact]
+    public void Select_WhenMultipleRulesMeetMinimum_PrefersNearestRuleForEqualRepresentation()
+    {
+        var policy = new ObserverRepresentationPolicy(
+        [
+            new RepresentationHorizonRule(new EventHorizon("NearA", 10, 8), RepresentationTarget.Near),
+            new RepresentationHorizonRule(new EventHorizon("NearB", 50, 6), RepresentationTarget.Near),
+            new RepresentationHorizonRule(new EventHorizon("Semantic", 100, 1), RepresentationTarget.Semantic)
+        ]);
+
+        var decision = policy.Select(100, RepresentationTarget.Near);
+
+        Assert.Equal("NearA", decision.HorizonName);
+        Assert.Equal(RepresentationTarget.Near, decision.Representation);
+        Assert.Equal(8, decision.UpdatesPerSecond);
+    }
+
+    [Fact]
     public void Select_WithMinimumRepresentationRejectsUndefinedTarget()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
