@@ -2,7 +2,7 @@
 
 # Theory-to-Implementation Map
 
-This is the source-backed companion to [Rendering Theory](RENDERING_THEORY.md). It connects the ideas taught in the theory chapters to the current public implementation and its focused tests. It is intentionally conservative: a passing unit test proves the behavior exercised by that test, not a complete production rendering pipeline.
+This is the source-backed companion to the [modular Renderer Theory learning path](RENDERING_THEORY.md). It connects the ideas taught in the theory chapters to the current public implementation and its focused tests. It is intentionally conservative: a passing unit test proves the behavior exercised by that test, not a complete production rendering pipeline.
 
 ## Reading the evidence
 
