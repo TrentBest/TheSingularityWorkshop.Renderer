@@ -42,3 +42,11 @@ A representation transition must preserve the identity of its source. A consumer
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> · <a href="RENDERING_THEORY.md">Theory index</a>
 </p>
+
+## Implementation and evidence
+
+**Source-checked:** [EventHorizon.cs](EventHorizon.cs), [ObserverRepresentationPolicy.cs](ObserverRepresentationPolicy.cs), and [HorizonRepresentationHandoff.cs](HorizonRepresentationHandoff.cs) cover a horizon contract, a concrete selection policy, and a prepared-representation handoff. Focused evidence is in [EventHorizonTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/EventHorizonTests.cs), [ObserverRepresentationPolicyTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/ObserverRepresentationPolicyTests.cs), and [HorizonRepresentationHandoffTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/HorizonRepresentationHandoffTests.cs).
+
+**Limit:** these are separate bounded contracts. They do not by themselves implement a universal multidimensional optimizer, calculate all observer coverage, or run a full world-to-GPU lifecycle.
+
+**Continue:** [Event Horizon Theory](EVENT_HORIZON_THEORY.md) and [Chapter 4 — Work budgets](THEORY_04_WORK_BUDGETS.md).
