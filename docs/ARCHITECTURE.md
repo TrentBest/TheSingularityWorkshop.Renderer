@@ -67,6 +67,23 @@ The illustration is produced by the runnable sample under `samples/LivingRendere
 - a specific game engine
 - business/application logic
 
+## Execution, rendering, visualization, and interaction
+
+These are neighboring responsibilities, not interchangeable names for one pipeline:
+
+| Responsibility | Owner | Contract |
+|---|---|---|
+| Execute a workflow and own its run lifecycle | Foundry / Hub workflow pipeline | Starts, coordinates, and reports work; Renderer must not duplicate this lifecycle |
+| Decide observer-relative representation and describe renderable output | Renderer | Converts source state and observer/policy inputs into rendering-oriented representations and frame data |
+| Manifest pixels, scenes, or world-space visuals | Visualize or a concrete presentation adapter | Turns suitable output into a visual manifestation; it is not the workflow executor |
+| Present semantic controls and collect human intent | GUI | Owns interaction-oriented UI semantics and presentation, not Renderer policy |
+
+Foundry outcomes can be rendered as **data**: a host or adapter may map a workflow status, result, or diagnostic into a Renderer-compatible representation. That does not transfer execution authority, cancellation ownership, retry policy, or run lifecycle into Renderer. Renderer consumes the outcome and describes output; it does not schedule the workflow that produced it.
+
+Likewise, a GUI may ask to inspect, filter, or act on an outcome, but those interaction semantics belong to GUI and the owning application. Renderer should not grow windowing, panel-layout, input-event, or GUI-framework dependencies to support that presentation. Visualize may provide an optional visual manifestation without becoming the owner of workflow orchestration.
+
+This table states the intended ownership boundary. It does not claim a complete Foundry-to-Renderer adapter or a production GUI/Visualize integration exists today; those require source-backed implementation and tests.
+
 ## Workshop relationships
 
 ### FSM_API
