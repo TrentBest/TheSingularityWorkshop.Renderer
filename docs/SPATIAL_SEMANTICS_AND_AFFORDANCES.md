@@ -76,6 +76,30 @@ A widget need not be only a flat UI element. Depending on the experience, it can
 
 A useful widget contract should identify its spatial anchor, interaction volume or surface, allowed input modes, preconditions, state feedback, and accessibility/forgiveness policy. Rendering presents the widget; an interaction system validates the action; the experience owns the rules. Renderer should not grow into a UI framework or game-logic engine merely because it describes where interactions are.
 
+## A GUI is a surface in space
+
+A useful Workshop-wide direction is to treat an interactive GUI as content on a surface with a spatial pose, rather than treating "2D GUI" and "3D GUI" as unrelated kinds of interface. The familiar flat, head-on panel is the default pose; placing the same panel on a wall, tabletop, machine, floating card, or observer-relative HUD changes its placement and orientation, not its application state or its fundamental layout.
+
+This unifies spatial presentation without pretending that all GUI concerns become 3D. Text layout, sizing, accessibility, focus, input semantics, and logical hit targets still need explicit contracts. A surface pose maps the panel's local coordinates into its destination frame. The GUI layer owns content and interaction semantics; the host or presentation adapter maps that content onto a screen or world-space surface. Renderer can inform observer-relative representation and work selection, but should not become a GUI framework or own panel docking and lifecycle.
+
+Conceptually:
+
+```text
+GUI content + logical hit targets
+             |
+       local surface space
+             |
+  surface pose / destination frame
+             |
+ screen-space or world-space adapter
+             |
+          presentation
+```
+
+For example, the same panel can be shown with zero rotation, attached to a wall, laid horizontally on a workbench, or oriented toward an observer. The content and local button target remain stable; only the mapping from local surface space to the destination changes. Tests should verify that the button's target maps consistently under each pose and that changing presentation pose does not mutate authoritative application state.
+
+**Math ownership matters here.** Use the Workshop's Physics-owned spatial primitives for positions, orientations, and transforms where their semantics match. Do not create a parallel Renderer math abstraction or mechanically substitute a 2D/3D Physics type for a graphics view/projection matrix: coordinate frames, units, handedness, precision, and matrix conventions must be explicit at the adapter boundary. This is an architectural direction and testable proof target, not a claim that these pose mappings are already implemented end to end.
+
 ## Why this matters to AI and FSM-driven agents
 
 A soldier agent could receive a compact, structured view such as:
