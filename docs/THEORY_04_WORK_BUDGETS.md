@@ -30,7 +30,7 @@ When resources are scarce, prefer reducing optional presentation fidelity before
 
 ## Implementation and evidence
 
-**Source-checked:** [RendererPerformanceModel.cs](RendererPerformanceModel.cs) provides cost-model vocabulary and [RendererPerformanceModelTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/RendererPerformanceModelTests.cs) covers its current contract. [Benchmarking](BENCHMARKING.md) describes measurement discipline and interpretation.
+**Source-checked:** [RendererPerformanceModel.cs](../RendererPerformanceModel.cs) provides cost-model vocabulary and [RendererPerformanceModelTests.cs](../tests/TheSingularityWorkshop.Renderer.Tests/RendererPerformanceModelTests.cs) covers its current contract. [Benchmarking](BENCHMARKING.md) describes measurement discipline and interpretation.
 
 **Limit:** a model estimate, asymptotic analysis, and wall-clock benchmark are different evidence classes. No universal budget or performance improvement follows from the existence of the model.
 
