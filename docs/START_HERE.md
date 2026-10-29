@@ -90,7 +90,9 @@ The dependency direction must remain downward and compositional. Renderer must n
 
 - [Rendering Theory textbook](RENDERING_THEORY.md) — a teachable chapter set explaining the problem, observer model, Event Horizons, budgets, freshness, work dependencies, presentation handoff, and proof methodology.
 - [Living Renderer guide](LIVING_RENDERER.md)
-- [Rendering Theory](RENDERING_THEORY.md) — textbook chapters and worked examples.\n- [Theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md) — the current public contracts and their focused tests.\n- [Architecture](ARCHITECTURE.md)
+- [Rendering Theory](RENDERING_THEORY.md) — textbook chapters and worked examples.
+- [Theory-to-implementation map](THEORY_IMPLEMENTATION_MAP.md) — the current public contracts and their focused tests.
+- [Architecture](ARCHITECTURE.md)
 - [Event Horizons](EVENT_HORIZONS.md)
 - [Rendering Model](RENDERING_MODEL.md)
 - [Representation](REPRESENTATION.md)
