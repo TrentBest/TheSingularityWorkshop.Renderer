@@ -131,12 +131,25 @@ public sealed class ObserverRepresentationPolicy
         if ((int)distanceDecision.Representation >= (int)minimumRepresentation)
             return distanceDecision;
 
+        // Pick the least-detailed configured target that satisfies the floor. If a target
+        // appears at multiple horizons, preserve the first (nearest) rule in policy order.
+        RepresentationHorizonRule? satisfyingRule = null;
         for (var i = 0; i < _rules.Length; i++)
         {
-            if ((int)_rules[i].Representation >= (int)minimumRepresentation)
-                return new ObserverRepresentationDecision(
-                    distance, _rules[i].Horizon, _rules[i].Representation);
+            var rule = _rules[i];
+            if ((int)rule.Representation < (int)minimumRepresentation)
+                continue;
+
+            if (satisfyingRule is null ||
+                (int)rule.Representation < (int)satisfyingRule.Representation)
+            {
+                satisfyingRule = rule;
+            }
         }
+
+        if (satisfyingRule is not null)
+            return new ObserverRepresentationDecision(
+                distance, satisfyingRule.Horizon, satisfyingRule.Representation);
 
         // This policy cannot satisfy the requested floor. Return its most detailed available
         // rule rather than claiming that an unsupported representation exists.
