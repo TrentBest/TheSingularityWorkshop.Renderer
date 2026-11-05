@@ -7,6 +7,8 @@
 
 # ✳️ 00 TheSingularityWorkshop.Renderer
 
+[![Sith Policy](assets/sith-policy.svg)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/sith-policy.yml)
+
 This README follows the Workshop's shared [Documentation Standard](https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/master/DOCUMENTATION_STANDARD.md).
 
 > **A rendering stack designed around computational detail, observation, and Event Horizons.**
@@ -570,8 +572,6 @@ dotnet test .\TheSingularityWorkshop.Renderer.slnx --configuration Release --no-
 ```
 
 The library project is `TheSingularityWorkshop.Renderer.csproj` at the repository root. Tests live under `tests/TheSingularityWorkshop.Renderer.Tests/`.
-
-
 
 ## Our own rendering model, with hardware-aware execution
 
