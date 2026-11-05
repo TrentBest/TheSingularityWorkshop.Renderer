@@ -5,6 +5,7 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/TrentBest/TheSingularityWorkshop.Renderer/build.yml?branch=development)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+[![Sith Policy](assets/sith-policy.svg)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/sith-policy.yml)
 > **Choose the computational representation an observer needs—not just the detail a graphics API can draw.**
 
 TheSingularityWorkshop.Renderer is a graphics-API-independent set of observer, representation, visibility, and computational-detail foundations. Its central idea is the **Event Horizon**: a boundary where the work needed to represent something can change with the observer and context.
