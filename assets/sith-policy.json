@@ -6,12 +6,13 @@
     "master"
   ],
   "actual_branches": [
+    "architecture/microbundle-ontology-boundary",
     "development",
     "master"
   ],
-  "branch_count": 2,
-  "status": "COMPLIANT",
-  "evaluated_at": "2026-11-10T12:34:54Z",
-  "workflow_run": "https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/42816955172",
-  "triggering_commit": "2d1f5374d0588de87936598bbbad31f4e28e97e3"
+  "branch_count": 3,
+  "status": "NON-COMPLIANT",
+  "evaluated_at": "2026-11-11T11:50:37Z",
+  "workflow_run": "https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/runs/43015263829",
+  "triggering_commit": "284c2062b72b96557cb704f96b28c6ed6c2d7f20"
 }
