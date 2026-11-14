@@ -1,5 +1,9 @@
 using TheSingularityWorkshop.FSM_API;
+#if WORKSHOP_USE_REPOSITORY_SOURCES
 using FSMApi = TheSingularityWorkshop.FSM_API.FsmApi;
+#else
+using FSMApi = TheSingularityWorkshop.FSM_API.FSM_API;
+#endif
 
 namespace TheSingularityWorkshop.Renderer;
 
