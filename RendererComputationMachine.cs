@@ -1,5 +1,5 @@
 using TheSingularityWorkshop.FSM_API;
-using FSMApi = TheSingularityWorkshop.FSM_API.FSM_API;
+using FSMApi = TheSingularityWorkshop.FSM_API.FsmApi;
 
 namespace TheSingularityWorkshop.Renderer;
 
