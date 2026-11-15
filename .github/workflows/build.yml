@@ -26,7 +26,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@6df8cefd1440cf9313e76b8fdb8aaf90cfa745a3 # v6.0.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
       - name: Restore
         run: dotnet restore TheSingularityWorkshop.Renderer.slnx
       - name: Build
@@ -47,7 +47,7 @@ jobs:
         run: |
           set -euo pipefail
           dotnet run --project samples/FsmCosWithoutRendering/FsmCosWithoutRendering.csproj --configuration Release
-          deps_file="samples/FsmCosWithoutRendering/bin/Release/net8.0/FsmCosWithoutRendering.deps.json"
+          deps_file="samples/FsmCosWithoutRendering/bin/Release/net10.0/FsmCosWithoutRendering.deps.json"
           if grep -Eqi 'TheSingularityWorkshop.Renderer|TheSingularityWorkshop.Visualize|GUI[.]SVG' "$deps_file"; then
             echo "The rendering-free consumer unexpectedly references a rendering assembly."
             exit 1
@@ -153,7 +153,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@6df8cefd1440cf9313e76b8fdb8aaf90cfa745a3 # v6.0.0
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
       - name: Restore from sibling repository sources
         run: dotnet restore Workshop/TheSingularityWorkshop.Renderer/TheSingularityWorkshop.Renderer.slnx -p:WorkshopUseRepositorySources=true
       - name: Build from sibling repository sources
