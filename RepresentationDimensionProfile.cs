@@ -98,15 +98,15 @@ public sealed record RepresentationDimensionProfile
     /// </summary>
     public bool MeetsOrExceeds(RepresentationDimensionProfile minimum) =>
         minimum is not null &&
-        Geometry >= minimum.Geometry &&
-        Volume >= minimum.Volume &&
-        Particles >= minimum.Particles &&
-        Animation >= minimum.Animation &&
+        (int)Geometry >= (int)minimum.Geometry &&
+        (int)Volume >= (int)minimum.Volume &&
+        (int)Particles >= (int)minimum.Particles &&
+        (int)Animation >= (int)minimum.Animation &&
         UpdateCadenceHz >= minimum.UpdateCadenceHz &&
-        Residency >= minimum.Residency &&
-        InteractionPrecision >= minimum.InteractionPrecision &&
-        SemanticDetail >= minimum.SemanticDetail &&
-        History >= minimum.History;
+        (int)Residency >= (int)minimum.Residency &&
+        (int)InteractionPrecision >= (int)minimum.InteractionPrecision &&
+        (int)SemanticDetail >= (int)minimum.SemanticDetail &&
+        (int)History >= (int)minimum.History;
 
     private static void ValidateDetail(RepresentationDetailLevel value, string parameterName)
     {
