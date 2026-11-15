@@ -56,7 +56,7 @@ The current library contains executable foundations for Event Horizon selection 
 
 ## 🟢 04 See it in a minute
 
-Renderer is a library, not a standalone windowed demo. The quickest source-level proof is to run its tests from a checkout with the .NET 8 SDK:
+Renderer is a library, not a standalone windowed demo. The quickest source-level proof is to run its tests from a checkout with the .NET 10 SDK:
 
 ~~~bash
 dotnet test tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj
@@ -115,13 +115,13 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 
 ## Current status and evidence
 
-Renderer is **alpha software**. The project has a .NET 8 library and automated tests for its current pure-model contracts. Its benchmark suite provides machine-specific measurements for selected operations; those measurements are calibration evidence, not proof that the complete system outperforms an established production renderer.
+Renderer is **alpha software**. The project has a .NET 10 library and automated tests for its current pure-model contracts. Its benchmark suite provides machine-specific measurements for selected operations; those measurements are calibration evidence, not proof that the complete system outperforms an established production renderer.
 
 Current implementation, design intent, and exploratory demonstrations are not interchangeable. The documentation linked above identifies the relevant contracts and known boundaries. The browser Soldier Field remains a separate Visualize lab until an explicit, tested policy handoff connects it to Renderer.
 
 ## Build and contribute
 
-- SDK: .NET 8.
+- SDK: .NET 10.
 - Build: dotnet build TheSingularityWorkshop.Renderer.csproj
 - Test: dotnet test TheSingularityWorkshop.Renderer.slnx
 - Benchmark laboratory: [TheSingularityWorkshop.Renderer.Benchmarks](https://github.com/TrentBest/TheSingularityWorkshop.Renderer.Benchmarks).
