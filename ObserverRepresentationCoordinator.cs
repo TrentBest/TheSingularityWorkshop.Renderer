@@ -73,18 +73,22 @@ public sealed class ObserverRepresentationCoordinator : IDisposable
     /// <param name="sourceRevision">Revision of the authoritative source data.</param>
     /// <param name="observerRevision">Revision of the observer view used for coverage.</param>
     /// <param name="now">Deterministic time used for bucket cadence checks.</param>
+    /// <param name="minimumRepresentation">Optional caller-supplied floor for representation detail, such as an interaction or inspection requirement.</param>
     /// <returns>A decision and either a refresh ticket or confirmation that valid cached output can be reused.</returns>
     public ObserverRepresentationEvaluation Evaluate(
         double distance,
         long sourceRevision,
         long observerRevision,
-        DateTimeOffset now)
+        DateTimeOffset now,
+        RepresentationTarget? minimumRepresentation = null)
     {
         lock (_gate)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
-            var decision = _policy.Select(distance);
+            var decision = minimumRepresentation is { } minimum
+                ? _policy.Select(distance, minimum)
+                : _policy.Select(distance);
             if (!_buckets.TryGetValue(decision.Horizon, out var bucket))
             {
                 throw new InvalidOperationException(
