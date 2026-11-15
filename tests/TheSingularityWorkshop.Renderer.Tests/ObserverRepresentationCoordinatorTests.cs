@@ -26,6 +26,28 @@ public sealed class ObserverRepresentationCoordinatorTests
     }
 
     [Fact]
+    public void Evaluate_AppliesMinimumRepresentationAndSelectsItsBucket()
+    {
+        var (coordinator, _) = CreateCoordinator("observer-minimum-representation");
+        using (coordinator)
+        {
+            var now = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
+            var evaluation = coordinator.Evaluate(
+                distance: 45,
+                sourceRevision: 1,
+                observerRevision: 1,
+                now: now,
+                minimumRepresentation: RepresentationTarget.Interactive);
+
+            Assert.Equal(RepresentationTarget.Interactive, evaluation.Decision.Representation);
+            Assert.Equal("Interactive", evaluation.Decision.HorizonName);
+            Assert.Equal("bucket-Interactive", evaluation.Bucket.Name);
+            Assert.Equal(RepresentationTarget.Interactive, evaluation.ActiveRepresentation);
+            Assert.True(evaluation.RefreshRequired);
+        }
+    }
+
+    [Fact]
     public void Evaluate_ReusesValidCacheUntilCadenceExpires()
     {
         var (coordinator, _) = CreateCoordinator();
