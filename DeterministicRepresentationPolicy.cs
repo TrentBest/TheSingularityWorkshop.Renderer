@@ -219,12 +219,6 @@ public sealed class DeterministicRepresentationPolicy
     /// <param name="budget">Independent resource ceilings.</param>
     /// <param name="candidates">Available representation candidates.</param>
     /// <returns>A decision containing the selected candidate, or an explicit no-selection result.</returns>
-    /// <summary>Selects the highest-ranked feasible candidate deterministically.</summary>
-    /// <param name="observation">Observer and authoritative source provenance.</param>
-    /// <param name="minimum">Component-wise minimum fidelity that must be preserved.</param>
-    /// <param name="budget">Independent resource ceilings.</param>
-    /// <param name="candidates">Available representation candidates.</param>
-    /// <returns>A decision containing the selected candidate, or an explicit no-selection result.</returns>
     public RepresentationSelectionDecision Select(RepresentationObservation observation,
         RepresentationDimensionProfile minimum, RepresentationResourceBudget budget,
         IReadOnlyList<RepresentationCandidate> candidates)
