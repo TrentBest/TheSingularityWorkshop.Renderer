@@ -4,6 +4,13 @@ namespace TheSingularityWorkshop.Renderer;
 /// <remarks>Values are estimates supplied by the host, not measured GPU execution.</remarks>
 public sealed record RepresentationResourceCost
 {
+    /// <summary>Creates estimated resource costs for one presentation candidate.</summary>
+    /// <param name="cpuPreparationMilliseconds">Estimated CPU preparation time in milliseconds.</param>
+    /// <param name="gpuExecutionMilliseconds">Estimated GPU execution time in milliseconds.</param>
+    /// <param name="residentBytes">Estimated resident memory in bytes.</param>
+    /// <param name="transferBytes">Estimated transfer volume in bytes.</param>
+    /// <param name="freshnessLatencyMilliseconds">Estimated freshness latency in milliseconds.</param>
+    /// <param name="uncertainty">Estimated non-negative host-defined uncertainty.</param>
     public RepresentationResourceCost(double cpuPreparationMilliseconds, double gpuExecutionMilliseconds,
         long residentBytes, long transferBytes, double freshnessLatencyMilliseconds, double uncertainty)
     {
@@ -206,6 +213,12 @@ public sealed record RepresentationSelectionDecision(
 /// </remarks>
 public sealed class DeterministicRepresentationPolicy
 {
+    /// <summary>Selects the highest-ranked feasible candidate deterministically.</summary>
+    /// <param name="observation">Observer and authoritative source provenance.</param>
+    /// <param name="minimum">Component-wise minimum fidelity that must be preserved.</param>
+    /// <param name="budget">Independent resource ceilings.</param>
+    /// <param name="candidates">Available representation candidates.</param>
+    /// <returns>A decision containing the selected candidate, or an explicit no-selection result.</returns>
     /// <summary>Selects the highest-ranked feasible candidate deterministically.</summary>
     /// <param name="observation">Observer and authoritative source provenance.</param>
     /// <param name="minimum">Component-wise minimum fidelity that must be preserved.</param>
