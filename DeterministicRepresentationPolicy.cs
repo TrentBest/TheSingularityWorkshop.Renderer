@@ -200,6 +200,9 @@ public sealed record RepresentationSelectionDecision(
 {
     /// <summary>Gets whether a feasible candidate was selected.</summary>
     public bool HasSelection => Selected is not null;
+
+    /// <summary>Feasible candidates and their deterministic observer-weighted scores, highest first.</summary>
+    public IReadOnlyList<string> CandidateScores { get; init; } = Array.Empty<string>();
 }
 
 /// <summary>
@@ -249,24 +252,44 @@ public sealed class DeterministicRepresentationPolicy
             feasible.Add(candidate);
         }
 
-        var selected = feasible
-            .OrderByDescending(candidate => Quality(candidate.Profile))
-            .ThenBy(candidate => candidate.Id, StringComparer.Ordinal)
-            .FirstOrDefault();
+        var ranked = feasible
+            .Select(candidate => (Candidate: candidate, Score: Quality(candidate.Profile, observation)))
+            .OrderByDescending(item => item.Score)
+            .ThenBy(item => item.Candidate.Id, StringComparer.Ordinal)
+            .ToArray();
+        var selected = ranked.FirstOrDefault().Candidate;
 
         var reduced = selected is null
             ? Array.Empty<string>()
             : GetReducedDimensions(selected.Profile);
 
         return new RepresentationSelectionDecision(observation.ObserverId, observation.ObserverKind,
-            observation.SourceId, observation.SourceRevision, selected, rejected.AsReadOnly(), reduced);
+            observation.SourceId, observation.SourceRevision, selected, rejected.AsReadOnly(), reduced)
+        {
+            CandidateScores = ranked.Select(item => $"{item.Candidate.Id}: {item.Score:F3}").ToArray()
+        };
     }
 
-    private static long Quality(RepresentationDimensionProfile profile) =>
-        (long)profile.Geometry + (long)profile.Volume + (long)profile.Particles +
-        (long)profile.Animation + (long)profile.InteractionPrecision +
-        (long)profile.SemanticDetail + (long)profile.History +
-        (long)profile.Residency * 3 + (long)Math.Min(profile.UpdateCadenceHz, 1000);
+    // Transparent policy weights: viewport footprint values geometry/volume/particles;
+    // visibility gates their relevance; semantic salience values semantic and interaction detail.
+    // Observer-role weights are explicit rather than inferred from distance or graphics backend.
+    private static double Quality(RepresentationDimensionProfile profile, RepresentationObservation observation)
+    {
+        var visualWeight = observation.ProjectedSize * observation.Visibility;
+        var semanticWeight = observation.SemanticSalience;
+        var geometryWeight = observation.ObserverKind == RepresentationObserverKind.Camera ? 1.25 : 1.0;
+        var interactionWeight = observation.ObserverKind == RepresentationObserverKind.FirstPerson ? 1.5 : 0.75;
+        var mapSemanticWeight = observation.ObserverKind == RepresentationObserverKind.AiMap ? 1.5 : 1.0;
+
+        return (double)profile.Geometry * visualWeight * geometryWeight * 100 +
+            (double)profile.Volume * visualWeight * 80 +
+            (double)profile.Particles * visualWeight * 60 +
+            (double)profile.Animation * visualWeight * 30 +
+            (double)profile.InteractionPrecision * semanticWeight * interactionWeight * 50 +
+            (double)profile.SemanticDetail * semanticWeight * mapSemanticWeight * 100 +
+            (double)profile.History * observation.Visibility * 20 +
+            (double)profile.Residency * 3 + Math.Min(profile.UpdateCadenceHz, 1000) * visualWeight;
+    }
 
     private static string[] GetReducedDimensions(RepresentationDimensionProfile profile)
     {
