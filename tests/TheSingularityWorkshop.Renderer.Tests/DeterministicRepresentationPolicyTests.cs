@@ -78,4 +78,68 @@ public sealed class DeterministicRepresentationPolicyTests
             new RepresentationObservation("observer", RepresentationObserverKind.Camera,
                 "source", 1, 1.1, 0, 0));
     }
+    [Fact]
+    public void Select_ProjectedSizeAndVisibilityFavorVisualGeometry()
+    {
+        var geometry = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Full, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted);
+        var semantic = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Full, RepresentationDetailLevel.Omitted);
+        var candidates = new[]
+        {
+            new RepresentationCandidate("geometry", geometry, Cost(1, 128)),
+            new RepresentationCandidate("semantic", semantic, Cost(1, 128))
+        };
+        var minimum = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted);
+        var observation = new RepresentationObservation("camera", RepresentationObserverKind.Camera,
+            "source", 7, 1, 1, 0.1);
+
+        var decision = new DeterministicRepresentationPolicy().Select(observation, minimum, Budget(), candidates);
+
+        Assert.Equal("geometry", decision.Selected!.Id);
+        Assert.Equal(2, decision.CandidateScores.Count);
+    }
+
+    [Fact]
+    public void Select_SemanticSalienceFavorsSemanticDetailForAiMapObserver()
+    {
+        var geometry = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Full, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted);
+        var semantic = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Full, RepresentationDetailLevel.Omitted);
+        var candidates = new[]
+        {
+            new RepresentationCandidate("geometry", geometry, Cost(1, 128)),
+            new RepresentationCandidate("semantic", semantic, Cost(1, 128))
+        };
+        var minimum = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted);
+        var observation = new RepresentationObservation("map", RepresentationObserverKind.AiMap,
+            "hazard", 9, 0.1, 1, 1);
+
+        var decision = new DeterministicRepresentationPolicy().Select(observation, minimum, Budget(), candidates);
+
+        Assert.Equal("semantic", decision.Selected!.Id);
+        Assert.Contains("semantic:", decision.CandidateScores[0]);
+    }
+
 }
