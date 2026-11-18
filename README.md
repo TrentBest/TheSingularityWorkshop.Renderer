@@ -26,7 +26,7 @@ flowchart TD
 
 ## 🟦 01 What
 
-Renderer provides reusable .NET contracts and models for deciding **what representation is appropriate to an observer, and what computational work belongs with it**.
+Renderer provides reusable .NET contracts and models for deciding **what representation is appropriate to an observer, and what computational work belongs with it**. At runtime, FSM_COS composes Renderer through its MicroBundle capability; NuGet dependencies support implementation/building and are not the runtime capability-consumption contract. See [MicroBundle boundary](docs/MICROBUNDLE.md).
 
 An Event Horizon can affect more than polygon count. Depending on policy, a representation may change geometry or material detail, animation/update cadence, simulation participation, interaction availability, semantic detail, visibility, or representation type.
 
@@ -131,10 +131,9 @@ Read [Architecture](docs/ARCHITECTURE.md) before changing responsibility boundar
 ---
 
 <p align="center">
-  <img src="https://avatars.githubusercontent.com/u/16405167?v=4" width="48" alt="The Singularity Workshop maintainer avatar">
+  <img src="https://raw.githubusercontent.com/TrentBest/FSM_API/master/Documentation/Branding/TheSingularityWorkshop.png" alt="The Singularity Workshop">
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> ·
   <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> ·
-  <a href="https://www.nuget.org/packages/TheSingularityWorkshop.Renderer">NuGet</a> ·
   <a href="https://github.com/TrentBest/TheSingularityWorkshop.FSM_COS/blob/development/DOCUMENTATION_STANDARD.md">Workshop documentation standard</a>
 </p>
