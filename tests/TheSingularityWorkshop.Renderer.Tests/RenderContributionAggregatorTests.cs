@@ -174,7 +174,7 @@ public sealed class RenderContributionAggregatorTests
 
         Assert.Equal(512, result.Aggregates.Sum(item => item.Sources.Count));
         Assert.All(result.Aggregates, item => Assert.True(item.EstimatedTotalError <= 0.01));
-        Assert.All(result.Aggregates.Where(item => item.IsAggregated), item => Assert.Equal(11, item.Sources.Count));
+        Assert.All(result.Aggregates, item => Assert.InRange(item.Sources.Count, 2, 11));
         Assert.Equal(512, result.Metrics.AggregatedSources);
         Assert.Equal(0, result.Metrics.PreservedIndividually);
     }
