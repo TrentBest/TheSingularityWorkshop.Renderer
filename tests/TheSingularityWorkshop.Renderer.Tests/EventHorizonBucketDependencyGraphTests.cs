@@ -137,6 +137,80 @@ public sealed class EventHorizonBucketDependencyGraphTests
         Assert.Throws<ObjectDisposedException>(() => graph.AddDependency(source, dependent));
     }
 
+
+    [Fact]
+    public void NaturalPhenomenonDependenciesInvalidateOnlyTheirDerivedOutputs()
+    {
+        var lightningEvent = Bucket("LightningEvent", "Transient", 60);
+        var ashDensityField = Bucket("AshDensityField", "Regional", 5);
+        var depositedAsh = Bucket("DepositedAsh", "Persistent", 1);
+        var cameraState = Bucket("CameraState", "Observer", 60);
+
+        var shadowHistory = Bucket("ShadowHistory", "Near", 30);
+        var temporalLightingHistory = Bucket("TemporalLightingHistory", "Near", 30);
+        var volumeIntegration = Bucket("VolumeIntegration", "Regional", 5);
+        var viewHistory = Bucket("ViewHistory", "Observer", 60);
+        var surfaceMaterials = Bucket("SurfaceMaterials", "Persistent", 1);
+        var surfaceLighting = Bucket("SurfaceLighting", "Persistent", 1);
+
+        using var graph = new EventHorizonBucketDependencyGraph();
+        graph.AddDependency(lightningEvent, shadowHistory);
+        graph.AddDependency(lightningEvent, temporalLightingHistory);
+        graph.AddDependency(ashDensityField, volumeIntegration);
+        graph.AddDependency(cameraState, viewHistory);
+        graph.AddDependency(depositedAsh, surfaceMaterials);
+        graph.AddDependency(depositedAsh, surfaceLighting);
+
+        var buckets = new[]
+        {
+            lightningEvent, ashDensityField, depositedAsh, cameraState,
+            shadowHistory, temporalLightingHistory, volumeIntegration,
+            viewHistory, surfaceMaterials, surfaceLighting
+        };
+        foreach (var bucket in buckets)
+            Complete(bucket);
+
+        // A transient flash invalidates illumination products, not the evolving ash field,
+        // persistent surface state, or camera history.
+        lightningEvent.SetSourceRevision(1);
+        Assert.False(shadowHistory.HasValidRepresentation);
+        Assert.False(temporalLightingHistory.HasValidRepresentation);
+        Assert.True(volumeIntegration.HasValidRepresentation);
+        Assert.True(viewHistory.HasValidRepresentation);
+        Assert.True(surfaceMaterials.HasValidRepresentation);
+        Assert.True(surfaceLighting.HasValidRepresentation);
+
+        Complete(shadowHistory);
+        Complete(temporalLightingHistory);
+
+        // A new authoritative density-field revision invalidates volume integration only.
+        ashDensityField.SetSourceRevision(1);
+        Assert.False(volumeIntegration.HasValidRepresentation);
+        Assert.True(shadowHistory.HasValidRepresentation);
+        Assert.True(temporalLightingHistory.HasValidRepresentation);
+        Assert.True(viewHistory.HasValidRepresentation);
+        Assert.True(surfaceMaterials.HasValidRepresentation);
+
+        Complete(volumeIntegration);
+
+        // A camera cut invalidates view-dependent history without changing world sources.
+        cameraState.MarkDirty(BucketDirtyReason.ObserverChanged);
+        Assert.False(viewHistory.HasValidRepresentation);
+        Assert.True(volumeIntegration.HasValidRepresentation);
+        Assert.True(surfaceMaterials.HasValidRepresentation);
+
+        Complete(viewHistory);
+
+        // Persistent aftermath has its own revision and invalidates later material/lighting
+        // products even after the transient event and its visual history have expired.
+        depositedAsh.SetSourceRevision(1);
+        Assert.False(surfaceMaterials.HasValidRepresentation);
+        Assert.False(surfaceLighting.HasValidRepresentation);
+        Assert.True(shadowHistory.HasValidRepresentation);
+        Assert.True(volumeIntegration.HasValidRepresentation);
+        Assert.True(viewHistory.HasValidRepresentation);
+    }
+
     private static EventHorizonBucket Bucket(string name, string horizon, double frequency) =>
         new(name, new EventHorizon(horizon, 100, frequency), frequency);
 
