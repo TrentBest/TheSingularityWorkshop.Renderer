@@ -140,8 +140,8 @@ public sealed class RenderContributionAggregatorTests
     {
         var result = RenderContributionAggregator.Aggregate(
             [Contribution("a"), Contribution("b"), Contribution("c"), Contribution("d")],
-            maximumAggregateError: 1,
-            additionalSourceError: 0,
+            maximumAggregateError: 0.09,
+            additionalSourceError: 0.02,
             minimumSources: 3);
 
         Assert.Equal(2, result.Aggregates.Count);
