@@ -152,10 +152,12 @@ public sealed class DeterministicRepresentationPolicyTests
         };
         var policy = new DeterministicRepresentationPolicy();
 
+        var previous = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            Budget(), new[] { candidates[1] });
         var first = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
-            Budget(), candidates, "z-current", 0);
+            Budget(), candidates, previous, 0);
         var replay = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
-            Budget(), candidates, "z-current", 0);
+            Budget(), candidates, previous, 0);
 
         Assert.Equal("z-current", first.Selected!.Id);
         Assert.True(first.HysteresisApplied);
@@ -172,9 +174,12 @@ public sealed class DeterministicRepresentationPolicyTests
             new RepresentationCandidate("required", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
         };
 
-        var decision = new DeterministicRepresentationPolicy().Select(
+        var policy = new DeterministicRepresentationPolicy();
+        var previous = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            Budget(), new[] { candidates[0] });
+        var decision = policy.Select(
             Observation(), Profile(RepresentationDetailLevel.Reduced), Budget(),
-            candidates, "current", double.MaxValue);
+            candidates, previous, double.MaxValue);
 
         Assert.Equal("required", decision.Selected!.Id);
         Assert.False(decision.HysteresisApplied);
@@ -190,9 +195,13 @@ public sealed class DeterministicRepresentationPolicyTests
             new RepresentationCandidate("fallback", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
         };
 
-        var decision = new DeterministicRepresentationPolicy().Select(
+        var policy = new DeterministicRepresentationPolicy();
+        var previous = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            new RepresentationResourceBudget(5, 3, 8192, 2048, 50, 0.5),
+            new[] { candidates[0] });
+        var decision = policy.Select(
             Observation(), Profile(RepresentationDetailLevel.Summary), Budget(),
-            candidates, "current", double.MaxValue);
+            candidates, previous, double.MaxValue);
 
         Assert.Equal("fallback", decision.Selected!.Id);
         Assert.False(decision.HysteresisApplied);
