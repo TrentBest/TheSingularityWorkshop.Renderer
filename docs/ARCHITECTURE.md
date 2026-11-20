@@ -100,18 +100,15 @@ FSM_COS can compose Renderer capabilities into a runtime.
 
 Renderer must not require FSM_COS simply to define or execute its core model.
 
-### Micro Bundles
+### MicroBundles
 
-The core Renderer is itself a MicroBundle capability through the RendererMicroBundle adapter
-included in this package.
+Renderer is delivered to the runtime as a **MicroBundle capability**, resolved by semantic identity and version through the Workshop repository boundary. NuGet is not the runtime consumption model for Renderer.
 
-Additional rendering capabilities can become sibling MicroBundles under the Renderer
-ontology. They do not automatically require separate NuGet packages; package boundaries
-should follow independent distribution, versioning, dependency, configuration, lifecycle,
-or arbitration needs.
+The canonical ontology identity is the string **TheSingularityWorkshop.Renderer**. A portable artifact reference is **(ontology string, version, SHA-256)**. A repository may map that identity to a local non-zero ulong handle for blob lookup, but the handle is storage-local and is never the portable semantic identity.
 
-FSM_COS consumes these MicroBundles through MicroBundleDomain. It should never need to
-learn Renderer-specific types merely to assemble a runtime.
+FSM_COS owns discovery, resolution, verification, loading, composition, and runtime lifecycle. Renderer owns its capability implementation and does not depend upward on FSM_COS. Ordinary NuGet dependencies may still be used to build Renderer; that does not make a NuGet package the capability delivered to FSM_COS.
+
+The complete durable repository-to-FSM_COS runtime path is an implementation milestone, not a behavior this repository currently claims to have completed.
 
 See [Renderer MicroBundle](MICROBUNDLE.md).
 
