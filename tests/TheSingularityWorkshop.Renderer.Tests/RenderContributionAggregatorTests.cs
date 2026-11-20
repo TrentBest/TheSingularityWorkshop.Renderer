@@ -122,6 +122,33 @@ public sealed class RenderContributionAggregatorTests
     }
 
     [Fact]
+    public void HonorsMinimumSourceCountWithoutPrematurelyFlushingEligibleContributions()
+    {
+        var result = RenderContributionAggregator.Aggregate(
+            [Contribution("a"), Contribution("b"), Contribution("c")],
+            maximumAggregateError: 1,
+            additionalSourceError: 0,
+            minimumSources: 3);
+
+        var aggregate = Assert.Single(result.Aggregates);
+        Assert.Equal(3, aggregate.Sources.Count);
+        Assert.True(aggregate.IsAggregated);
+    }
+
+    [Fact]
+    public void PreservesSubMinimumRemainderAsIndividualSources()
+    {
+        var result = RenderContributionAggregator.Aggregate(
+            [Contribution("a"), Contribution("b"), Contribution("c"), Contribution("d")],
+            maximumAggregateError: 1,
+            additionalSourceError: 0,
+            minimumSources: 3);
+
+        Assert.Equal(4, result.Aggregates.Count);
+        Assert.All(result.Aggregates, item => Assert.False(item.IsAggregated));
+    }
+
+    [Fact]
     public void RejectsDuplicateSourceIdentityInOneSnapshotEvenWhenRevisionsDiffer()
     {
         Assert.Throws<ArgumentException>(() =>
@@ -156,7 +183,9 @@ public sealed class RenderContributionAggregatorTests
         var left = RenderContributionAggregator.Aggregate(first, 1, 0.01);
         var right = RenderContributionAggregator.Aggregate(second, 1, 0.01);
 
-        Assert.Equal(left.Aggregates, right.Aggregates);
+        Assert.Equal(
+            left.Aggregates.Select(item => (item.AggregationKey, item.EstimatedSourceError, item.AggregationError)),
+            right.Aggregates.Select(item => (item.AggregationKey, item.EstimatedSourceError, item.AggregationError)));
         Assert.Equal(left.Aggregates[0].Sources, right.Aggregates[0].Sources);
     }
 }
