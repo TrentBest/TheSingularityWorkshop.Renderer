@@ -238,12 +238,12 @@ public sealed class DeterministicRepresentationPolicy
     /// <param name="minimum">Component-wise minimum fidelity that must be preserved.</param>
     /// <param name="budget">Independent resource ceilings.</param>
     /// <param name="candidates">Available representation candidates.</param>
-    /// <param name="currentCandidateId">Currently presented candidate ID, if any.</param>
+    /// <param name="previousDecision">Previous decision for the same observer and authoritative source, if any.</param>
     /// <param name="minimumSwitchAdvantage">Required score advantage before changing candidates.</param>
     /// <returns>A deterministic decision; infeasible current candidates never receive hysteresis protection.</returns>
     public RepresentationSelectionDecision Select(RepresentationObservation observation,
         RepresentationDimensionProfile minimum, RepresentationResourceBudget budget,
-        IReadOnlyList<RepresentationCandidate> candidates, string? currentCandidateId,
+        IReadOnlyList<RepresentationCandidate> candidates, RepresentationSelectionDecision? previousDecision,
         double minimumSwitchAdvantage)
     {
         if (!double.IsFinite(minimumSwitchAdvantage) || minimumSwitchAdvantage < 0)
@@ -283,11 +283,18 @@ public sealed class DeterministicRepresentationPolicy
         var selected = challenger.Candidate;
         var hysteresisApplied = false;
 
-        if (selected is not null && !string.IsNullOrWhiteSpace(currentCandidateId) &&
-            !StringComparer.Ordinal.Equals(selected.Id, currentCandidateId))
+        var previousCandidateId = previousDecision is not null &&
+            StringComparer.Ordinal.Equals(previousDecision.ObserverId, observation.ObserverId) &&
+            StringComparer.Ordinal.Equals(previousDecision.SourceId, observation.SourceId) &&
+            previousDecision.HasSelection
+                ? previousDecision.Selected!.Id
+                : null;
+
+        if (selected is not null && previousCandidateId is not null &&
+            !StringComparer.Ordinal.Equals(selected.Id, previousCandidateId))
         {
             var current = ranked.FirstOrDefault(item =>
-                StringComparer.Ordinal.Equals(item.Candidate.Id, currentCandidateId));
+                StringComparer.Ordinal.Equals(item.Candidate.Id, previousCandidateId));
             if (current.Candidate is not null &&
                 challenger.Score - current.Score <= minimumSwitchAdvantage)
             {
