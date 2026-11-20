@@ -217,4 +217,26 @@ public sealed class DeterministicRepresentationPolicyTests
                 Array.Empty<RepresentationCandidate>(), null, double.NaN));
     }
 
+    [Fact]
+    public void Select_HysteresisDoesNotCarryAcrossAuthoritativeSources()
+    {
+        var candidates = new[]
+        {
+            new RepresentationCandidate("a-challenger", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128)),
+            new RepresentationCandidate("z-previous", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
+        };
+        var policy = new DeterministicRepresentationPolicy();
+        var previous = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            Budget(), new[] { candidates[1] });
+        var otherSource = new RepresentationObservation("observer-A", RepresentationObserverKind.Camera,
+            "phenomenon/ash-cloud-2", 42, 0.7, 0.9, 0.8);
+
+        var decision = policy.Select(otherSource, Profile(RepresentationDetailLevel.Summary),
+            Budget(), candidates, previous, 0);
+
+        Assert.Equal("a-challenger", decision.Selected!.Id);
+        Assert.False(decision.HysteresisApplied);
+        Assert.Equal("phenomenon/ash-cloud-2", decision.SourceId);
+    }
+
 }
