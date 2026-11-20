@@ -161,6 +161,44 @@ public sealed class RenderContributionAggregatorTests
     }
 
     [Fact]
+    public void LargeSourceSetIsPartitionedWithinErrorBudgetWithoutLosingProvenance()
+    {
+        var contributions = Enumerable.Range(0, 512)
+            .Select(index => Contribution($"source-{index:D4}", revision: index + 1, error: 0))
+            .ToArray();
+
+        var result = RenderContributionAggregator.Aggregate(
+            contributions,
+            maximumAggregateError: 0.01,
+            additionalSourceError: 0.001);
+
+        Assert.Equal(512, result.Aggregates.Sum(item => item.Sources.Count));
+        Assert.All(result.Aggregates, item => Assert.True(item.EstimatedTotalError <= 0.01));
+        Assert.All(result.Aggregates.Where(item => item.IsAggregated), item => Assert.Equal(11, item.Sources.Count));
+        Assert.Equal(512, result.Metrics.AggregatedSources);
+        Assert.Equal(0, result.Metrics.PreservedIndividually);
+    }
+
+    [Fact]
+    public void IndependentObserverSnapshotsCannotAggregateAcrossCalls()
+    {
+        var nearbyObserver = RenderContributionAggregator.Aggregate(
+            [Contribution("source-a"), Contribution("source-b")],
+            maximumAggregateError: 1,
+            additionalSourceError: 0);
+        var distantObserver = RenderContributionAggregator.Aggregate(
+            [Contribution("source-c"), Contribution("source-d")],
+            maximumAggregateError: 1,
+            additionalSourceError: 0);
+
+        Assert.Equal(2, Assert.Single(nearbyObserver.Aggregates).Sources.Count);
+        Assert.Equal(2, Assert.Single(distantObserver.Aggregates).Sources.Count);
+        Assert.DoesNotContain(
+            nearbyObserver.Aggregates.SelectMany(item => item.Sources),
+            source => distantObserver.Aggregates.SelectMany(item => item.Sources).Contains(source));
+    }
+
+    [Fact]
     public void RejectsInvalidBudgetsAndMinimumSourceCount()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
