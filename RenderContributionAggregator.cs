@@ -177,10 +177,9 @@ public static class RenderContributionAggregator
                 var nextAggregationError = additionalSourceError * (nextCount - 1);
                 var nextTotalError = nextSourceError + nextAggregationError;
 
-                if (current.Count > 0 &&
-                    (nextCount < minimumSources || nextTotalError > maximumAggregateError))
+                if (current.Count > 0 && nextTotalError > maximumAggregateError)
                 {
-                    Flush(current, sourceError, additionalSourceError, output);
+                    FlushOrPreserveIndividually(current, sourceError, additionalSourceError, minimumSources, output);
                     current.Clear();
                     sourceError = 0;
                     nextSourceError = item.EstimatedSourceError;
@@ -189,19 +188,19 @@ public static class RenderContributionAggregator
                     nextTotalError = nextSourceError;
                 }
 
-                if (nextCount == 1 || nextTotalError <= maximumAggregateError)
+                if (nextCount == 1 && nextTotalError > maximumAggregateError)
+                {
+                    output.Add(CreateSingle(item));
+                }
+                else
                 {
                     current.Add(item);
                     sourceError = nextSourceError;
                 }
-                else
-                {
-                    output.Add(CreateSingle(item));
-                }
             }
 
             if (current.Count > 0)
-                Flush(current, sourceError, additionalSourceError, output);
+                FlushOrPreserveIndividually(current, sourceError, additionalSourceError, minimumSources, output);
         }
 
         output = output
@@ -224,9 +223,26 @@ public static class RenderContributionAggregator
     private static RenderContributionAggregate CreateSingle(RenderContribution contribution) =>
         new(
             contribution.AggregationKey,
-            Array.AsReadOnly([new RenderContributionProvenance(contribution.SourceId, contribution.SourceRevision)]),
+            Array.AsReadOnly(new[] { new RenderContributionProvenance(contribution.SourceId, contribution.SourceRevision) }),
             contribution.EstimatedSourceError,
             0);
+
+    private static void FlushOrPreserveIndividually(
+        IReadOnlyList<RenderContribution> contributions,
+        double sourceError,
+        double additionalSourceError,
+        int minimumSources,
+        ICollection<RenderContributionAggregate> output)
+    {
+        if (contributions.Count < minimumSources)
+        {
+            foreach (var contribution in contributions)
+                output.Add(CreateSingle(contribution));
+            return;
+        }
+
+        Flush(contributions, sourceError, additionalSourceError, output);
+    }
 
     private static void Flush(
         IReadOnlyList<RenderContribution> contributions,
