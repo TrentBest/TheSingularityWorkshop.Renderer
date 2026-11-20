@@ -6,7 +6,6 @@ namespace TheSingularityWorkshop.Renderer;
 /// <param name="Id">Stable identity for this representation instance.</param>
 /// <param name="HorizonName">The Event Horizon whose policy produced the representation.</param>
 /// <param name="SourceRevision">Authoritative source revision represented by this output.</param>
-/// <param name="SourceId">Stable authoritative identity of the entity or source represented by this output.</param>
 /// <param name="ObserverRevision">Observer/view revision for which its coverage was evaluated.</param>
 /// <param name="IsReady">Whether all required preparation work has completed successfully.</param>
 /// <param name="CoversObserverView">Whether this representation covers the current observer view.</param>
