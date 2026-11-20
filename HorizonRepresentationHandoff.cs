@@ -6,6 +6,7 @@ namespace TheSingularityWorkshop.Renderer;
 /// <param name="Id">Stable identity for this representation instance.</param>
 /// <param name="HorizonName">The Event Horizon whose policy produced the representation.</param>
 /// <param name="SourceRevision">Authoritative source revision represented by this output.</param>
+/// <param name="SourceId">Stable authoritative identity of the entity or source represented by this output.</param>
 /// <param name="ObserverRevision">Observer/view revision for which its coverage was evaluated.</param>
 /// <param name="IsReady">Whether all required preparation work has completed successfully.</param>
 /// <param name="CoversObserverView">Whether this representation covers the current observer view.</param>
@@ -15,7 +16,11 @@ public sealed record HorizonRepresentation(
     long SourceRevision,
     long ObserverRevision,
     bool IsReady,
-    bool CoversObserverView);
+    bool CoversObserverView)
+{
+    /// <summary>Stable authoritative identity of the entity or source represented by this output.</summary>
+    public string SourceId { get; init; } = string.Empty;
+}
 
 /// <summary>An atomic display-selection snapshot for an Event Horizon handoff.</summary>
 /// <param name="Current">The representation that must remain visible until a handoff commits.</param>
@@ -76,6 +81,8 @@ public sealed class HorizonRepresentationHandoff
         {
             if (string.Equals(candidate.Id, _current.Id, StringComparison.Ordinal))
                 throw new ArgumentException("The pending representation must differ from the current representation.", nameof(candidate));
+            if (!string.Equals(candidate.SourceId, _current.SourceId, StringComparison.Ordinal))
+                throw new ArgumentException("A handoff cannot change the authoritative source identity.", nameof(candidate));
 
             _pending = candidate;
             _generation++;
@@ -157,5 +164,7 @@ public sealed class HorizonRepresentationHandoff
             throw new ArgumentException("A representation identity is required.", parameterName);
         if (string.IsNullOrWhiteSpace(representation.HorizonName))
             throw new ArgumentException("A horizon name is required.", parameterName);
+        if (string.IsNullOrWhiteSpace(representation.SourceId))
+            throw new ArgumentException("A stable authoritative source identity is required.", parameterName);
     }
 }
