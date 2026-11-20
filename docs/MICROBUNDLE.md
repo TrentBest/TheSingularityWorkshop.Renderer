@@ -1,118 +1,106 @@
 # Renderer MicroBundle
 
-The Renderer is a capability, not a composition-kernel responsibility. Concrete execution is deliberately outside the Renderer package: Computation defines the execution boundary, while CPU and GPU execution are independent MicroBundles.
+## Capability and composition boundary
 
-The package therefore contains its own MicroBundle adapter: RendererMicroBundle. This keeps the number of NuGet packages small while still giving FSM_COS the correct composition boundary.
+Renderer is a capability artifact that FSM_COS discovers and composes as a **MicroBundle**. NuGet is not the runtime capability-distribution or consumption contract for Renderer.
 
-## Voltron principle
+The Renderer repository may use ordinary NuGet dependencies while building its implementation (for example FSM_API and neutral domain contracts). A build/package artifact is not, by itself, the runtime MicroBundle. The MicroBundle artifact is resolved by its semantic identity and version, verified by its content digest, and loaded by FSM_COS through the Workshop repository/resolution boundary.
 
-```text
-Independent NuGet capability
-          |
-          v
-   MicroBundle adapter
-          |
-          v
-       FSM_COS
-          |
-          v
-   RuntimeAssembly
-          |
-          v
-       Host / Experience
-```
+    Experience requirement
+            |
+            v
+    String ontology identity + version
+            |
+            v
+    Workshop repository / resolver
+            |  locate artifact; verify SHA-256
+            v
+    Renderer MicroBundle artifact
+            |
+            v
+    FSM_COS composition
+            |
+            v
+    Runtime capability
+            |
+            v
+    Host / Experience
 
-A package may contain the implementation needed to make its capability useful and the small adapter needed to expose that capability to the composition system. FSM_COS does not need to know the implementation package directly.
+FSM_COS owns discovery, resolution, loading, composition, and configuration. Renderer owns its capability implementation and its public semantic contract. Renderer must not depend upward on FSM_COS.
 
-The adapter is deliberately inside TheSingularityWorkshop.Renderer rather than becoming a second Renderer.MicroBundle NuGet package. Splitting every adapter into another package would recreate the composition overhead we are trying to eliminate.
+## Canonical identity
 
-## Renderer ontology
+The canonical ontology identity for this capability is the stable string:
 
-The core rendering capability declares the human-level ontology name: Renderer.
+    TheSingularityWorkshop.Renderer
 
-Its stable MicroBundle identity is 0x52454E4445520001.
+This string is the semantic identity used in requirements, manifests, and portable artifact references. It is not a repository address, NuGet package coordinate, or storage location.
 
-The domain contract intentionally treats the numeric ID as opaque. The Renderer owns the meaning of this identity and can grow the family without changing FSM_COS.
+A portable artifact reference is the tuple:
 
-```text
-Renderer
-├── Renderer core
-├── Renderer.Cartoon
-├── Renderer.Reality
-├── Renderer.LowPoly
-├── Renderer.Semantic
-├── Renderer.Terrain
-└── future rendering capabilities
-```
+    (ontology string, version, SHA-256)
 
-Those are potential capabilities, not commitments to create a package for each one. A capability should become its own MicroBundle when it has an independent composition, configuration, lifecycle, dependency, or arbitration reason to exist.
+The SHA-256 digest identifies the exact artifact bytes. Version expresses the capability's declared release/version lineage. The ontology string identifies what capability the artifact provides.
 
-## What the core bundle does
+A repository may map that portable identity to a local non-zero ulong handle for efficient blob lookup. That numeric handle is **repository-local only**: it is not the ontology, must not be exchanged as the portable identity, and may differ between repositories or storage instances.
 
-RendererMicroBundle currently does only three things:
+    Portable identity
+      ontology string + version + SHA-256
+              |
+              v
+    Repository-local mapping
+      opaque non-zero ulong handle
+              |
+              v
+    Stored artifact blob
 
-1. identifies the Renderer capability;
-2. receives its configuration opaquely from the composition host;
-3. participates in arbitration without claiming composition changes.
+Do not publish a numeric constant as Renderer’s stable MicroBundle identity. Do not infer semantic identity from a package name or a blob handle.
 
-It does not make FSM_COS responsible for rendering.
+## Capability family
 
-It does not define a serialization format.
+The core Renderer capability can grow related capabilities under its ontology:
 
-It does not create a GUI.
+    TheSingularityWorkshop.Renderer
+    ├── Renderer core
+    ├── Renderer.Cartoon
+    ├── Renderer.Reality
+    ├── Renderer.LowPoly
+    ├── Renderer.Semantic
+    ├── Renderer.Terrain
+    └── future rendering capabilities
 
-It does not choose a GPU backend.
+These names illustrate possible capability boundaries, not a commitment to create a separate artifact for each one. A capability should become an independently resolved MicroBundle when it has a distinct composition, configuration, lifecycle, dependency, versioning, or arbitration reason to exist.
 
-Those remain Renderer or neighboring capability concerns.
+## Ownership
 
-## Why this boundary matters
+The Renderer MicroBundle provides observer-relative representation and computational-detail policy. It does not own FSM_COS composition or runtime lifecycle; authoritative Experience/world meaning or persistent world storage; GUI interaction semantics; Visualize's pixel/scene manifestation; or CPU/GPU provider execution and native graphics APIs.
 
-The composition crane should be assembled once and kept small.
+The intended responsibility flow is:
 
-```text
-             FSM_COS
-          /     |     \\
-       REST   GUI   Renderer
-                    |
-             Renderer MicroBundle
-                    |
-               Computation
-                    |
-          +---------+---------+
-          |                   |
-      CPU MicroBundle    GPU MicroBundle
-```
+    Experience: authoritative meaning and state
+            |
+            v
+    Renderer: observer-relative representation
+            |
+            v
+    Computation: workload description and provider selection
+            |
+            +--> CPU execution MicroBundle
+            +--> GPU execution MicroBundle
+            |
+            v
+    Visualize / host: manifestation
 
-The crane does not grow a new arm every time a new capability appears. It receives another MicroBundle and installs it.
+The same authoritative entity identity and state can support multiple representations. Renderer chooses what representation is appropriate; Visualize or another host manifests it. Neither layer becomes the owner of Experience meaning.
 
-That is the intended meaning of the Workshop's modularity: **the pieces become more capable without making the crane more complicated.**
+## Implementation status
 
-## Dependency direction
+This document defines the required artifact identity and composition boundary. It does **not** claim that this repository already contains a complete durable artifact publisher, repository resolver, FSM_COS loader, or end-to-end runtime composition path. Those require separate implementation and executable integration tests.
 
-```text
-MicroBundleDomain
-       ^
-       |
-Renderer ───────► FSM_API
-       |
-       └── ProtocolAi
+The current .NET project and its NuGet dependencies are build-time implementation concerns. They must not be presented as proof that FSM_COS consumes Renderer as a NuGet capability.
 
-FSM_COS ───────► MicroBundleDomain
-FSM_COS ───────► Renderer (only when a host/catalog chooses to compose it)
-```
+## Rule for future work
 
-Renderer may depend on the neutral MicroBundle contract because it is authoring its own capability adapter. Renderer never depends upward on FSM_COS.
+> Does this belong to Renderer’s implementation, the portable MicroBundle artifact, repository resolution, FSM_COS composition, or a neighboring execution/presentation capability?
 
-The same rule applies to execution: Renderer does not become a CPU/GPU implementation package. A future Computation package can contain its own MicroBundle adapter, while CPU and GPU provider packages each contain their own adapters and can be composed independently.
-
-FSM_COS remains a consumer of the domain contract and does not acquire Renderer-specific logic.
-
-## Rule for future capabilities
-
-Before creating another NuGet package, ask:
-
-> **Does this capability need independent versioning, distribution, dependency closure, configuration, lifecycle, or arbitration?**
-
-If not, it probably belongs inside an existing package.
-
-If yes, expose it as a MicroBundle so the composition crane can load it without learning what it is.
+Keep each responsibility on its owning side of the boundary.
