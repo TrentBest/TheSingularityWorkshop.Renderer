@@ -129,6 +129,30 @@ public sealed class HorizonRepresentationHandoffTests
     }
 
     [Fact]
+    public void CandidateFromDifferentAuthoritativeSourceCannotBeStaged()
+    {
+        var handoff = CreateHandoff();
+        var foreignSource = Representation("other", "Near", ready: true, covers: true) with { SourceId = "world:other-entity" };
+
+        Assert.Throws<ArgumentException>(() => handoff.Stage(foreignSource));
+        Assert.Null(handoff.Snapshot.Pending);
+        Assert.Equal("world:tree-1", handoff.Snapshot.Current.SourceId);
+    }
+
+    [Fact]
+    public void SourceIdentitySurvivesPromotionAndDemotion()
+    {
+        var handoff = CreateHandoff();
+        handoff.Stage(Representation("near", "Near", ready: true, covers: true));
+        Assert.True(handoff.TryCommit(7, 12));
+        Assert.Equal("world:tree-1", handoff.Snapshot.Current.SourceId);
+
+        handoff.Stage(Representation("far-refreshed", "Far", ready: true, covers: true));
+        Assert.True(handoff.TryCommit(7, 12));
+        Assert.Equal("world:tree-1", handoff.Snapshot.Current.SourceId);
+    }
+
+    [Fact]
     public void CurrentRepresentationCannotAlsoBeStagedAsPending()
     {
         var handoff = CreateHandoff();
@@ -151,7 +175,9 @@ public sealed class HorizonRepresentationHandoffTests
         Assert.Throws<ArgumentException>(() => new HorizonRepresentationHandoff(
             new HorizonRepresentation(" ", "Far", 7, 12, true, true)));
         Assert.Throws<ArgumentException>(() => new HorizonRepresentationHandoff(
-            new HorizonRepresentation("far", " ", 7, 12, true, true)));
+            new HorizonRepresentation("far", " ", 7, 12, true, true) { SourceId = "world:tree-1" }));
+        Assert.Throws<ArgumentException>(() => new HorizonRepresentationHandoff(
+            new HorizonRepresentation("far", "Far", 7, 12, true, true)));
     }
 
     private static HorizonRepresentationHandoff CreateHandoff() =>
@@ -162,5 +188,8 @@ public sealed class HorizonRepresentationHandoffTests
         string horizon,
         bool ready,
         bool covers) =>
-        new(id, horizon, SourceRevision: 7, ObserverRevision: 12, IsReady: ready, CoversObserverView: covers);
+        new(id, horizon, SourceRevision: 7, ObserverRevision: 12, IsReady: ready, CoversObserverView: covers)
+        {
+            SourceId = "world:tree-1"
+        };
 }
