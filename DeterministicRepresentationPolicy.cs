@@ -203,6 +203,9 @@ public sealed record RepresentationSelectionDecision(
 
     /// <summary>Feasible candidates and their deterministic observer-weighted scores, highest first.</summary>
     public IReadOnlyList<string> CandidateScores { get; init; } = Array.Empty<string>();
+
+    /// <summary>Whether the current feasible candidate was retained by temporal hysteresis.</summary>
+    public bool HysteresisApplied { get; init; }
 }
 
 /// <summary>
@@ -224,8 +227,27 @@ public sealed class DeterministicRepresentationPolicy
     /// <returns>A decision containing the selected candidate, or an explicit no-selection result.</returns>
     public RepresentationSelectionDecision Select(RepresentationObservation observation,
         RepresentationDimensionProfile minimum, RepresentationResourceBudget budget,
-        IReadOnlyList<RepresentationCandidate> candidates)
+        IReadOnlyList<RepresentationCandidate> candidates) =>
+        Select(observation, minimum, budget, candidates, null, 0);
+
+    /// <summary>
+    /// Selects a feasible representation while retaining the current feasible candidate until
+    /// a challenger exceeds it by the configured quality margin.
+    /// </summary>
+    /// <param name="observation">Observer and authoritative source provenance.</param>
+    /// <param name="minimum">Component-wise minimum fidelity that must be preserved.</param>
+    /// <param name="budget">Independent resource ceilings.</param>
+    /// <param name="candidates">Available representation candidates.</param>
+    /// <param name="currentCandidateId">Currently presented candidate ID, if any.</param>
+    /// <param name="minimumSwitchAdvantage">Required score advantage before changing candidates.</param>
+    /// <returns>A deterministic decision; infeasible current candidates never receive hysteresis protection.</returns>
+    public RepresentationSelectionDecision Select(RepresentationObservation observation,
+        RepresentationDimensionProfile minimum, RepresentationResourceBudget budget,
+        IReadOnlyList<RepresentationCandidate> candidates, string? currentCandidateId,
+        double minimumSwitchAdvantage)
     {
+        if (!double.IsFinite(minimumSwitchAdvantage) || minimumSwitchAdvantage < 0)
+            throw new ArgumentOutOfRangeException(nameof(minimumSwitchAdvantage));
         ArgumentNullException.ThrowIfNull(observation);
         ArgumentNullException.ThrowIfNull(minimum);
         ArgumentNullException.ThrowIfNull(budget);
@@ -257,7 +279,22 @@ public sealed class DeterministicRepresentationPolicy
             .OrderByDescending(item => item.Score)
             .ThenBy(item => item.Candidate.Id, StringComparer.Ordinal)
             .ToArray();
-        var selected = ranked.FirstOrDefault().Candidate;
+        var challenger = ranked.FirstOrDefault();
+        var selected = challenger.Candidate;
+        var hysteresisApplied = false;
+
+        if (selected is not null && !string.IsNullOrWhiteSpace(currentCandidateId) &&
+            !StringComparer.Ordinal.Equals(selected.Id, currentCandidateId))
+        {
+            var current = ranked.FirstOrDefault(item =>
+                StringComparer.Ordinal.Equals(item.Candidate.Id, currentCandidateId));
+            if (current.Candidate is not null &&
+                challenger.Score - current.Score <= minimumSwitchAdvantage)
+            {
+                selected = current.Candidate;
+                hysteresisApplied = true;
+            }
+        }
 
         var reduced = selected is null
             ? Array.Empty<string>()
@@ -266,7 +303,8 @@ public sealed class DeterministicRepresentationPolicy
         return new RepresentationSelectionDecision(observation.ObserverId, observation.ObserverKind,
             observation.SourceId, observation.SourceRevision, selected, rejected.AsReadOnly(), reduced)
         {
-            CandidateScores = ranked.Select(item => $"{item.Candidate.Id}: {item.Score:F3}").ToArray()
+            CandidateScores = ranked.Select(item => $"{item.Candidate.Id}: {item.Score:F3}").ToArray(),
+            HysteresisApplied = hysteresisApplied
         };
     }
 
