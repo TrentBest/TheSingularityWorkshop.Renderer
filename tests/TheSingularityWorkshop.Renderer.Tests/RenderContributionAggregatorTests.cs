@@ -116,7 +116,7 @@ public sealed class RenderContributionAggregatorTests
             additionalSourceError: 0.01);
 
         Assert.Equal(2, result.Aggregates.Count);
-        var preserved = Assert.Single(result.Aggregates.Where(item => item.Sources.Any(source => source.SourceId == "over-budget")));
+        var preserved = Assert.Single(result.Aggregates, item => item.Sources.Any(source => source.SourceId == "over-budget"));
         Assert.False(preserved.IsAggregated);
         Assert.Equal(0.5, preserved.EstimatedTotalError, 10);
     }
@@ -144,8 +144,10 @@ public sealed class RenderContributionAggregatorTests
             additionalSourceError: 0,
             minimumSources: 3);
 
-        Assert.Equal(4, result.Aggregates.Count);
-        Assert.All(result.Aggregates, item => Assert.False(item.IsAggregated));
+        Assert.Equal(2, result.Aggregates.Count);
+        Assert.Equal(3, Assert.Single(result.Aggregates, item => item.IsAggregated).Sources.Count);
+        var remainder = Assert.Single(result.Aggregates, item => !item.IsAggregated);
+        Assert.Equal("d", remainder.Sources[0].SourceId);
     }
 
     [Fact]
