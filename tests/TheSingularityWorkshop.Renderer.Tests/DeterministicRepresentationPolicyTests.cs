@@ -142,4 +142,70 @@ public sealed class DeterministicRepresentationPolicyTests
         Assert.Contains("semantic:", decision.CandidateScores[0]);
     }
 
+    [Fact]
+    public void Select_HysteresisRetainsCurrentFeasibleCandidateWithinSwitchMargin()
+    {
+        var candidates = new[]
+        {
+            new RepresentationCandidate("a-challenger", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128)),
+            new RepresentationCandidate("z-current", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
+        };
+        var policy = new DeterministicRepresentationPolicy();
+
+        var first = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            Budget(), candidates, "z-current", 0);
+        var replay = policy.Select(Observation(), Profile(RepresentationDetailLevel.Summary),
+            Budget(), candidates, "z-current", 0);
+
+        Assert.Equal("z-current", first.Selected!.Id);
+        Assert.True(first.HysteresisApplied);
+        Assert.Equal(first.Selected.Id, replay.Selected!.Id);
+        Assert.Equal(first.CandidateScores, replay.CandidateScores);
+    }
+
+    [Fact]
+    public void Select_HysteresisCannotPreserveCandidateBelowHardMinimum()
+    {
+        var candidates = new[]
+        {
+            new RepresentationCandidate("current", Profile(RepresentationDetailLevel.Summary), Cost(1, 128)),
+            new RepresentationCandidate("required", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
+        };
+
+        var decision = new DeterministicRepresentationPolicy().Select(
+            Observation(), Profile(RepresentationDetailLevel.Reduced), Budget(),
+            candidates, "current", double.MaxValue);
+
+        Assert.Equal("required", decision.Selected!.Id);
+        Assert.False(decision.HysteresisApplied);
+        Assert.Contains(decision.RejectedCandidates, reason => reason.StartsWith("current:"));
+    }
+
+    [Fact]
+    public void Select_HysteresisCannotPreserveCandidateOverBudget()
+    {
+        var candidates = new[]
+        {
+            new RepresentationCandidate("current", Profile(RepresentationDetailLevel.Full), Cost(1, 4096)),
+            new RepresentationCandidate("fallback", Profile(RepresentationDetailLevel.Reduced), Cost(1, 128))
+        };
+
+        var decision = new DeterministicRepresentationPolicy().Select(
+            Observation(), Profile(RepresentationDetailLevel.Summary), Budget(),
+            candidates, "current", double.MaxValue);
+
+        Assert.Equal("fallback", decision.Selected!.Id);
+        Assert.False(decision.HysteresisApplied);
+        Assert.Contains(decision.RejectedCandidates, reason => reason.Contains("resident memory budget"));
+    }
+
+    [Fact]
+    public void Select_RejectsInvalidHysteresisMargin()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new DeterministicRepresentationPolicy().Select(
+                Observation(), Profile(RepresentationDetailLevel.Summary), Budget(),
+                Array.Empty<RepresentationCandidate>(), null, double.NaN));
+    }
+
 }
