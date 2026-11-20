@@ -26,7 +26,7 @@ flowchart TD
 
 ## 🟦 01 What
 
-Renderer provides reusable .NET contracts and models for deciding **what representation is appropriate to an observer, and what computational work belongs with it**. At runtime, FSM_COS composes Renderer through its MicroBundle capability; NuGet dependencies support implementation/building and are not the runtime capability-consumption contract. See [MicroBundle boundary](docs/MICROBUNDLE.md).
+Renderer provides reusable .NET contracts and models for deciding **what representation is appropriate to an observer, and what computational work belongs with it**. At runtime, the capability is resolved and composed by FSM_COS as a MicroBundle; NuGet is not the Renderer capability-consumption contract. See the [MicroBundle identity and composition boundary](docs/MICROBUNDLE.md).
 
 An Event Horizon can affect more than polygon count. Depending on policy, a representation may change geometry or material detail, animation/update cadence, simulation participation, interaction availability, semantic detail, visibility, or representation type.
 
@@ -115,7 +115,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 
 ## Current status and evidence
 
-Renderer is **alpha software**. The project has a .NET 10 library and automated tests for its current pure-model contracts. Its benchmark suite provides machine-specific measurements for selected operations; those measurements are calibration evidence, not proof that the complete system outperforms an established production renderer.
+Renderer is **alpha software**. The project has a .NET 10 library and automated tests for its current pure-model contracts. The runtime MicroBundle identity is the string ontology **TheSingularityWorkshop.Renderer**; a repository-local numeric handle, if used, is only a lookup into that repository's blob store. Durable artifact storage, resolution, and FSM_COS runtime loading remain explicit integration work. Its benchmark suite provides machine-specific measurements for selected operations; those measurements are calibration evidence, not proof that the complete system outperforms an established production renderer.
 
 Current implementation, design intent, and exploratory demonstrations are not interchangeable. The documentation linked above identifies the relevant contracts and known boundaries. The browser Soldier Field remains a separate Visualize lab until an explicit, tested policy handoff connects it to Renderer.
 
@@ -131,7 +131,7 @@ Read [Architecture](docs/ARCHITECTURE.md) before changing responsibility boundar
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/TrentBest/FSM_API/master/Documentation/Branding/TheSingularityWorkshop.png" alt="The Singularity Workshop">
+  <img src="https://raw.githubusercontent.com/TrentBest/FSM_API/master/Documentation/Branding/TheSingularityWorkshop.png" width="180" alt="The Singularity Workshop">
   <br>
   <a href="https://github.com/TrentBest">GitHub</a> ·
   <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Renderer</a> ·
