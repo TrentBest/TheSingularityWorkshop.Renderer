@@ -226,6 +226,8 @@ Examples:
 
 The policy interface should be able to express dependency and invalidation: a changed light may invalidate shadows or temporal lighting history; a changed density field may invalidate volume integration; a camera cut may invalidate view-dependent history; a surface-state update may invalidate material/lighting caches. The exact invalidation graph belongs to the implementation and must be measured.
 
+**Executable CPU proof now covers this dependency pattern.** `EventHorizonBucketDependencyGraphTests.NaturalPhenomenonDependenciesInvalidateOnlyTheirDerivedOutputs` creates separate buckets for a transient lightning event, an evolving ash-density field, persistent deposited ash, and camera state. It verifies the declared edges (event → shadows/temporal lighting, density → volume integration, camera cut → view history, aftermath → surface materials/lighting) and verifies that unrelated cached outputs remain reusable. The test exercises invalidation routing only: it does not simulate ash, lightning, or surface deposition, and it does not execute shaders or GPU work.
+
 ## 15. Representation budget is a vector, not a single quality number
 
 A phenomenon's budget should distinguish at least:
