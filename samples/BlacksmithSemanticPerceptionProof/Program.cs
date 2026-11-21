@@ -8,9 +8,21 @@ var outputDirectory = args.Length > 0 ? Path.GetFullPath(args[0]) : Path.GetFull
 Directory.CreateDirectory(outputDirectory);
 
 var world = BlacksmithWorld.Create();
-var assistant = new ObserverPolicy("WorkshopAssistant", new HashSet<ulong> { 1, 2, 3, 4, 5, 6, 7 }, "Operational + maintenance channels");
-var player = new ObserverPolicy("Player", new HashSet<ulong> { 1, 2, 3, 4, 5, 6 }, "Direct line of sight");
-var playerView = new RenderView(Vector3.Zero, Matrix4x4.Identity, Matrix4x4.Identity);
+var assistant = new ObserverPolicy("WorkshopAssistant", new HashSet<ulong> { 1, 2, 3, 4, 5, 6, 7 }, "Operational + maintenance channels", new Vector3(-4, 1, 0), 1);
+var player = new ObserverPolicy("Player", new HashSet<ulong> { 1, 2, 3, 4, 5, 6 }, "Direct line of sight", Vector3.Zero, 1);
+var playerView = new RenderView(player.Position, Matrix4x4.Identity, Matrix4x4.Identity);
+
+var near = new EventHorizon("Near", 2, 60);
+var mid = new EventHorizon("Mid", 10, 10);
+var far = new EventHorizon("Far", double.MaxValue, 1);
+var representationPolicy = new ObserverRepresentationPolicy(
+[
+    new RepresentationHorizonRule(near, RepresentationTarget.Interactive),
+    new RepresentationHorizonRule(mid, RepresentationTarget.Near),
+    new RepresentationHorizonRule(far, RepresentationTarget.Distant)
+]);
+using var assistantCoordinator = CreateCoordinator(assistant.Name, representationPolicy, [near, mid, far]);
+using var playerCoordinator = CreateCoordinator(player.Name, representationPolicy, [near, mid, far]);
 
 var trace = new List<RevisionTrace>();
 Capture("Initial", world.Snapshot());
@@ -34,13 +46,23 @@ Console.WriteLine($"Wrote {svgPath}");
 
 void Capture(string eventName, WorldSnapshot snapshot)
 {
+    var workpiece = snapshot.Entities.Single(x => x.Id == 3);
+    var now = DateTimeOffset.UnixEpoch.AddSeconds(snapshot.Revision);
+    var assistantRepresentation = assistantCoordinator.Evaluate(
+        Vector3.Distance(assistant.Position, workpiece.Position), snapshot.Revision, assistant.Revision, now);
+    var playerRepresentation = playerCoordinator.Evaluate(
+        Vector3.Distance(player.Position, workpiece.Position), snapshot.Revision, player.Revision, now);
     var assistantObservation = Observe(snapshot, assistant);
     var playerObservation = Observe(snapshot, player);
-    var frame = BuildFrame(snapshot, player, playerView);
+    var frame = BuildFrame(snapshot, player, playerView, playerRepresentation.ActiveRepresentation);
 
     Require(assistantObservation.SourceRevision == snapshot.Revision, "Assistant observation revision mismatch.");
     Require(playerObservation.SourceRevision == snapshot.Revision, "Player observation revision mismatch.");
     Require(frame.Commands.Count == playerObservation.Entities.Count, "Visual commands and visible semantic entities diverged.");
+    Require(playerRepresentation.Decision.Horizon.Name == "Near" && playerRepresentation.ActiveRepresentation == RepresentationTarget.Interactive,
+        "The nearby player should receive the interactive Event Horizon representation.");
+    Require(assistantRepresentation.Decision.Horizon.Name == "Mid" && assistantRepresentation.ActiveRepresentation == RepresentationTarget.Near,
+        "The more distant assistant should receive the lower-cost Mid representation.");
     Require(assistantObservation.Entities.Any(x => x.Entity.Value == 7 && x.Knowledge == SemanticKnowledge.Sensed), "Assistant should have maintenance-channel access to the sensed fuel valve.");
     Require(playerObservation.Entities.All(x => x.Entity.Value != 7), "Player must not receive hidden fuel-valve state.");
     Require(playerObservation.Entities.Single(x => x.Entity.Value == 3).Knowledge == SemanticKnowledge.Observed, "Player-visible workpiece must be marked as directly observed.");
@@ -51,7 +73,11 @@ void Capture(string eventName, WorldSnapshot snapshot)
     Require(assistantObservation.Relations.All(x => x.Subject.Value != 8 && x.Target.Value != 8), "Relations must not disclose unavailable entity identities.");
     Require(playerObservation.Relations.All(x => x.Subject.Value != 8 && x.Target.Value != 8), "Relations must not disclose unavailable entity identities.");
 
+    CompleteRefresh(assistantRepresentation, now.AddMilliseconds(1));
+    CompleteRefresh(playerRepresentation, now.AddMilliseconds(1));
     trace.Add(new RevisionTrace(eventName, snapshot.Revision, assistantObservation, playerObservation,
+        new RepresentationTrace(assistantRepresentation.Decision.Horizon.Name, assistantRepresentation.ActiveRepresentation.ToString(), assistantRepresentation.RefreshRequired, assistantRepresentation.Decision.Distance),
+        new RepresentationTrace(playerRepresentation.Decision.Horizon.Name, playerRepresentation.ActiveRepresentation.ToString(), playerRepresentation.RefreshRequired, playerRepresentation.Decision.Distance),
         frame.Commands.Select(x => new DrawCommandTrace(x.Entity.Value, x.Geometry.Value, x.Material.Value, x.IndexCount, x.Representation.ToString())).ToArray()));
     var revisionSvgPath = Path.Combine(outputDirectory, $"blacksmith-revision-{snapshot.Revision:D2}-{eventName.ToLowerInvariant()}.svg");
     File.WriteAllText(revisionSvgPath, BuildSvg(snapshot, frame), new UTF8Encoding(false));
@@ -91,7 +117,7 @@ static TheSingularityWorkshop.Renderer.SemanticObservation Observe(WorldSnapshot
         observer.Name, snapshot.Revision, SemanticObservationFreshness.Current, entities, relations);
 }
 
-static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, RenderView view)
+static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, RenderView view, RepresentationTarget workpieceRepresentation)
 {
     var commands = snapshot.Entities
         .Where(entity => observer.PermittedEntityIds.Contains(entity.Id) && entity.VisibleToPlayer)
@@ -102,7 +128,7 @@ static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, R
             entity.Id == 3 ? 96 : 36,
             0,
             0,
-            entity.Id == 3 ? RendererRepresentation.Interactive : RendererRepresentation.Near,
+            entity.Id == 3 && workpieceRepresentation == RepresentationTarget.Interactive ? RendererRepresentation.Interactive : RendererRepresentation.Near,
             entity: new RenderEntityId(entity.Id)))
         .ToArray();
     return new RenderFrame(view, commands);
@@ -140,12 +166,30 @@ static void Require(bool condition, string message)
     if (!condition) throw new InvalidOperationException(message);
 }
 
-sealed record ObserverPolicy(string Name, HashSet<ulong> PermittedEntityIds, string Channels);
+static ObserverRepresentationCoordinator CreateCoordinator(
+    string observerName,
+    ObserverRepresentationPolicy policy,
+    IReadOnlyList<EventHorizon> horizons) =>
+    new(
+        policy,
+        horizons.Select(horizon => new EventHorizonBucket($"{observerName}-{horizon.Name}", horizon, horizon.UpdatesPerSecond)),
+        $"Blacksmith-{observerName}");
+
+static void CompleteRefresh(ObserverRepresentationEvaluation evaluation, DateTimeOffset completedAt)
+{
+    if (evaluation.RefreshTicket is { } ticket)
+        Require(evaluation.Bucket.TryCompleteRefresh(ticket, completedAt), $"Refresh for {evaluation.Bucket.Name} was rejected.");
+    else
+        Require(evaluation.CanReuseCachedRepresentation, $"Cached representation for {evaluation.Bucket.Name} was not reusable.");
+}
+
+sealed record ObserverPolicy(string Name, HashSet<ulong> PermittedEntityIds, string Channels, Vector3 Position, long Revision);
 sealed record WorldEvent(string Kind, ulong TargetEntityId, string ResultingActivity);
 sealed record WorldEntity(ulong Id, string StableId, string Category, string State, string Activity, string Hazard, string[] Affordances, Vector3 Position, bool VisibleToPlayer);
 sealed record WorldSnapshot(long Revision, IReadOnlyList<WorldEntity> Entities);
 sealed record DrawCommandTrace(ulong EntityId, ulong GeometryId, ulong MaterialId, int IndexCount, string Representation);
-sealed record RevisionTrace(string Event, long WorldRevision, TheSingularityWorkshop.Renderer.SemanticObservation Assistant, TheSingularityWorkshop.Renderer.SemanticObservation Player, IReadOnlyList<DrawCommandTrace> PlayerDrawCommands);
+sealed record RepresentationTrace(string Horizon, string Representation, bool Refreshed, double Distance);
+sealed record RevisionTrace(string Event, long WorldRevision, TheSingularityWorkshop.Renderer.SemanticObservation Assistant, TheSingularityWorkshop.Renderer.SemanticObservation Player, RepresentationTrace AssistantRepresentation, RepresentationTrace PlayerRepresentation, IReadOnlyList<DrawCommandTrace> PlayerDrawCommands);
 
 sealed class BlacksmithWorld
 {
