@@ -83,7 +83,7 @@ Knowledge:
   unknowns: [ContentsOfClosedCabinet]
 ```
 
-This is illustrative notation, not a finalized Renderer API or a prescribed ontology. Stable entity identity, semantic category, relations, state, affordances, provenance, freshness, and uncertainty are the important ingredients.
+This is illustrative notation, not a prescribed ontology. Renderer now supplies provider-neutral contracts for stable entity identity, semantic category, relations, state, affordances, provenance, freshness, confidence, and knowledge quality. The experience still owns the vocabulary, authoritative world state, and observer permissions.
 
 ## What the player should see
 
@@ -145,11 +145,11 @@ The first executable blacksmith proof now lives in [BlacksmithSemanticPerception
 dotnet run --project samples/BlacksmithSemanticPerceptionProof/BlacksmithSemanticPerceptionProof.csproj --configuration Release
 ```
 
-The deterministic fixture applies an initial snapshot, a hammer-strike event, and a quench event. At each source revision it derives two distinct semantic observations and a player-facing `RenderFrame` from the same authoritative world snapshot. The assistant has operational and maintenance channels; the player has direct line of sight. The executable asserts that the assistant can know the fuel-valve state while the player cannot, that locked-cabinet contents remain unknown to both, and that the player frame command count matches the player-visible semantic entity count. CI archives a machine-readable observation trace and a companion SVG.
+The deterministic fixture applies an initial snapshot, a hammer-strike event, and a quench event. At each source revision it derives two distinct semantic observations and a player-facing `RenderFrame` from the same authoritative world snapshot. The assistant has operational and maintenance channels; the player has direct line of sight. The executable uses Renderer’s production `SemanticObservation`, `SemanticEntityObservation`, `SemanticRelationObservation`, `SemanticAffordance`, and `SemanticProvenance` contracts. It asserts that the assistant can know the fuel-valve state while the player cannot, that the locked cabinet's identity is not disclosed to either observer, that relations never point to unavailable entities, and that the player frame command count matches the player-visible semantic entity count. CI archives a machine-readable observation trace and a companion SVG.
 
-**Evidence boundary:** this is an executable deterministic sample using Renderer’s actual `RenderFrame` and `RenderDrawCommand` contracts plus sample-owned world state and observer permissions. The semantic-observation schema and knowledge policy are sample-owned, not a production Renderer API. The SVG is a CPU-side diagnostic visualization, not GPU output or a full pixel renderer. There is no live AI, FSM, perception, sensor, or host integration, and no calibrated timing or allocation claim.
+**Evidence boundary:** this is an executable deterministic sample using Renderer’s actual frame, draw-command, and semantic-observation contracts plus sample-owned world state and observer permissions. The knowledge policy and sensor authorization remain sample-owned; the public contracts validate and transport claims but do not acquire them. The SVG is a CPU-side diagnostic visualization, not GPU output or a full pixel renderer. There is no live AI, FSM, perception, sensor, or host integration, and no calibrated timing or allocation claim.
 
-Remaining proof work includes moving the semantic observation contract into an explicitly owned shared layer if warranted, testing richer sensor/occlusion models, connecting the policy to production Event Horizon selection, and adding further environments by reusing the same fixture contract.
+Remaining proof work includes testing richer sensor/occlusion models, connecting observer policy to production Event Horizon selection, and adding further environments by reusing the same fixture contract.
 
 ## Related work
 
