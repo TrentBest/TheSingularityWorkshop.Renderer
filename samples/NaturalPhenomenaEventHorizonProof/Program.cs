@@ -98,6 +98,10 @@ var transitionTrace = new RepresentationTransitionTrace(
     transitionInitial.Selected!.Id,
     transitionPromoted.Selected!.Id,
     transitionDemoted.Selected!.Id,
+    transitionInitial.ProjectedSize,
+    promotedObservation.ProjectedSize,
+    transitionObserver.ProjectedSize,
+    "CameraBudget → ExpandedBudget → CameraBudget",
     transitionInitial.RejectedCandidates,
     transitionPromoted.RejectedCandidates,
     transitionDemoted.RejectedCandidates);
@@ -281,8 +285,8 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<text x="36" y="76" fill="#a9bacb" font-family="Consolas,monospace" font-size="13">Volcanic ash field · deterministic CPU policy proof · source identity and revision retained</text>""");
     sb.AppendLine("""<rect x="36" y="105" width="1088" height="90" rx="12" fill="#1b2b3a" stroke="#466176"/><text x="58" y="135" fill="#f2d6a2" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">SOURCE LIFECYCLES</text>""");
     sb.AppendLine("""<text x="58" y="164" fill="#f4f7fb" font-family="Consolas,monospace" font-size="13">Lightning event (transient)  →  Ash density field (evolving)  →  Deposited ash (persistent aftermath)</text>""");
-    sb.AppendLine($"""<text x="36" y="216" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
-    sb.AppendLine($"""<text x="36" y="234" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Promotion / demotion: {Esc(trace.Transition.Initial)} → {Esc(trace.Transition.Promoted)} → {Esc(trace.Transition.Demoted)} · same source {Esc(trace.Transition.SourceId)} @ r{trace.Transition.SourceRevision}</text>""");
+    sb.AppendLine($"""<text x="36" y="216" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis applied={trace.Hysteresis.Applied}: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
+    sb.AppendLine($"""<text x="36" y="234" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Promotion / demotion: {Esc(trace.Transition.Initial)} → {Esc(trace.Transition.Promoted)} → {Esc(trace.Transition.Demoted)} · projected {trace.Transition.InitialProjectedSize:F2} → {trace.Transition.PromotedProjectedSize:F2} → {trace.Transition.DemotedProjectedSize:F2} · {Esc(trace.Transition.BudgetSequence)}</text>""");
     sb.AppendLine("""<text x="36" y="258" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
     for (var i = 0; i < trace.Observers.Count; i++)
     {
@@ -317,5 +321,5 @@ sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, stri
 sealed record AggregateTrace(string AggregationKey, IReadOnlyList<RenderContributionProvenance> Sources, bool IsAggregated, double EstimatedTotalError);
 sealed record BucketTrace(string Name, bool IsValid, string DirtyReasons, long Invalidations, long AcceptedRefreshes, long ReuseCount);
 sealed record HysteresisTrace(string Initial, string Selected, string RetainedCandidate, bool Applied, double InitialProjectedSize, double NextProjectedSize, double SwitchMargin);
-sealed record RepresentationTransitionTrace(string SourceId, long SourceRevision, string Initial, string Promoted, string Demoted, IReadOnlyList<string> InitialRejections, IReadOnlyList<string> PromotionRejections, IReadOnlyList<string> DemotionRejections);
+sealed record RepresentationTransitionTrace(string SourceId, long SourceRevision, string Initial, string Promoted, string Demoted, double InitialProjectedSize, double PromotedProjectedSize, double DemotedProjectedSize, string BudgetSequence, IReadOnlyList<string> InitialRejections, IReadOnlyList<string> PromotionRejections, IReadOnlyList<string> DemotionRejections);
 sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis, RepresentationTransitionTrace Transition);
