@@ -163,7 +163,7 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
             string name,
             PreparedBucketPipeline pipeline,
             IReadOnlyDictionary<string, Action> stageActions,
-            Action finalize)
+            Func<bool> finalize)
         {
             Name = name;
             Pipeline = pipeline;
