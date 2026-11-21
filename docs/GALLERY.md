@@ -15,7 +15,7 @@ A single change of observer position has two complementary views: Renderer expos
 
 The exhibit is useful because the causal chain is testable: move the observer → policy selects different representations → frame commands carry those decisions → the adapter preserves identity and representation → the SVG output changes. The fixture geometry is deliberately simple; do not mistake it for a universal LOD policy or a production scene scheduler.
 
-## 01 — Event Horizons: representation states
+## 01 — Semantic perception: one world, two observers\n\nThe [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with a blacksmith shop and catalogs kitchens, hospitals, forests, battlefields, construction sites, cockpits, classrooms, warehouses, and unfamiliar rooms. This is currently a conceptual showcase—not a live perception or rendering integration.\n\n## 02 — Event Horizons: representation states
 
 ![Event Horizon representation-state snapshot](assets/living-event-horizons.svg)
 
@@ -23,7 +23,7 @@ The exhibit is useful because the causal chain is testable: move the observer �
 
 **Recipe:** [Event Horizon state proof recipe](gallery/event-horizons.md).
 
-## 02 — RenderFrame inspector: ordered work
+## 03 — RenderFrame inspector: ordered work
 
 ![Renderer frame command inspector](assets/render-frame-inspector.svg)
 
@@ -31,7 +31,7 @@ The exhibit is useful because the causal chain is testable: move the observer �
 
 **Recipe:** [RenderFrame inspector recipe and run command](gallery/render-frame-inspector.md).
 
-## 03 — Observer moves: policy-to-frame proof
+## 04 — Observer moves: policy-to-frame proof
 
 The executable proof compares two observer positions against the same entity fixture. It calls Renderer’s real `ObserverDistance.Select`, builds real `RenderFrame` command snapshots, and asserts that selected representations and total index work change.
 
@@ -39,7 +39,7 @@ The executable proof compares two observer positions against the same entity fix
 
 **Recipe:** [Observer-driven frame proof](gallery/observer-driven-frame.md). CI uploads the generated comparison as the `renderer-observer-driven-frame-proof` artifact.
 
-## 04 — Observer → buckets → frame
+## 05 — Observer → buckets → frame
 
 This connected executable proof joins observer-distance selection, per-subject bucket invalidation, declared shadow dependencies, explicit reuse of unchanged buckets, and the resulting ordered `RenderFrame` commands. It asserts that changed representations refresh their dependent outputs while a subject that remains in the same representation records reuse.
 
@@ -47,7 +47,7 @@ This connected executable proof joins observer-distance selection, per-subject b
 
 **Recipe:** [Observer-to-bucket-to-frame causal proof](gallery/observer-bucket-frame.md). CI uploads the SVG as the `renderer-observer-bucket-frame-proof` artifact.
 
-## 05 — Bucket invalidation and cache reuse
+## 06 — Bucket invalidation and cache reuse
 
 This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucketDependencyGraph` APIs. It changes a source revision, verifies that the changed bucket and its declared dependent are invalidated, confirms unrelated lighting and distant-motion buckets remain reusable, then accepts replacement refreshes. The SVG reports actual bucket metrics.
 
@@ -55,7 +55,7 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 
 **Recipe:** [Bucket invalidation and reuse proof](gallery/bucket-invalidation-and-reuse.md). CI uploads the generated SVG as `renderer-bucket-invalidation-reuse-proof`.
 
-## 06 — Composition: where responsibilities live
+## 07 — Composition: where responsibilities live
 
 ![Renderer composition illustration](assets/renderer-composition.svg)
 
