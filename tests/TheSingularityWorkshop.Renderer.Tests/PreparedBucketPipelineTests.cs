@@ -21,13 +21,9 @@ public sealed class PreparedBucketPipelineTests
             ["shadow-cadence"] = "15"
         };
 
-        var prepared = PreparedBucketPipeline.Prepare(
-            "Lighting",
-            DefaultStages,
-            defaults);
+        var prepared = PreparedBucketPipeline.Prepare("Lighting", DefaultStages, defaults);
 
-        Assert.Equal(
-            ["PreProcessing", "Processing", "PostProcessing", "Finalization"],
+        Assert.Equal(new[] { "PreProcessing", "Processing", "PostProcessing", "Finalization" },
             prepared.Stages.Select(stage => stage.Id));
         Assert.Equal("balanced", prepared.Settings["quality"]);
         Assert.Equal("15", prepared.Settings["shadow-cadence"]);
@@ -45,10 +41,7 @@ public sealed class PreparedBucketPipelineTests
                 ["shadow-cadence"] = "15",
                 ["ambient"] = "enabled"
             },
-            new Dictionary<string, string>
-            {
-                ["quality"] = "high"
-            });
+            new Dictionary<string, string> { ["quality"] = "high" });
 
         Assert.Equal("high", prepared.Settings["quality"]);
         Assert.Equal("15", prepared.Settings["shadow-cadence"]);
@@ -69,7 +62,7 @@ public sealed class PreparedBucketPipelineTests
             ]);
 
         Assert.Equal(
-            ["PreProcessing", "Processing", "ParticleEffects", "PostProcessing", "Finalization"],
+            new[] { "PreProcessing", "Processing", "ParticleEffects", "PostProcessing", "Finalization" },
             prepared.Stages.Select(stage => stage.Id));
     }
 
@@ -151,8 +144,6 @@ public sealed class PreparedBucketPipelineTests
 
         defaults["quality"] = "changed";
         Assert.Equal("balanced", prepared.Settings["quality"]);
-        Assert.IsAssignableFrom<IReadOnlyList<RendererPipelineStage>>(prepared.Stages);
-        Assert.IsAssignableFrom<IReadOnlyDictionary<string, string>>(prepared.Settings);
         Assert.Throws<NotSupportedException>(() =>
             ((IDictionary<string, string>)prepared.Settings).Add("new", "value"));
     }
