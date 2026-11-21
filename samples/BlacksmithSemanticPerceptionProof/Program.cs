@@ -41,8 +41,11 @@ void Capture(string eventName, WorldSnapshot snapshot)
     Require(assistantObservation.SourceRevision == snapshot.Revision, "Assistant observation revision mismatch.");
     Require(playerObservation.SourceRevision == snapshot.Revision, "Player observation revision mismatch.");
     Require(frame.Commands.Count == playerObservation.Entities.Count, "Visual commands and visible semantic entities diverged.");
-    Require(assistantObservation.Entities.Any(x => x.Entity.Value == 7), "Assistant should have maintenance-channel access to the fuel valve.");
+    Require(assistantObservation.Entities.Any(x => x.Entity.Value == 7 && x.Knowledge == SemanticKnowledge.Sensed), "Assistant should have maintenance-channel access to the sensed fuel valve.");
     Require(playerObservation.Entities.All(x => x.Entity.Value != 7), "Player must not receive hidden fuel-valve state.");
+    Require(playerObservation.Entities.Single(x => x.Entity.Value == 3).Knowledge == SemanticKnowledge.Observed, "Player-visible workpiece must be marked as directly observed.");
+    Require(assistantObservation.Relations.Any(x => x.Relation == "Heats"), "Assistant should receive the permitted forge-to-workpiece relation.");
+    Require(playerObservation.Relations.Any(x => x.Relation == "CanBeQuenchedIn"), "Player should receive the permitted workpiece-to-barrel affordance relation.");
     Require(assistantObservation.Entities.All(x => x.Entity.Value != 8), "Assistant must not receive the locked cabinet identity.");
     Require(playerObservation.Entities.All(x => x.Entity.Value != 8), "Player must not receive the locked cabinet identity.");
     Require(assistantObservation.Relations.All(x => x.Subject.Value != 8 && x.Target.Value != 8), "Relations must not disclose unavailable entity identities.");
@@ -50,6 +53,8 @@ void Capture(string eventName, WorldSnapshot snapshot)
 
     trace.Add(new RevisionTrace(eventName, snapshot.Revision, assistantObservation, playerObservation,
         frame.Commands.Select(x => new DrawCommandTrace(x.Entity.Value, x.Geometry.Value, x.Material.Value, x.IndexCount, x.Representation.ToString())).ToArray()));
+    var revisionSvgPath = Path.Combine(outputDirectory, $"blacksmith-revision-{snapshot.Revision:D2}-{eventName.ToLowerInvariant()}.svg");
+    File.WriteAllText(revisionSvgPath, BuildSvg(snapshot, frame), new UTF8Encoding(false));
 }
 
 static TheSingularityWorkshop.Renderer.SemanticObservation Observe(WorldSnapshot snapshot, ObserverPolicy observer)
