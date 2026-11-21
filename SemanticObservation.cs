@@ -43,6 +43,9 @@ public readonly record struct SemanticProvenance
 
     /// <summary>Exact revision of that source.</summary>
     public long SourceRevision { get; }
+
+    /// <summary>Whether this value was created with a non-empty source and valid revision.</summary>
+    public bool IsValid => !string.IsNullOrWhiteSpace(SourceId) && SourceRevision >= 0;
 }
 
 /// <summary>A named action or capability that an observer is justified in associating with an entity.</summary>
@@ -86,8 +89,10 @@ public sealed class SemanticEntityObservation
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(activity);
         ArgumentException.ThrowIfNullOrWhiteSpace(hazard);
-        if (!Enum.IsDefined(knowledge))
-            throw new ArgumentOutOfRangeException(nameof(knowledge));
+        if (!Enum.IsDefined(knowledge) || knowledge == SemanticKnowledge.Unknown)
+            throw new ArgumentOutOfRangeException(nameof(knowledge), "Unknown subjects must not be represented with a disclosed entity identity.");
+        if (!provenance.IsValid)
+            throw new ArgumentException("Valid provenance is required.", nameof(provenance));
         ValidateConfidence(confidence);
 
         var values = (affordances ?? []).ToArray();
@@ -150,8 +155,10 @@ public readonly record struct SemanticRelationObservation
         if (subject == target)
             throw new ArgumentException("A relation cannot connect an entity to itself.", nameof(target));
         ArgumentException.ThrowIfNullOrWhiteSpace(relation);
-        if (!Enum.IsDefined(knowledge))
-            throw new ArgumentOutOfRangeException(nameof(knowledge));
+        if (!Enum.IsDefined(knowledge) || knowledge == SemanticKnowledge.Unknown)
+            throw new ArgumentOutOfRangeException(nameof(knowledge), "Unknown relations must not disclose entity identities.");
+        if (!provenance.IsValid)
+            throw new ArgumentException("Valid provenance is required.", nameof(provenance));
         SemanticEntityObservation.ValidateConfidence(confidence);
 
         Subject = subject;
