@@ -235,10 +235,10 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
     var invalidated = trace.Buckets.Where(x => !x.IsValid).ToArray();
     var valid = trace.Buckets.Where(x => x.IsValid).ToArray();
-    sb.AppendLine($"""<rect x="36" y="554" width="530" height="142" rx="10" fill="#2d2419" stroke="#b88742"/><text x="56" y="582" fill="#ffd28a" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700">INVALIDATED PATHS ({invalidated.Length})</text>""");
+    sb.AppendLine($"""<rect x="36" y="554" width="530" height="142" rx="10" fill="#2d2419" stroke="#b88742"/><text x="56" y="582" fill="#ffd28a" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700">CURRENTLY INVALID / NEEDS REFRESH ({invalidated.Length})</text>""");
     for (var i = 0; i < invalidated.Length; i++)
-        sb.AppendLine($"""<text x="56" y="{610 + i * 20}" fill="#f4f7fb" font-family="Consolas,monospace" font-size="11">{Esc(invalidated[i].Name)} · {Esc(invalidated[i].DirtyReasons)}</text>""");
-    sb.AppendLine($"""<rect x="594" y="554" width="530" height="142" rx="10" fill="#183027" stroke="#4c9c72"/><text x="614" y="582" fill="#8fe0ac" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700">UNAFFECTED / REUSABLE ({valid.Length})</text>""");
+        sb.AppendLine($"""<text x="56" y="{606 + i * 14}" fill="#f4f7fb" font-family="Consolas,monospace" font-size="11">{Esc(invalidated[i].Name)} · {Esc(invalidated[i].DirtyReasons)}</text>""");
+    sb.AppendLine($"""<rect x="594" y="554" width="530" height="142" rx="10" fill="#183027" stroke="#4c9c72"/><text x="614" y="582" fill="#8fe0ac" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700">CURRENTLY VALID / REUSABLE ({valid.Length})</text>""");
     for (var i = 0; i < valid.Length; i++)
         sb.AppendLine($"""<text x="614" y="{610 + i * 20}" fill="#f4f7fb" font-family="Consolas,monospace" font-size="11">{Esc(valid[i].Name)} · accepted {valid[i].AcceptedRefreshes} · reuse {valid[i].ReuseCount}</text>""");
     sb.AppendLine("""<text x="36" y="730" fill="#a9bacb" font-family="Segoe UI,sans-serif" font-size="12">Budget costs are estimates. This proof does not simulate ash, lightning, surface deposition, shaders, particles, or GPU work.</text></svg>""");
