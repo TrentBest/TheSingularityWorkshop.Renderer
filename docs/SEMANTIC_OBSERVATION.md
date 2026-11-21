@@ -120,11 +120,11 @@ The goal is not to abolish every form of culling. It is to avoid confusing **“
 
 ## Implementation path
 
-1. <text>**Complete:** define the provider-neutral semantic observation contract beside the existing observer and semantic-anchor concepts.</text>
-2. <text>**First fixture complete:** create a deterministic blacksmith world with multiple observer positions, observer-specific knowledge, relations, affordances, hazards, provenance, confidence, and freshness.</text>
+1. **Complete:** define the provider-neutral semantic observation contract beside the existing observer and semantic-anchor concepts.
+2. **First fixture complete:** create a deterministic blacksmith world with multiple observer positions, observer-specific knowledge, relations, affordances, hazards, provenance, confidence, and freshness.
 3. **Next:** generate scalable horizon summaries from known world data, including entity counts and relative relations, then connect those summaries to the same production selection path.
 4. **Next:** feed the semantic observation into an agent FSM_API and show the behavior transition and its reason. The current proof exercises Renderer representation FSM transitions, not an AI behavior agent.
-5. <text>**Partial:** connect the same world to visual representation selection. The current proof shares source revisions across semantic observations and a player RenderFrame; a live Visualize/host pixel path remains outstanding.</text>
+5. **Partial:** connect the same world to visual representation selection. The current proof shares source revisions across semantic observations and a player RenderFrame; a live Visualize/host pixel path remains outstanding.
 6. **Move the observer and change sensor/context inputs**. Show counts, summaries, confidence/freshness, representation, and FSM decisions changing together.
 7. **Measure scaling** as total population grows by 10× and 100×: observation cost, refreshes, per-horizon work, allocations, and decision latency. Compare equivalent correctness requirements, not just raw operation counts.
 
