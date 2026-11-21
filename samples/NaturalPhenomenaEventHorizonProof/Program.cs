@@ -72,6 +72,36 @@ var hysteresisTrace = new HysteresisTrace(
     slightlyMovedObservation.ProjectedSize,
     150);
 
+var transitionObserver = new RepresentationObservation(
+    "camera-promotion-demotion", RepresentationObserverKind.Camera, sourceId, sourceRevision, 0.1, 0.8, 0.2);
+var transitionInitial = policy.Select(transitionObserver, minimum, observers[1].Budget, candidates);
+var promotedObservation = new RepresentationObservation(
+    "camera-promotion-demotion", RepresentationObserverKind.Camera, sourceId, sourceRevision, 0.9, 0.95, 0.2);
+var transitionPromoted = policy.Select(
+    promotedObservation, minimum,
+    new RepresentationResourceBudget(5, 5, 8 * 1024 * 1024, 4 * 1024 * 1024, 200, 0.5),
+    candidates, transitionInitial, minimumSwitchAdvantage: 0);
+var transitionDemoted = policy.Select(
+    transitionObserver, minimum, observers[1].Budget, candidates,
+    transitionPromoted, minimumSwitchAdvantage: 0);
+Require(transitionInitial.Selected?.Id == "RegionalVolume" &&
+        transitionPromoted.Selected?.Id == "FullVisual" &&
+        transitionDemoted.Selected?.Id == "RegionalVolume",
+    "The same observer/source must promote and demote deterministically as projected size and available budget change.");
+Require(transitionInitial.SourceId == transitionPromoted.SourceId &&
+        transitionPromoted.SourceId == transitionDemoted.SourceId &&
+        transitionInitial.SourceRevision == transitionPromoted.SourceRevision &&
+        transitionPromoted.SourceRevision == transitionDemoted.SourceRevision,
+    "Promotion and demotion must preserve authoritative source identity and revision.");
+var transitionTrace = new RepresentationTransitionTrace(
+    sourceId, sourceRevision,
+    transitionInitial.Selected!.Id,
+    transitionPromoted.Selected!.Id,
+    transitionDemoted.Selected!.Id,
+    transitionInitial.RejectedCandidates,
+    transitionPromoted.RejectedCandidates,
+    transitionDemoted.RejectedCandidates);
+
 var contributions = new[]
 {
     new RenderContribution("ash-cell-north", 2, "ash:regional-density:kg-m3", 0.005),
@@ -115,7 +145,8 @@ var trace = new NaturalPhenomenaTrace(
         item.IsAggregated,
         item.EstimatedTotalError)).ToArray(),
     dependencyTrace,
-    hysteresisTrace);
+    hysteresisTrace,
+    transitionTrace);
 
 var jsonPath = Path.Combine(outputDirectory, "natural-phenomena-trace.json");
 var svgPath = Path.Combine(outputDirectory, "natural-phenomena-event-horizons.svg");
@@ -123,6 +154,7 @@ File.WriteAllText(jsonPath, JsonSerializer.Serialize(trace, new JsonSerializerOp
 File.WriteAllText(svgPath, BuildSvg(trace), new UTF8Encoding(false));
 
 Console.WriteLine("PASS: first-person, camera, and AI/map observers selected deterministic independent profiles.");
+Console.WriteLine("PASS: the camera promotes and demotes the same source deterministically while retaining its identity and revision.");
 Console.WriteLine("PASS: all decisions preserve the authoritative ash source identity and revision.");
 Console.WriteLine("PASS: hazard and interaction-critical contributions remain individual.");
 Console.WriteLine("PASS: transient, evolving-field, observer-history, and persistent-aftermath dependencies invalidate only declared outputs.");
@@ -249,12 +281,13 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<text x="36" y="76" fill="#a9bacb" font-family="Consolas,monospace" font-size="13">Volcanic ash field · deterministic CPU policy proof · source identity and revision retained</text>""");
     sb.AppendLine("""<rect x="36" y="105" width="1088" height="90" rx="12" fill="#1b2b3a" stroke="#466176"/><text x="58" y="135" fill="#f2d6a2" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">SOURCE LIFECYCLES</text>""");
     sb.AppendLine("""<text x="58" y="164" fill="#f4f7fb" font-family="Consolas,monospace" font-size="13">Lightning event (transient)  →  Ash density field (evolving)  →  Deposited ash (persistent aftermath)</text>""");
-    sb.AppendLine($"""<text x="36" y="218" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
-    sb.AppendLine("""<text x="36" y="242" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
+    sb.AppendLine($"""<text x="36" y="216" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
+    sb.AppendLine($"""<text x="36" y="234" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Promotion / demotion: {Esc(trace.Transition.Initial)} → {Esc(trace.Transition.Promoted)} → {Esc(trace.Transition.Demoted)} · same source {Esc(trace.Transition.SourceId)} @ r{trace.Transition.SourceRevision}</text>""");
+    sb.AppendLine("""<text x="36" y="258" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
     for (var i = 0; i < trace.Observers.Count; i++)
     {
         var observer = trace.Observers[i];
-        var y = 262 + i * 76;
+        var y = 278 + i * 76;
         sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Intent)} → {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
     }
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
@@ -284,4 +317,5 @@ sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, stri
 sealed record AggregateTrace(string AggregationKey, IReadOnlyList<RenderContributionProvenance> Sources, bool IsAggregated, double EstimatedTotalError);
 sealed record BucketTrace(string Name, bool IsValid, string DirtyReasons, long Invalidations, long AcceptedRefreshes, long ReuseCount);
 sealed record HysteresisTrace(string Initial, string Selected, string RetainedCandidate, bool Applied, double InitialProjectedSize, double NextProjectedSize, double SwitchMargin);
-sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis);
+sealed record RepresentationTransitionTrace(string SourceId, long SourceRevision, string Initial, string Promoted, string Demoted, IReadOnlyList<string> InitialRejections, IReadOnlyList<string> PromotionRejections, IReadOnlyList<string> DemotionRejections);
+sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis, RepresentationTransitionTrace Transition);
