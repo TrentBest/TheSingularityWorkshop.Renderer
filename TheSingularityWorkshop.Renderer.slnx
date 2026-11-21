@@ -2,4 +2,5 @@
   <Project Path="TheSingularityWorkshop.Renderer.csproj" />
   <Project Path="tests/TheSingularityWorkshop.Renderer.Tests/TheSingularityWorkshop.Renderer.Tests.csproj" />
   <Project Path="samples/BlacksmithSemanticPerceptionProof/BlacksmithSemanticPerceptionProof.csproj" />
+  <Project Path="samples/NaturalPhenomenaEventHorizonProof/NaturalPhenomenaEventHorizonProof.csproj" />
 </Solution>
