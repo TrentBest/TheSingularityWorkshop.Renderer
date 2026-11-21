@@ -63,6 +63,30 @@ population.Move("cohort:42", far);
 
 The membership index is not a spatial partitioner, a horizon-selection algorithm, or a population simulator. The caller decides when a member should move. Simulation, collision, damage, and authoritative gameplay must not silently inherit a bucket's visual refresh rate.
 
+## Evaluating multiple buckets in one horizon
+
+A single observer coordinator may contain several named buckets for the same selected horizon. Each bucket receives its own FSM representation context, observer-revision tracking, refresh tickets, cadence, invalidation state, and reuse metrics. Evaluate each visual domain independently by its bucket name:
+
+```csharp
+var coordinator = new ObserverRepresentationCoordinator(
+    policy,
+    [geometryBucket, motionBucket, lightingBucket],
+    contextName: "player-observer");
+
+// Each call selects the same observer-relative horizon, but advances
+// and evaluates only the named bucket's independent state.
+var geometry = coordinator.Evaluate(
+    distance, sourceRevision, observerRevision, now, bucketName: "Geometry");
+var motion = coordinator.Evaluate(
+    distance, sourceRevision, observerRevision, now, bucketName: "Motion");
+var lighting = coordinator.Evaluate(
+    distance, sourceRevision, observerRevision, now, bucketName: "Lighting");
+```
+
+When a horizon contains exactly one bucket, `bucketName` may be omitted for compatibility with the simple case. When it contains multiple buckets, the name is required; silently choosing one would leave other visual domains unevaluated. Bucket names must be unique within their horizon, but may be reused in another horizon.
+
+This coordinator evaluates policy and bucket state; it does not build images or schedule GPU work. The returned ticket identifies only the selected bucket's refresh attempt. The host/Visualize adapter owns the produced image or other resource and reports completion only after the replacement is ready.
+
 ## Validity, cadence, and safe refresh
 
 Each bucket owns its cadence, dirty reasons, source revision, cache validity, and refresh history. A due refresh does not itself invalidate a valid representation.
