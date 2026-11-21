@@ -15,7 +15,11 @@ A single change of observer position has two complementary views: Renderer expos
 
 The exhibit is useful because the causal chain is testable: move the observer → policy selects different representations → frame commands carry those decisions → the adapter preserves identity and representation → the SVG output changes. The fixture geometry is deliberately simple; do not mistake it for a universal LOD policy or a production scene scheduler.
 
-## 01 — Semantic perception: one world, two observers\n\nThe [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with a blacksmith shop and catalogs kitchens, hospitals, forests, battlefields, construction sites, cockpits, classrooms, warehouses, and unfamiliar rooms. This is currently a conceptual showcase—not a live perception or rendering integration.\n\n## 02 — Event Horizons: representation states
+## 01 — Semantic perception: one world, two observers
+
+The [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with a blacksmith shop and catalogs kitchens, hospitals, forests, battlefields, construction sites, cockpits, classrooms, warehouses, and unfamiliar rooms. This is currently a conceptual showcase—not a live perception or rendering integration.
+
+## 02 — Event Horizons: representation states
 
 ![Event Horizon representation-state snapshot](assets/living-event-horizons.svg)
 
