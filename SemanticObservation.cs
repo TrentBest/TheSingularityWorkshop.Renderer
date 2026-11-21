@@ -11,8 +11,6 @@ public enum SemanticKnowledge
     Inferred,
     /// <summary>Previously identified, but currently blocked from direct observation.</summary>
     Occluded,
-    /// <summary>The observer has no justified knowledge of this subject.</summary>
-    Unknown,
     /// <summary>The observation is older than the source state it is intended to describe.</summary>
     Stale
 }
@@ -89,8 +87,8 @@ public sealed class SemanticEntityObservation
         ArgumentException.ThrowIfNullOrWhiteSpace(state);
         ArgumentException.ThrowIfNullOrWhiteSpace(activity);
         ArgumentException.ThrowIfNullOrWhiteSpace(hazard);
-        if (!Enum.IsDefined(knowledge) || knowledge == SemanticKnowledge.Unknown)
-            throw new ArgumentOutOfRangeException(nameof(knowledge), "Unknown subjects must not be represented with a disclosed entity identity.");
+        if (!Enum.IsDefined(knowledge))
+            throw new ArgumentOutOfRangeException(nameof(knowledge));
         if (!provenance.IsValid)
             throw new ArgumentException("Valid provenance is required.", nameof(provenance));
         ValidateConfidence(confidence);
@@ -155,8 +153,8 @@ public readonly record struct SemanticRelationObservation
         if (subject == target)
             throw new ArgumentException("A relation cannot connect an entity to itself.", nameof(target));
         ArgumentException.ThrowIfNullOrWhiteSpace(relation);
-        if (!Enum.IsDefined(knowledge) || knowledge == SemanticKnowledge.Unknown)
-            throw new ArgumentOutOfRangeException(nameof(knowledge), "Unknown relations must not disclose entity identities.");
+        if (!Enum.IsDefined(knowledge))
+            throw new ArgumentOutOfRangeException(nameof(knowledge));
         if (!provenance.IsValid)
             throw new ArgumentException("Valid provenance is required.", nameof(provenance));
         SemanticEntityObservation.ValidateConfidence(confidence);
