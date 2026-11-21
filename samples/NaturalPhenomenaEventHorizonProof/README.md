@@ -12,7 +12,7 @@ This deterministic CPU-side proof uses one volcanic-ash phenomenon with three di
 - An evolving regional ash-density field.
 - Persistent deposited ash aftermath.
 
-It runs the production `DeterministicRepresentationPolicy` for three observer roles: first-person, distant camera, and AI/map. Each decision retains the same authoritative ash source ID and revision while selecting a different multidimensional profile under independent CPU, GPU-estimate, memory, transfer, freshness, and uncertainty budgets. The expected choices are FullVisual, RegionalVolume, and HazardMarker respectively. Costs are host-supplied estimates, not measured execution.
+It runs the production `DeterministicRepresentationPolicy` for three observer roles: first-person, distant camera, and AI/map. Each decision retains the same authoritative ash source ID and revision while selecting a different multidimensional profile under independent CPU, GPU-estimate, memory, transfer, freshness, and uncertainty budgets. The first-person observer carries `Interact` intent, the camera uses passive `Observe`, and the AI/map observer carries `RespondToHazard` intent. The expected choices are FullVisual, RegionalVolume, and HazardMarker respectively. Costs are host-supplied estimates, not measured execution.
 
 The proof also runs `RenderContributionAggregator` over compatible ash contributions. Ordinary ash cells may aggregate within the declared error budget; the hazard plume and interaction-critical rescue corridor remain individual and preserve their source revisions.
 
