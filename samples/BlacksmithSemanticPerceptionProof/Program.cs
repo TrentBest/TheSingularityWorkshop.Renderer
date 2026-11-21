@@ -35,7 +35,7 @@ Capture("Quench", world.Snapshot());
 var tracePath = Path.Combine(outputDirectory, "blacksmith-observation-trace.json");
 var svgPath = Path.Combine(outputDirectory, "blacksmith-player-view.svg");
 File.WriteAllText(tracePath, JsonSerializer.Serialize(trace, new JsonSerializerOptions { WriteIndented = true }));
-File.WriteAllText(svgPath, BuildSvg(world.Snapshot(), BuildFrame(world.Snapshot(), player, playerView)), new UTF8Encoding(false));
+File.WriteAllText(svgPath, BuildSvg(world.Snapshot(), BuildFrame(world.Snapshot(), player, playerView, RepresentationTarget.Interactive)), new UTF8Encoding(false));
 
 Console.WriteLine($"PASS: {trace.Count} revisions projected for two observers.");
 Console.WriteLine($"PASS: assistant sees fuel-valve state; player does not receive it.");
