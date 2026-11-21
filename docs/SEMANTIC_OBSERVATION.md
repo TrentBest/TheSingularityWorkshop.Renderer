@@ -60,7 +60,7 @@ The first production-facing Renderer contract now exists in `SemanticObservation
 - `SemanticEntityObservation` carries stable subject identity, category, state, activity, hazard, knowledge quality, confidence, provenance, and affordances.
 - `SemanticRelationObservation` carries typed relations with confidence and provenance. Both endpoints must already be present in that observer's snapshot.
 - `SemanticProvenance` identifies the source and exact revision supporting a claim.
-- `SemanticKnowledge` distinguishes observed, sensed, inferred, occluded, unknown, and stale knowledge.
+- `SemanticKnowledge` distinguishes observed, sensed, inferred, occluded, and stale claims. Unknown subjects are represented by absence, not by an identity-bearing record; an "unknown entity" entry would leak the identity or existence of something the observer is not permitted to know.
 
 The contract validates confidence, source revisions, duplicate entity identities, and relation endpoints, and copies caller collections into read-only snapshots. It intentionally does not provide a list of hidden entity IDs under an "unknown" label: doing so would disclose the existence and identity of things the observer is not permitted to know. Unknown information must be expressed without leaking protected identity.
 
