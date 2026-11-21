@@ -130,6 +130,21 @@ public sealed record RepresentationCandidate
     public RepresentationResourceCost Cost { get; }
 }
 
+/// <summary>Intent that changes the relative value of visual, semantic, and interaction fidelity.</summary>
+public enum RepresentationIntent
+{
+    /// <summary>Passive observation without a specific task.</summary>
+    Observe,
+    /// <summary>Find a safe or useful path through the environment.</summary>
+    Navigate,
+    /// <summary>Inspect a subject or its visible structure.</summary>
+    Inspect,
+    /// <summary>Act on or manipulate a subject.</summary>
+    Interact,
+    /// <summary>Respond to a domain-identified hazard or urgent condition.</summary>
+    RespondToHazard
+}
+
 /// <summary>Observer and source provenance for a deterministic representation decision.</summary>
 public sealed record RepresentationObservation
 {
@@ -141,12 +156,16 @@ public sealed record RepresentationObservation
     /// <param name="projectedSize">Projected viewport fraction in [0,1].</param>
     /// <param name="visibility">Visibility confidence in [0,1].</param>
     /// <param name="semanticSalience">Domain-supplied semantic salience in [0,1].</param>
+    /// <param name="intent">The observer task that changes the relative value of representation dimensions.</param>
     public RepresentationObservation(string observerId, RepresentationObserverKind observerKind,
-        string sourceId, long sourceRevision, double projectedSize, double visibility, double semanticSalience)
+        string sourceId, long sourceRevision, double projectedSize, double visibility, double semanticSalience,
+        RepresentationIntent intent = RepresentationIntent.Observe)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(observerId);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceId);
         if (!Enum.IsDefined(observerKind)) throw new ArgumentOutOfRangeException(nameof(observerKind));
+        if (!Enum.IsDefined(intent)) throw new ArgumentOutOfRangeException(nameof(intent));
+        ArgumentOutOfRangeException.ThrowIfNegative(sourceRevision);
         ValidateUnit(projectedSize, nameof(projectedSize));
         ValidateUnit(visibility, nameof(visibility));
         ValidateUnit(semanticSalience, nameof(semanticSalience));
@@ -157,6 +176,7 @@ public sealed record RepresentationObservation
         ProjectedSize = projectedSize;
         Visibility = visibility;
         SemanticSalience = semanticSalience;
+        Intent = intent;
     }
 
     /// <summary>Stable observer identifier.</summary>
@@ -322,9 +342,23 @@ public sealed class DeterministicRepresentationPolicy
     {
         var visualWeight = observation.ProjectedSize * observation.Visibility;
         var semanticWeight = observation.SemanticSalience;
-        var geometryWeight = observation.ObserverKind == RepresentationObserverKind.Camera ? 1.25 : 1.0;
-        var interactionWeight = observation.ObserverKind == RepresentationObserverKind.FirstPerson ? 1.5 : 0.75;
-        var mapSemanticWeight = observation.ObserverKind == RepresentationObserverKind.AiMap ? 1.5 : 1.0;
+        var geometryWeight = (observation.ObserverKind == RepresentationObserverKind.Camera ? 1.25 : 1.0) *
+            (observation.Intent == RepresentationIntent.Inspect ? 1.5 : 1.0);
+        var interactionWeight = (observation.ObserverKind == RepresentationObserverKind.FirstPerson ? 1.5 : 0.75) *
+            (observation.Intent switch
+            {
+                RepresentationIntent.Interact => 4.0,
+                RepresentationIntent.Inspect => 1.5,
+                _ => 1.0
+            });
+        var mapSemanticWeight = (observation.ObserverKind == RepresentationObserverKind.AiMap ? 1.5 : 1.0) *
+            (observation.Intent switch
+            {
+                RepresentationIntent.Navigate => 1.25,
+                RepresentationIntent.RespondToHazard => 1.75,
+                _ => 1.0
+            });
+        var historyIntentWeight = observation.Intent == RepresentationIntent.RespondToHazard ? 1.5 : 1.0;
 
         return (double)profile.Geometry * visualWeight * geometryWeight * 100 +
             (double)profile.Volume * visualWeight * 80 +
@@ -332,7 +366,7 @@ public sealed class DeterministicRepresentationPolicy
             (double)profile.Animation * visualWeight * 30 +
             (double)profile.InteractionPrecision * semanticWeight * interactionWeight * 50 +
             (double)profile.SemanticDetail * semanticWeight * mapSemanticWeight * 100 +
-            (double)profile.History * observation.Visibility * 20 +
+            (double)profile.History * observation.Visibility * historyIntentWeight * 20 +
             (double)profile.Residency * 3 + Math.Min(profile.UpdateCadenceHz, 1000) * visualWeight;
     }
 
