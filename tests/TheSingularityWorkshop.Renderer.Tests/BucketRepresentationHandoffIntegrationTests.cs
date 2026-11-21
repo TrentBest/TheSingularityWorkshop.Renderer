@@ -18,7 +18,7 @@ public sealed class BucketRepresentationHandoffIntegrationTests
         var lighting = new EventHorizonBucket("Lighting", horizon, 15);
 
         CompleteInitialRefresh(geometry, sourceRevision: 1);
-        CompleteInitialRefresh(lighting, sourceRevision: 1);
+        CompleteInitialRefresh(lighting, sourceRevision: 0);
 
         var handoff = new HorizonRepresentationHandoff(Representation(
             "geometry-v1", "Near", sourceRevision: 1, observerRevision: 4, ready: true, covers: true));
@@ -56,7 +56,7 @@ public sealed class BucketRepresentationHandoffIntegrationTests
 
         // No geometry invalidation or refresh operation touched the lighting bucket.
         Assert.True(lighting.HasValidRepresentation);
-        Assert.Equal(1, lighting.CachedSourceRevision);
+        Assert.Equal(0, lighting.CachedSourceRevision);
         Assert.True(lighting.TryRecordReuse());
         Assert.Equal(1, lighting.Metrics.ReuseCount);
         Assert.Equal(0, lighting.Metrics.Invalidations);
