@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using TheSingularityWorkshop.Renderer;
@@ -38,6 +40,23 @@ var observers = new[]
 
 var decisions = observers.Select(observer =>
     policy.Select(observer.Observation, minimum, observer.Budget, candidates)).ToArray();
+
+var ashSource = new AshFieldSnapshot(sourceId, sourceRevision,
+[
+    new AshCell("north", 0.82, true),
+    new AshCell("south", 0.64, false),
+    new AshCell("east", 0.38, false),
+    new AshCell("west", 0.71, true)
+]);
+var materializations = decisions.Select(decision =>
+    Materialize(ashSource, decision.Selected!)).ToArray();
+Require(materializations.All(item => item.SourceId == sourceId && item.SourceRevision == sourceRevision),
+    "Every materialized representation must preserve authoritative source identity and revision.");
+Require(materializations.Select(item => item.HazardSummary).Distinct(StringComparer.Ordinal).Count() == 1,
+    "Every visual/semantic representation must preserve the same fixture-owned hazard summary.");
+var repeatedFull = Materialize(ashSource, candidates.Single(x => x.Id == "FullVisual"));
+Require(repeatedFull.ContentHash == materializations.Single(x => x.CandidateId == "FullVisual").ContentHash,
+    "Reconstructing the same candidate from the same source snapshot must produce the same content hash.");
 
 Require(decisions[0].Selected?.Id == "FullVisual", "First-person observer should retain full visual fidelity.");
 Require(decisions[1].Selected?.Id == "RegionalVolume", "Distant camera should select a reduced regional volume.");
@@ -93,6 +112,13 @@ Require(transitionInitial.SourceId == transitionPromoted.SourceId &&
         transitionInitial.SourceRevision == transitionPromoted.SourceRevision &&
         transitionPromoted.SourceRevision == transitionDemoted.SourceRevision,
     "Promotion and demotion must preserve authoritative source identity and revision.");
+var initialMaterialization = Materialize(ashSource, transitionInitial.Selected!);
+var promotedMaterialization = Materialize(ashSource, transitionPromoted.Selected!);
+var demotedMaterialization = Materialize(ashSource, transitionDemoted.Selected!);
+Require(initialMaterialization.ContentHash == demotedMaterialization.ContentHash,
+    "Demotion must deterministically reconstruct the original reduced representation from the unchanged source snapshot.");
+Require(initialMaterialization.ContentHash != promotedMaterialization.ContentHash,
+    "Promotion must produce the selected richer representation payload.");
 var transitionTrace = new RepresentationTransitionTrace(
     sourceId, sourceRevision,
     transitionInitial.Selected!.Id,
@@ -102,6 +128,9 @@ var transitionTrace = new RepresentationTransitionTrace(
     promotedObservation.ProjectedSize,
     transitionObserver.ProjectedSize,
     "CameraBudget → ExpandedBudget → CameraBudget",
+    initialMaterialization.ContentHash,
+    promotedMaterialization.ContentHash,
+    demotedMaterialization.ContentHash,
     transitionInitial.RejectedCandidates,
     transitionPromoted.RejectedCandidates,
     transitionDemoted.RejectedCandidates);
@@ -143,6 +172,7 @@ var trace = new NaturalPhenomenaTrace(
         decision.ReducedDimensions,
         decision.RejectedCandidates,
         decision.CandidateScores)).ToArray(),
+    materializations.Select(item => new MaterializationTrace(item.CandidateId, item.SourceId, item.SourceRevision, item.ContentHash, item.Payload, item.HazardSummary)).ToArray(),
     aggregation.Aggregates.Select(item => new AggregateTrace(
         item.AggregationKey,
         item.Sources,
@@ -164,6 +194,31 @@ Console.WriteLine("PASS: hazard and interaction-critical contributions remain in
 Console.WriteLine("PASS: transient, evolving-field, observer-history, and persistent-aftermath dependencies invalidate only declared outputs.");
 Console.WriteLine($"Wrote {jsonPath}");
 Console.WriteLine($"Wrote {svgPath}");
+
+static MaterializedRepresentation Materialize(AshFieldSnapshot source, RepresentationCandidate candidate)
+{
+    var cells = source.Cells.OrderBy(cell => cell.RegionId, StringComparer.Ordinal).ToArray();
+    var hazardRegions = cells
+        .Where(cell => cell.IsHazard && cell.Density >= 0.5)
+        .Select(cell => cell.RegionId)
+        .ToArray();
+    var hazardSummary = hazardRegions.Length == 0
+        ? "No active hazard regions"
+        : $"Hazard regions: {string.Join(",", hazardRegions)}";
+
+    var payload = candidate.Id switch
+    {
+        "FullVisual" => string.Join("|", cells.Select(cell =>
+            $"{cell.RegionId}:{cell.Density.ToString("F3", CultureInfo.InvariantCulture)}:{(cell.IsHazard ? "hazard" : "ordinary")}")),
+        "RegionalVolume" => $"regions={cells.Length};meanDensity={cells.Average(cell => cell.Density).ToString("F3", CultureInfo.InvariantCulture)};maxDensity={cells.Max(cell => cell.Density).ToString("F3", CultureInfo.InvariantCulture)}",
+        "HazardMarker" => $"hazardCount={hazardRegions.Length};regions={string.Join(",", hazardRegions)}",
+        _ => throw new InvalidOperationException($"No fixture materializer exists for candidate '{candidate.Id}'.")
+    };
+
+    var hashInput = $"{source.SourceId}|{source.Revision}|{candidate.Id}|{payload}|{hazardSummary}";
+    var contentHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(hashInput)));
+    return new MaterializedRepresentation(source.SourceId, source.Revision, candidate.Id, payload, hazardSummary, contentHash);
+}
 
 static RepresentationCandidate[] CreateCandidates() =>
 [
@@ -287,11 +342,12 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<text x="58" y="164" fill="#f4f7fb" font-family="Consolas,monospace" font-size="13">Lightning event (transient)  →  Ash density field (evolving)  →  Deposited ash (persistent aftermath)</text>""");
     sb.AppendLine($"""<text x="36" y="216" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis applied={trace.Hysteresis.Applied}: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
     sb.AppendLine($"""<text x="36" y="234" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Promotion / demotion: {Esc(trace.Transition.Initial)} → {Esc(trace.Transition.Promoted)} → {Esc(trace.Transition.Demoted)} · projected {trace.Transition.InitialProjectedSize:F2} → {trace.Transition.PromotedProjectedSize:F2} → {trace.Transition.DemotedProjectedSize:F2} · {Esc(trace.Transition.BudgetSequence)}</text>""");
-    sb.AppendLine("""<text x="36" y="258" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
+    sb.AppendLine($"""<text x="36" y="252" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">Reconstruction hashes: regional {trace.Transition.InitialHash[..12]} → full {trace.Transition.PromotedHash[..12]} → regional {trace.Transition.DemotedHash[..12]} · same source snapshot</text>""");
+    sb.AppendLine("""<text x="36" y="274" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
     for (var i = 0; i < trace.Observers.Count; i++)
     {
         var observer = trace.Observers[i];
-        var y = 278 + i * 76;
+        var y = 294 + i * 76;
         sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Intent)} → {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
     }
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
@@ -317,9 +373,13 @@ static void Require(bool condition, string message)
 
 sealed record ObserverBudget(RepresentationObservation Observation, RepresentationResourceBudget Budget);
 sealed record SourceLifecycle(string SourceId, long Revision, string Lifecycle, string Description);
+sealed record AshCell(string RegionId, double Density, bool IsHazard);
+sealed record AshFieldSnapshot(string SourceId, long Revision, IReadOnlyList<AshCell> Cells);
+sealed record MaterializedRepresentation(string SourceId, long SourceRevision, string CandidateId, string Payload, string HazardSummary, string ContentHash);
+sealed record MaterializationTrace(string CandidateId, string SourceId, long SourceRevision, string ContentHash, string Payload, string HazardSummary);
 sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, string Intent, string SourceId, long SourceRevision, string Selected, IReadOnlyList<string> ReducedDimensions, IReadOnlyList<string> RejectedCandidates, IReadOnlyList<string> CandidateScores);
 sealed record AggregateTrace(string AggregationKey, IReadOnlyList<RenderContributionProvenance> Sources, bool IsAggregated, double EstimatedTotalError);
 sealed record BucketTrace(string Name, bool IsValid, string DirtyReasons, long Invalidations, long AcceptedRefreshes, long ReuseCount);
 sealed record HysteresisTrace(string Initial, string Selected, string RetainedCandidate, bool Applied, double InitialProjectedSize, double NextProjectedSize, double SwitchMargin);
-sealed record RepresentationTransitionTrace(string SourceId, long SourceRevision, string Initial, string Promoted, string Demoted, double InitialProjectedSize, double PromotedProjectedSize, double DemotedProjectedSize, string BudgetSequence, IReadOnlyList<string> InitialRejections, IReadOnlyList<string> PromotionRejections, IReadOnlyList<string> DemotionRejections);
-sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis, RepresentationTransitionTrace Transition);
+sealed record RepresentationTransitionTrace(string SourceId, long SourceRevision, string Initial, string Promoted, string Demoted, double InitialProjectedSize, double PromotedProjectedSize, double DemotedProjectedSize, string BudgetSequence, string InitialHash, string PromotedHash, string DemotedHash, IReadOnlyList<string> InitialRejections, IReadOnlyList<string> PromotionRejections, IReadOnlyList<string> DemotionRejections);
+sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<MaterializationTrace> Materializations, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis, RepresentationTransitionTrace Transition);
