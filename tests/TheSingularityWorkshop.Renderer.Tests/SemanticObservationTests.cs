@@ -84,6 +84,28 @@ public sealed class SemanticObservationTests
             new SemanticObservation("Player", 4, SemanticObservationFreshness.Current, [entity]));
     }
 
+
+    [Fact]
+    public void EntityRejectsDefaultProvenanceAndDefaultAffordance()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new SemanticEntityObservation(
+                new RenderEntityId(1), "Forge", "Active", "Burning", "Hot",
+                SemanticKnowledge.Observed, 1, default));
+
+        Assert.Throws<ArgumentException>(() =>
+            Entity(1, "Forge", "Active", [default]));
+    }
+
+    [Fact]
+    public void SnapshotRejectsDefaultRelationValue()
+    {
+        var entity = Entity(1, "Forge", "Active");
+        Assert.Throws<ArgumentException>(() =>
+            new SemanticObservation(
+                "Player", 4, SemanticObservationFreshness.Current, [entity], [default]));
+    }
+
     private static SemanticEntityObservation Entity(
         ulong id,
         string category,
