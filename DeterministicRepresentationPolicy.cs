@@ -193,6 +193,8 @@ public sealed record RepresentationObservation
     public double Visibility { get; }
     /// <summary>Domain-supplied semantic salience, in [0,1].</summary>
     public double SemanticSalience { get; }
+    /// <summary>Observer task used to weight visual, semantic, and interaction dimensions.</summary>
+    public RepresentationIntent Intent { get; }
 
     private static void ValidateUnit(double value, string name)
     {
