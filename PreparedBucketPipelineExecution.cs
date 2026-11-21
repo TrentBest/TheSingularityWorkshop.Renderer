@@ -26,8 +26,8 @@ public enum PreparedBucketPipelineExecutionState
 /// <remarks>
 /// Each FSM update performs at most one meaningful pipeline stage. Stage and finalization
 /// callbacks are supplied by the runtime integration; this type has no graphics/backend
-/// dependency. A failed callback moves the FSM to its terminal Failed state and prevents
-/// the finalization callback from running.
+/// dependency. A failed stage or rejected publication gate moves the FSM to its terminal
+/// Failed state and never reports the output as finalized.
 /// </remarks>
 public sealed class PreparedBucketPipelineExecution : IDisposable
 {
@@ -43,7 +43,7 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
     /// <param name="name">Unique identity for this execution context.</param>
     /// <param name="pipeline">The immutable pipeline prepared by the composition host.</param>
     /// <param name="stageActions">One runtime action for each prepared stage identity.</param>
-    /// <param name="finalize">Action that publishes the successfully completed result.</param>
+    /// <param name="finalize">Publication gate; returns true only when the result is accepted as current output.</param>
     public PreparedBucketPipelineExecution(
         string name,
         PreparedBucketPipeline pipeline,
