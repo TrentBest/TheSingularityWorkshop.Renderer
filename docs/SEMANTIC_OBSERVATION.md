@@ -54,7 +54,17 @@ A useful observation contract should be explicit about:
 - **Provenance:** which sensor/channel or world-query contract supports the observation.
 - **Budget and importance:** enough information to explain why the observation is retained or summarized.
 
-This is a design target, not a finalized public API. The first implementation should stay small and typed, avoid embedding behavior in data, and remain independent of a particular AI provider.
+The first production-facing Renderer contract now exists in `SemanticObservation.cs`. It is deliberately provider-neutral and does not own world state or decide what an observer is allowed to know:
+
+- `SemanticObservation` pins one observer to one source revision and freshness state.
+- `SemanticEntityObservation` carries stable subject identity, category, state, activity, hazard, knowledge quality, confidence, provenance, and affordances.
+- `SemanticRelationObservation` carries typed relations with confidence and provenance. Both endpoints must already be present in that observer's snapshot.
+- `SemanticProvenance` identifies the source and exact revision supporting a claim.
+- `SemanticKnowledge` distinguishes observed, sensed, inferred, occluded, unknown, and stale knowledge.
+
+The contract validates confidence, source revisions, duplicate entity identities, and relation endpoints, and copies caller collections into read-only snapshots. It intentionally does not provide a list of hidden entity IDs under an "unknown" label: doing so would disclose the existence and identity of things the observer is not permitted to know. Unknown information must be expressed without leaking protected identity.
+
+The contract describes knowledge supplied by an owning experience, sensor, or world-query layer. It does not implement authorization, perception, sensor physics, AI decisions, or world truth.
 
 ## Event Horizons are not simply distance rings
 
