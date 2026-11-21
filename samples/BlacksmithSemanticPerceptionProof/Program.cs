@@ -27,7 +27,7 @@ File.WriteAllText(svgPath, BuildSvg(world.Snapshot(), BuildFrame(world.Snapshot(
 
 Console.WriteLine($"PASS: {trace.Count} revisions projected for two observers.");
 Console.WriteLine($"PASS: assistant sees fuel-valve state; player does not receive it.");
-Console.WriteLine($"PASS: locked-cabinet contents remain unknown to both observers.");
+Console.WriteLine($"PASS: locked-cabinet identity and its relations are not disclosed to either observer.");
 Console.WriteLine($"PASS: player RenderFrame tracks the same authoritative revision as semantic observations.");
 Console.WriteLine($"Wrote {tracePath}");
 Console.WriteLine($"Wrote {svgPath}");
