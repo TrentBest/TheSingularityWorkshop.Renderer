@@ -48,7 +48,7 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
         string name,
         PreparedBucketPipeline pipeline,
         IReadOnlyDictionary<string, Action> stageActions,
-        Action finalize)
+        Func<bool> finalize)
     {
         ArgumentNullException.ThrowIfNull(pipeline);
         ArgumentNullException.ThrowIfNull(stageActions);
@@ -156,7 +156,7 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
     private sealed class ExecutionContext : IStateContext
     {
         private readonly IReadOnlyDictionary<string, Action> _stageActions;
-        private readonly Action _finalize;
+        private readonly Func<bool> _finalize;
         private int _nextStageIndex;
 
         public ExecutionContext(
@@ -227,7 +227,12 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
 
             try
             {
-                _finalize();
+                if (!_finalize())
+                {
+                    Failure = new InvalidOperationException("The result publication gate rejected the prepared output.");
+                    return;
+                }
+
                 IsFinalized = true;
             }
             catch (Exception exception)
