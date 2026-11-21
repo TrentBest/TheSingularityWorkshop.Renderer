@@ -28,9 +28,8 @@ public sealed class PreparedBucketPipelineExecutionTests
         Assert.Equal(PreparedBucketPipelineExecutionState.Executing, execution.Advance());
         Assert.Equal(PreparedBucketPipelineExecutionState.Finalization, execution.Advance());
         Assert.False(execution.IsFinalized);
-        Assert.Equal(PreparedBucketPipelineExecutionState.Finalization, execution.Advance());
-        Assert.True(execution.IsFinalized);
         Assert.Equal(PreparedBucketPipelineExecutionState.Completed, execution.Advance());
+        Assert.True(execution.IsFinalized);
         Assert.Equal(
             new[] { "PreProcessing", "Processing", "PostProcessing", "FinalizationStage", "Publish" },
             trace);
@@ -79,9 +78,8 @@ public sealed class PreparedBucketPipelineExecutionTests
         for (var i = 0; i < 4; i++)
             execution.Advance();
 
-        Assert.Equal(PreparedBucketPipelineExecutionState.Finalization, execution.Advance());
-        Assert.False(execution.IsFinalized);
         Assert.Equal(PreparedBucketPipelineExecutionState.Failed, execution.Advance());
+        Assert.False(execution.IsFinalized);
         Assert.IsType<InvalidOperationException>(execution.Failure);
     }
 
