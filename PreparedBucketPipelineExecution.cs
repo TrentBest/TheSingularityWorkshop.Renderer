@@ -119,8 +119,8 @@ public sealed class PreparedBucketPipelineExecution : IDisposable
                     onExit: null)
                 .State(
                     nameof(PreparedBucketPipelineExecutionState.Finalization),
-                    onEnter: context => ((ExecutionContext)context).TryFinalize(),
-                    onUpdate: null,
+                    onEnter: null,
+                    onUpdate: context => ((ExecutionContext)context).TryFinalize(),
                     onExit: null)
                 .State(
                     nameof(PreparedBucketPipelineExecutionState.Completed),
