@@ -94,6 +94,8 @@ public sealed class SemanticEntityObservation
         ValidateConfidence(confidence);
 
         var values = (affordances ?? []).ToArray();
+        if (values.Any(x => string.IsNullOrWhiteSpace(x.Id)))
+            throw new ArgumentException("Every affordance must have a valid identifier.", nameof(affordances));
         if (values.Select(x => x.Id).Distinct(StringComparer.Ordinal).Count() != values.Length)
             throw new ArgumentException("Affordance identifiers must be unique within an entity observation.", nameof(affordances));
 
@@ -206,12 +208,24 @@ public sealed class SemanticObservation
         ArgumentNullException.ThrowIfNull(entities);
 
         var entityValues = entities.ToArray();
+        if (entityValues.Any(x => x is null))
+            throw new ArgumentException("A semantic snapshot cannot contain a null entity observation.", nameof(entities));
         if (entityValues.Select(x => x.Entity).Distinct().Count() != entityValues.Length)
             throw new ArgumentException("A semantic snapshot cannot contain the same entity more than once.", nameof(entities));
         if (entityValues.Any(x => x.Provenance.SourceRevision > sourceRevision))
             throw new ArgumentException("An entity observation cannot originate from a future source revision.", nameof(entities));
 
         var relationValues = (relations ?? []).ToArray();
+        if (relationValues.Any(x =>
+            !x.Subject.IsValid || !x.Target.IsValid ||
+            string.IsNullOrWhiteSpace(x.Relation) ||
+            !Enum.IsDefined(x.Knowledge) ||
+            !x.Provenance.IsValid ||
+            !double.IsFinite(x.Confidence) || x.Confidence is < 0 or > 1))
+        {
+            throw new ArgumentException("Every relation must be a fully initialized, valid observation.", nameof(relations));
+        }
+
         var entityIds = entityValues.Select(x => x.Entity).ToHashSet();
         if (relationValues.Any(x => !entityIds.Contains(x.Subject) || !entityIds.Contains(x.Target)))
             throw new ArgumentException("Both endpoints of every relation must be present in this observer's semantic snapshot.", nameof(relations));
