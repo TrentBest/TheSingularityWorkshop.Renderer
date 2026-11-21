@@ -17,7 +17,7 @@ The exhibit is useful because the causal chain is testable: move the observer �
 
 ## 01 — Semantic perception: one world, two observers
 
-The [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with a blacksmith shop and catalogs kitchens, hospitals, forests, battlefields, construction sites, cockpits, classrooms, warehouses, and unfamiliar rooms. This is currently a conceptual showcase—not a live perception or rendering integration.
+The [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with an executable blacksmith fixture: two observer-specific semantic observations and a player-facing RenderFrame are derived from the same source revisions, with permission boundaries asserted. CI archives a JSON trace and companion SVG. This is CPU-side sample integration, not a live AI/perception system or GPU pixel renderer.
 
 ## 02 — Event Horizons: representation states
 
