@@ -144,7 +144,64 @@ public sealed class ObserverRepresentationCoordinatorTests
     }
 
     [Fact]
-    public void Constructor_RejectsDuplicateBucketsForOneHorizon()
+    public void Evaluate_TracksNamedBucketsWithinOneHorizonIndependently()
+    {
+        var horizon = new EventHorizon("Interactive", 1, 10);
+        var policy = new ObserverRepresentationPolicy(
+        [
+            new RepresentationHorizonRule(horizon, RepresentationTarget.Interactive)
+        ]);
+        var geometry = new EventHorizonBucket("geometry", horizon, 10);
+        var motion = new EventHorizonBucket("motion", horizon, 2);
+        using var coordinator = new ObserverRepresentationCoordinator(
+            policy,
+            [geometry, motion],
+            "independent-horizon-buckets");
+
+        var now = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
+        var geometryInitial = coordinator.Evaluate(0.5, 1, 1, now, bucketName: "geometry");
+        Assert.Same(geometry, geometryInitial.Bucket);
+        Assert.True(geometryInitial.RefreshTicket.HasValue);
+        Assert.True(geometry.TryCompleteRefresh(geometryInitial.RefreshTicket!.Value, now));
+
+        var geometryReuse = coordinator.Evaluate(
+            0.5, 1, 1, now.AddMilliseconds(10), bucketName: "geometry");
+        Assert.False(geometryReuse.RefreshRequired);
+        Assert.True(geometryReuse.CanReuseCachedRepresentation);
+
+        var motionInitial = coordinator.Evaluate(
+            0.5, 1, 1, now.AddMilliseconds(10), bucketName: "motion");
+        Assert.Same(motion, motionInitial.Bucket);
+        Assert.True(motionInitial.RefreshRequired);
+        Assert.False(motionInitial.CanReuseCachedRepresentation);
+
+        Assert.Equal(1, geometry.Metrics.ReuseCount);
+        Assert.Equal(0, motion.Metrics.ReuseCount);
+        Assert.NotEqual(geometryInitial.RefreshTicket!.Value.BucketId, motionInitial.RefreshTicket!.Value.BucketId);
+    }
+
+    [Fact]
+    public void Evaluate_RequiresBucketNameWhenSelectedHorizonHasMultipleBuckets()
+    {
+        var horizon = new EventHorizon("Interactive", 1, 10);
+        var policy = new ObserverRepresentationPolicy(
+        [
+            new RepresentationHorizonRule(horizon, RepresentationTarget.Interactive)
+        ]);
+        using var coordinator = new ObserverRepresentationCoordinator(
+            policy,
+            [
+                new EventHorizonBucket("geometry", horizon, 10),
+                new EventHorizonBucket("motion", horizon, 10)
+            ],
+            "ambiguous-bucket-test");
+
+        Assert.Throws<InvalidOperationException>(() =>
+            coordinator.Evaluate(0.5, 1, 1, DateTimeOffset.UtcNow));
+    }
+
+    [Fact]
+    public void Constructor_RejectsDuplicateBucketNamesWithinOneHorizon()
     {
         var horizon = new EventHorizon("Interactive", 1, 10);
         var policy = new ObserverRepresentationPolicy(
@@ -154,11 +211,11 @@ public sealed class ObserverRepresentationCoordinatorTests
         var buckets = new[]
         {
             new EventHorizonBucket("geometry", horizon, 10),
-            new EventHorizonBucket("motion", horizon, 10)
+            new EventHorizonBucket("geometry", horizon, 2)
         };
 
         Assert.Throws<ArgumentException>(() =>
-            new ObserverRepresentationCoordinator(policy, buckets, "duplicate-bucket-test"));
+            new ObserverRepresentationCoordinator(policy, buckets, "duplicate-bucket-name-test"));
     }
 
     private static (ObserverRepresentationCoordinator Coordinator, EventHorizonBucket[] Buckets) CreateCoordinator(string contextName = "observer-coordinator-test")
