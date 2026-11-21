@@ -15,6 +15,7 @@ var playerView = new RenderView(Vector3.Zero, Matrix4x4.Identity, Matrix4x4.Iden
 var trace = new List<RevisionTrace>();
 Capture("Initial", world.Snapshot());
 world.Apply(new WorldEvent("HammerStrike", 3, "Being shaped by the blacksmith"));
+Require(world.Snapshot().Entities.Single(x => x.Id == 3).State == "Freshly struck; heated", "Hammer strike must change authoritative workpiece state.");
 Capture("HammerStrike", world.Snapshot());
 world.Apply(new WorldEvent("Quench", 3, "Quenched; cooling"));
 Capture("Quench", world.Snapshot());
@@ -91,7 +92,7 @@ static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, R
         .Where(entity => observer.PermittedEntityIds.Contains(entity.Id) && entity.VisibleToPlayer)
         .Select(entity => new RenderDrawCommand(
             new RenderResourceId((ulong)(100 + entity.Id)),
-            new RenderResourceId(entity.Id == 3 && entity.State.StartsWith("Quenched", StringComparison.Ordinal) ? 203UL : (ulong)(200 + entity.Id)),
+            new RenderResourceId(entity.Id == 3 ? entity.State.StartsWith("Quenched", StringComparison.Ordinal) ? 303UL : entity.State.StartsWith("Freshly struck", StringComparison.Ordinal) ? 302UL : 301UL : (ulong)(200 + entity.Id)),
             Matrix4x4.CreateTranslation(entity.Position),
             entity.Id == 3 ? 96 : 36,
             0,
@@ -118,7 +119,10 @@ static string BuildSvg(WorldSnapshot snapshot, RenderFrame frame)
     sb.AppendLine("""<rect x="395" y="310" width="240" height="48" rx="8" fill="#5a6068" stroke="#c0c7cf" stroke-width="3"/><path d="M430 310 L455 285 L580 285 L605 310" fill="#737b85" stroke="#c0c7cf" stroke-width="3"/>""");
     var workpiece = entities[3];
     var quenched = workpiece.State.StartsWith("Quenched", StringComparison.Ordinal);
+    var freshlyStruck = workpiece.State.StartsWith("Freshly struck", StringComparison.Ordinal);
     sb.AppendLine($"""<path d="M470 272 L570 272" stroke="{(quenched ? "#7eb7d8" : "#ff8b36")}" stroke-width="16" stroke-linecap="round"/><text x="515" y="420" text-anchor="middle" fill="{(quenched ? "#9bd3ef" : "#ffb06b")}" font-family="Segoe UI,sans-serif" font-size="15">{SecurityElement.Escape(workpiece.State.ToUpperInvariant())}</text>""");
+    if (freshlyStruck)
+        sb.AppendLine("""<g stroke="#ffd36b" stroke-width="4" stroke-linecap="round"><path d="M520 245 l-10 -18 M535 248 l12 -17 M505 250 l-17 -4 M535 260 l18 6"/></g><text x="520" y="220" text-anchor="middle" fill="#ffd36b" font-family="Segoe UI,sans-serif" font-size="12">SPARKS</text>""");
     sb.AppendLine("""<circle cx="740" cy="330" r="66" fill="#31566b" stroke="#8ab6cb" stroke-width="4"/><path d="M690 330 Q740 310 790 330" stroke="#b7e4f3" stroke-width="4" fill="none"/><text x="740" y="420" text-anchor="middle" fill="#c4dce8" font-family="Segoe UI,sans-serif" font-size="15">QUENCH BARREL</text>""");
     sb.AppendLine("""<path d="M420 200 L475 145 L495 165 L440 220 Z" fill="#9da4aa" stroke="#e0e4e8" stroke-width="3"/><path d="M400 220 L445 175" stroke="#9a6843" stroke-width="13" stroke-linecap="round"/><text x="450" y="125" fill="#e5d7c7" font-family="Segoe UI,sans-serif" font-size="14">HAMMER</text>""");
     sb.AppendLine("""<text x="52" y="492" fill="#9eacba" font-family="Consolas,monospace" font-size="12">CPU-side SVG diagnostic · same source snapshot as semantic trace · not a pixel/GPU renderer</text>""");
@@ -166,7 +170,7 @@ sealed class BlacksmithWorld
         var current = _entities[index];
         var state = worldEvent.Kind switch
         {
-            "HammerStrike" => "Heated",
+            "HammerStrike" => "Freshly struck; heated",
             "Quench" => "Quenched; cooling",
             _ => throw new ArgumentOutOfRangeException(nameof(worldEvent), worldEvent.Kind, "Unsupported fixture event.")
         };
