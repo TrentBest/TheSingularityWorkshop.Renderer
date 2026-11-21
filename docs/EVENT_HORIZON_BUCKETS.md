@@ -125,6 +125,18 @@ The integration regression `BucketRepresentationHandoffIntegrationTests` exercis
 
 These APIs intentionally remain separate: the bucket validates cached-work freshness; the handoff validates which prepared representation may be selected. The host coordinates them and must re-check the current revisions at promotion time. If observer movement or another invalidation occurs between cache acceptance and promotion, the host must keep the old visible representation and reprepare or invalidate the candidate as appropriate. This is not a cross-object atomic transaction and does not imply GPU resource synchronization.
 
+## Prepared bucket pipelines and FSM execution
+
+`PreparedBucketPipeline` is the runtime-facing contract for a bucket sequence already selected by the composition host. It snapshots the ordered stages and merges bundle-owned defaults with explicit experience overrides. An empty override set is valid; omitted values retain defaults.
+
+`RendererPipelineStage` declares stable stage identity and prerequisites. Preparation rejects duplicate identities, missing prerequisites, and prerequisites placed after the dependent stage. Ordered `RendererPipelineStageContribution` values insert optional stages before an existing stage. The composition host supplies the base sequence and contributions; Renderer does not inspect the MicroBundle catalog or run arbitration.
+
+`PreparedBucketPipelineExecution` executes the prepared sequence through an FSM_API instance. Each FSM update invokes at most one stage callback. The runtime supplies one callback for each selected stage and a final publication callback. A missing stage callback is rejected before execution; a callback exception moves the FSM to `Failed`. The publication callback is reached only after every selected stage succeeds, and a publication exception also leaves the execution failed rather than finalized.
+
+The FSM definition is shared; each bucket execution has its own context and handle. The prepared definition can therefore be reused for separate bucket instances without sharing their stage progress or failure state. Runtime data changes invalidate bucket outputs through the existing bucket/dependency APIs; they do not rerun forge-time preparation or change the prepared stage order.
+
+This is a backend-free execution proof. It does not claim GPU scheduling, cross-bucket resource synchronization, or an end-to-end frame-time improvement. The host still owns arbitration, convergence, and deciding when to advance the relevant FSM processing group.
+
 ## Measuring the work
 
 The bucket exposes a diagnostic snapshot with counts for cadence checks, due/not-due results, refresh attempts, accepted/rejected refreshes, invalidations, observed invalidation reasons, and explicit cache reuse.
@@ -162,7 +174,7 @@ Not implemented by these primitives:
 - spatial indexing or automatic horizon assignment;
 - actual GPU resources, drawing, or persistent rendered textures;
 - observer reprojection, parallax reconstruction, or filling newly exposed regions;
-- forge-time MicroBundle arbitration or prepared bucket-local FSM pipelines;
+- forge-time MicroBundle arbitration and convergence (owned by the composition host);
 - a measured end-to-end performance result.
 
 Those boundaries are deliberate: the validity model can be tested without selecting a graphics API, while the eventual backend must prove that its cache representation remains correct as the observer moves.
