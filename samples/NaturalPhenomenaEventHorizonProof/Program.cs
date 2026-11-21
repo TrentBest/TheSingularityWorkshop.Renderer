@@ -233,8 +233,8 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
         sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
     }
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
-    var invalidated = trace.Buckets.Where(x => x.Invalidations > 0).ToArray();
-    var valid = trace.Buckets.Where(x => x.Invalidations == 0).ToArray();
+    var invalidated = trace.Buckets.Where(x => !x.IsValid).ToArray();
+    var valid = trace.Buckets.Where(x => x.IsValid).ToArray();
     sb.AppendLine($"""<rect x="36" y="554" width="530" height="142" rx="10" fill="#2d2419" stroke="#b88742"/><text x="56" y="582" fill="#ffd28a" font-family="Segoe UI,sans-serif" font-size="14" font-weight="700">INVALIDATED PATHS ({invalidated.Length})</text>""");
     for (var i = 0; i < invalidated.Length; i++)
         sb.AppendLine($"""<text x="56" y="{610 + i * 20}" fill="#f4f7fb" font-family="Consolas,monospace" font-size="11">{Esc(invalidated[i].Name)} · {Esc(invalidated[i].DirtyReasons)}</text>""");
