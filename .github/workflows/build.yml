@@ -40,6 +40,13 @@ jobs:
           --collect:"XPlat Code Coverage;Format=cobertura"
           --results-directory ./TestResults
           --logger "trx;LogFileName=testresults.trx"
+      - name: Prove blacksmith semantic perception and shared world revision
+        run: dotnet run --project samples/BlacksmithSemanticPerceptionProof/BlacksmithSemanticPerceptionProof.csproj --configuration Release -- artifacts/blacksmith-semantic-proof
+      - name: Upload blacksmith semantic perception proof
+        uses: actions/upload-artifact@c2acdedd35a8824a1552c7137f8c18288c3ea469 # v7.0.2
+        with:
+          name: renderer-blacksmith-semantic-perception-proof
+          path: artifacts/blacksmith-semantic-proof/*
       - name: Prove opt-in FSM_COS rendering composition
         run: dotnet run --project samples/FsmCosRendering/FsmCosRendering.csproj --configuration Release
       - name: Prove FSM_COS composition without rendering dependencies
