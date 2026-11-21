@@ -40,28 +40,49 @@ void Capture(string eventName, WorldSnapshot snapshot)
     Require(assistantObservation.SourceRevision == snapshot.Revision, "Assistant observation revision mismatch.");
     Require(playerObservation.SourceRevision == snapshot.Revision, "Player observation revision mismatch.");
     Require(frame.Commands.Count == playerObservation.Entities.Count, "Visual commands and visible semantic entities diverged.");
-    Require(assistantObservation.Entities.Any(x => x.EntityId == 7), "Assistant should have maintenance-channel access to the fuel valve.");
-    Require(playerObservation.Entities.All(x => x.EntityId != 7), "Player must not receive hidden fuel-valve state.");
-    Require(assistantObservation.Unknowns.Contains("locked-cabinet-01"), "Assistant must retain the locked cabinet as unknown.");
-    Require(playerObservation.Unknowns.Contains("locked-cabinet-01"), "Player must retain the locked cabinet as unknown.");
+    Require(assistantObservation.Entities.Any(x => x.Entity.Value == 7), "Assistant should have maintenance-channel access to the fuel valve.");
+    Require(playerObservation.Entities.All(x => x.Entity.Value != 7), "Player must not receive hidden fuel-valve state.");
+    Require(assistantObservation.Entities.All(x => x.Entity.Value != 8), "Assistant must not receive the locked cabinet identity.");
+    Require(playerObservation.Entities.All(x => x.Entity.Value != 8), "Player must not receive the locked cabinet identity.");
+    Require(assistantObservation.Relations.All(x => x.Subject.Value != 8 && x.Target.Value != 8), "Relations must not disclose unavailable entity identities.");
+    Require(playerObservation.Relations.All(x => x.Subject.Value != 8 && x.Target.Value != 8), "Relations must not disclose unavailable entity identities.");
 
     trace.Add(new RevisionTrace(eventName, snapshot.Revision, assistantObservation, playerObservation,
         frame.Commands.Select(x => new DrawCommandTrace(x.Entity.Value, x.Geometry.Value, x.Material.Value, x.IndexCount, x.Representation.ToString())).ToArray()));
 }
 
-static SemanticObservation Observe(WorldSnapshot snapshot, ObserverPolicy observer)
+static TheSingularityWorkshop.Renderer.SemanticObservation Observe(WorldSnapshot snapshot, ObserverPolicy observer)
 {
-    var entities = snapshot.Entities
+    var permitted = snapshot.Entities
         .Where(entity => observer.PermittedEntityIds.Contains(entity.Id))
-        .Select(entity => new ObservedEntity(entity.Id, entity.StableId, entity.Category, entity.State, entity.Activity, entity.Hazard, entity.Affordances))
         .ToArray();
+    var ids = permitted.Select(entity => new RenderEntityId(entity.Id)).ToHashSet();
+    var provenance = new SemanticProvenance("AuthoritativeBlacksmithWorld", snapshot.Revision);
 
-    var unknowns = snapshot.Entities
-        .Where(entity => !observer.PermittedEntityIds.Contains(entity.Id))
-        .Select(entity => entity.StableId)
-        .ToArray();
+    var entities = permitted.Select(entity =>
+    {
+        var knowledge = entity.Id == 7 ? SemanticKnowledge.Sensed : SemanticKnowledge.Observed;
+        var confidence = knowledge == SemanticKnowledge.Sensed ? 0.98 : 1.0;
+        var affordances = entity.Affordances.Select(value => new SemanticAffordance(value, true));
+        return new SemanticEntityObservation(
+            new RenderEntityId(entity.Id), entity.Category, entity.State, entity.Activity,
+            entity.Hazard, knowledge, confidence, provenance, affordances);
+    }).ToArray();
 
-    return new SemanticObservation(observer.Name, observer.Channels, snapshot.Revision, "CurrentAtSourceRevision", "AuthoritativeBlacksmithWorld", entities, unknowns);
+    var relations = new[]
+    {
+        (Subject: 1UL, Relation: "Heats", Target: 3UL),
+        (Subject: 2UL, Relation: "Uses", Target: 4UL),
+        (Subject: 3UL, Relation: "CanBeQuenchedIn", Target: 6UL)
+    }
+    .Where(relation => ids.Contains(new RenderEntityId(relation.Subject)) && ids.Contains(new RenderEntityId(relation.Target)))
+    .Select(relation => new SemanticRelationObservation(
+        new RenderEntityId(relation.Subject), relation.Relation, new RenderEntityId(relation.Target),
+        SemanticKnowledge.Observed, 1.0, provenance))
+    .ToArray();
+
+    return new TheSingularityWorkshop.Renderer.SemanticObservation(
+        observer.Name, snapshot.Revision, SemanticObservationFreshness.Current, entities, relations);
 }
 
 static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, RenderView view)
@@ -114,10 +135,8 @@ sealed record ObserverPolicy(string Name, HashSet<ulong> PermittedEntityIds, str
 sealed record WorldEvent(string Kind, ulong TargetEntityId, string ResultingActivity);
 sealed record WorldEntity(ulong Id, string StableId, string Category, string State, string Activity, string Hazard, string[] Affordances, Vector3 Position, bool VisibleToPlayer);
 sealed record WorldSnapshot(long Revision, IReadOnlyList<WorldEntity> Entities);
-sealed record ObservedEntity(ulong EntityId, string StableId, string Category, string State, string Activity, string Hazard, string[] Affordances);
-sealed record SemanticObservation(string Observer, string Channels, long SourceRevision, string Freshness, string Provenance, IReadOnlyList<ObservedEntity> Entities, IReadOnlyList<string> Unknowns);
 sealed record DrawCommandTrace(ulong EntityId, ulong GeometryId, ulong MaterialId, int IndexCount, string Representation);
-sealed record RevisionTrace(string Event, long WorldRevision, SemanticObservation Assistant, SemanticObservation Player, IReadOnlyList<DrawCommandTrace> PlayerDrawCommands);
+sealed record RevisionTrace(string Event, long WorldRevision, TheSingularityWorkshop.Renderer.SemanticObservation Assistant, TheSingularityWorkshop.Renderer.SemanticObservation Player, IReadOnlyList<DrawCommandTrace> PlayerDrawCommands);
 
 sealed class BlacksmithWorld
 {
