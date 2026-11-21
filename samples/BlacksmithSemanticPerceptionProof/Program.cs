@@ -61,7 +61,7 @@ static SemanticObservation Observe(WorldSnapshot snapshot, ObserverPolicy observ
         .Select(entity => entity.StableId)
         .ToArray();
 
-    return new SemanticObservation(observer.Name, observer.Channels, snapshot.Revision, "AuthoritativeBlacksmithWorld", entities, unknowns);
+    return new SemanticObservation(observer.Name, observer.Channels, snapshot.Revision, "CurrentAtSourceRevision", "AuthoritativeBlacksmithWorld", entities, unknowns);
 }
 
 static RenderFrame BuildFrame(WorldSnapshot snapshot, ObserverPolicy observer, RenderView view)
@@ -115,7 +115,7 @@ sealed record WorldEvent(string Kind, ulong TargetEntityId, string ResultingActi
 sealed record WorldEntity(ulong Id, string StableId, string Category, string State, string Activity, string Hazard, string[] Affordances, Vector3 Position, bool VisibleToPlayer);
 sealed record WorldSnapshot(long Revision, IReadOnlyList<WorldEntity> Entities);
 sealed record ObservedEntity(ulong EntityId, string StableId, string Category, string State, string Activity, string Hazard, string[] Affordances);
-sealed record SemanticObservation(string Observer, string Channels, long SourceRevision, string Provenance, IReadOnlyList<ObservedEntity> Entities, IReadOnlyList<string> Unknowns);
+sealed record SemanticObservation(string Observer, string Channels, long SourceRevision, string Freshness, string Provenance, IReadOnlyList<ObservedEntity> Entities, IReadOnlyList<string> Unknowns);
 sealed record DrawCommandTrace(ulong EntityId, ulong GeometryId, ulong MaterialId, int IndexCount, string Representation);
 sealed record RevisionTrace(string Event, long WorldRevision, SemanticObservation Assistant, SemanticObservation Player, IReadOnlyList<DrawCommandTrace> PlayerDrawCommands);
 
