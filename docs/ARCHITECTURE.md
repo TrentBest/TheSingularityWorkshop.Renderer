@@ -102,13 +102,13 @@ Renderer must not require FSM_COS simply to define or execute its core model.
 
 ### MicroBundles
 
-Renderer is delivered to the runtime as a **MicroBundle capability**, resolved by semantic identity and version through the Workshop repository boundary. NuGet is not the runtime consumption model for Renderer.
+Renderer is intended to be delivered to the runtime as a **MicroBundle capability**; NuGet is not its runtime consumption contract. The current executable adapter uses a numeric `BundleId`, and the current MicroBundleDomain/FSM_COS contracts resolve and pin that numeric ID with version and SHA-256. The provider label is currently `Renderer`.
 
-The canonical ontology identity is the string **TheSingularityWorkshop.Renderer**. A portable artifact reference is **(ontology string, version, SHA-256)**. A repository may map that identity to a local non-zero ulong handle for blob lookup, but the handle is storage-local and is never the portable semantic identity.
+The intended portable ontology identity is the string **TheSingularityWorkshop.Renderer**, with a portable reference of **(ontology string, version, SHA-256)**. That is target architecture, not the lookup key currently implemented by the shared MicroBundleDomain and FSM_COS APIs. The identity migration requires coordinated work in those owning repositories; this Renderer repository must not claim it is already complete.
 
 FSM_COS owns discovery, resolution, verification, loading, composition, and runtime lifecycle. Renderer owns its capability implementation and does not depend upward on FSM_COS. Ordinary NuGet dependencies may still be used to build Renderer; that does not make a NuGet package the capability delivered to FSM_COS.
 
-The complete durable repository-to-FSM_COS runtime path is an implementation milestone, not a behavior this repository currently claims to have completed.
+The complete portable ontology-string and durable repository-to-FSM_COS runtime path remain integration milestones.
 
 See [Renderer MicroBundle](MICROBUNDLE.md).
 
