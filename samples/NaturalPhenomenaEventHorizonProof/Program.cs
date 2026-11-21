@@ -26,13 +26,13 @@ var policy = new DeterministicRepresentationPolicy();
 var observers = new[]
 {
     new ObserverBudget(
-        new RepresentationObservation("first-person", RepresentationObserverKind.FirstPerson, sourceId, sourceRevision, 0.9, 0.95, 0.9),
+        new RepresentationObservation("first-person", RepresentationObserverKind.FirstPerson, sourceId, sourceRevision, 0.9, 0.95, 0.9, RepresentationIntent.Interact),
         new RepresentationResourceBudget(4, 5, 8 * 1024 * 1024, 4 * 1024 * 1024, 50, 0.25)),
     new ObserverBudget(
         new RepresentationObservation("distant-camera", RepresentationObserverKind.Camera, sourceId, sourceRevision, 0.2, 0.8, 0.2),
         new RepresentationResourceBudget(1.5, 1, 1024 * 1024, 512 * 1024, 200, 0.3)),
     new ObserverBudget(
-        new RepresentationObservation("ai-map", RepresentationObserverKind.AiMap, sourceId, sourceRevision, 0.1, 0.7, 0.95),
+        new RepresentationObservation("ai-map", RepresentationObserverKind.AiMap, sourceId, sourceRevision, 0.1, 0.7, 0.95, RepresentationIntent.RespondToHazard),
         new RepresentationResourceBudget(0.5, 0.2, 128 * 1024, 32 * 1024, 250, 0.5))
 };
 
