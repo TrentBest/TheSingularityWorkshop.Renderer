@@ -226,7 +226,7 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<rect x="36" y="105" width="1088" height="90" rx="12" fill="#1b2b3a" stroke="#466176"/><text x="58" y="135" fill="#f2d6a2" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">SOURCE LIFECYCLES</text>""");
     sb.AppendLine("""<text x="58" y="164" fill="#f4f7fb" font-family="Consolas,monospace" font-size="13">Lightning event (transient)  →  Ash density field (evolving)  →  Deposited ash (persistent aftermath)</text>""");
     sb.AppendLine("""<text x="36" y="230" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
-    for (var i = 0; i < trace.Observers.Length; i++)
+    for (var i = 0; i < trace.Observers.Count; i++)
     {
         var observer = trace.Observers[i];
         var y = 250 + i * 86;
