@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="The Singularity Workshop Renderer: observer-relative representation, Event Horizons, independently invalidated work buckets, and executable evidence.">
+  <title>Renderer — The Singularity Workshop</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080d18;--panel:#111a2b;--panel2:#172338;--line:#2b3a52;--ink:#edf3fb;--muted:#a9b8cc;--cyan:#67d9e8;--violet:#b9a4ff;--green:#7ce0b0;--gold:#f4cb79;--max:1120px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#1c3150 0,transparent 42%),var(--bg);color:var(--ink);font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}img{max-width:100%;height:auto} .wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
+    header{padding:22px 0;border-bottom:1px solid var(--line)}.nav{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.brand{font-weight:800;letter-spacing:.12em;font-size:.82rem;color:var(--ink)}.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:.9rem}
+    .hero{padding:76px 0 54px}.eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.2em;font-size:.76rem;font-weight:800}.hero h1{font-size:clamp(2.5rem,7vw,5.3rem);line-height:1.02;letter-spacing:-.055em;max-width:900px;margin:16px 0}.hero p{font-size:clamp(1.08rem,2vw,1.3rem);color:var(--muted);max-width:790px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0}.action{display:inline-block;padding:10px 16px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-weight:700}.action.primary{background:var(--cyan);color:#06111b;border-color:var(--cyan)}
+    .status{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.status img{height:22px}.status a{display:inline-flex;align-items:center}
+    section{padding:52px 0;border-top:1px solid var(--line)}h2{font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.15;letter-spacing:-.035em;margin:0 0 12px}h3{margin:0 0 8px;font-size:1.12rem}.intro{color:var(--muted);max-width:780px;margin:0 0 26px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0}.card p{color:var(--muted);margin:8px 0 14px}.tag{display:inline-block;color:var(--green);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;margin-bottom:8px}
+    .diagram{background:#0b1220;border:1px solid var(--line);border-radius:14px;padding:14px;margin:24px 0}.diagram img{display:block;width:100%}.diagram figcaption{color:var(--muted);font-size:.85rem;padding:10px 4px 0}
+    .proofs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.proof{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}.proof strong{display:block;color:var(--gold);margin-bottom:5px}.proof p{color:var(--muted);font-size:.94rem;margin:0 0 12px}
+    .callout{border-left:3px solid var(--violet);padding:12px 18px;background:#14182a;color:var(--muted);margin:22px 0}.links{display:flex;flex-wrap:wrap;gap:10px 18px}.links a{font-weight:650}
+    footer{padding:36px 0 54px;color:var(--muted);border-top:1px solid var(--line);font-size:.9rem}footer img{width:170px;display:block;margin:0 auto 12px}
+    @media(max-width:760px){.grid,.proofs{grid-template-columns:1fr}.hero{padding-top:52px}.nav{align-items:flex-start}}
+  </style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="#top">THE SINGULARITY WORKSHOP</a><nav class="navlinks"><a href="#model">Model</a><a href="#evidence">Evidence</a><a href="#theory">Theory</a><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Source</a></nav></div></header>
+<main id="top">
+  <div class="wrap hero">
+    <div class="eyebrow">A living technical exhibit · Renderer</div>
+    <h1>Compute the representation the observer needs.</h1>
+    <p>Rendering is not merely drawing fewer polygons. It is deciding what information, fidelity, visibility, and computational work are appropriate to an observer—and preserving the ability to promote that representation when the observer's needs change.</p>
+    <div class="actions"><a class="action primary" href="#evidence">Explore executable evidence</a><a class="action" href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/START_HERE.md">Read the guided introduction</a></div>
+    <div class="status">
+      <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/build.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/TrentBest/TheSingularityWorkshop.Renderer/build.yml?branch=development&label=build%20%2F%20test"></a>
+      <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/sith-policy.yml"><img alt="Sith branch policy" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/TrentBest/TheSingularityWorkshop.Renderer/master/assets/sith-policy.json"></a>
+      <a class="action" href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions">Inspect CI runs ↗</a>
+    </div>
+  </div>
+  <section id="model"><div class="wrap">
+    <div class="eyebrow">01 · The model</div><h2>Event Horizons organize work around observation.</h2>
+    <p class="intro">An Event Horizon is a policy boundary: crossing it can change the representation and the work required to maintain it. Horizons are not fixed graphics-engine LOD rings; their meaning depends on observer context and experience policy.</p>
+    <div class="grid">
+      <article class="card"><span class="tag">Observer</span><h3>What matters from here?</h3><p>Position, intent, visibility, task, and semantic needs influence which information is relevant. Different observers can legitimately require different representations of the same world.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/OBSERVATION_MODEL.md">Observation model ↗</a></article>
+      <article class="card"><span class="tag">Representation</span><h3>Identity outlives form.</h3><p>A stable entity can have multiple materialized representations. Fidelity, cadence, semantic detail, visibility, and interaction availability are policy dimensions—not just polygon count.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/REPRESENTATION.md">Representation contracts ↗</a></article>
+      <article class="card"><span class="tag">Buckets</span><h3>Invalidate only what changed.</h3><p>Independent work buckets own their inputs, dependencies, revisions, and validity. A lighting change need not discard an unrelated shadow or geometry result.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/EVENT_HORIZON_BUCKETS.md">Bucket model ↗</a></article>
+      <article class="card"><span class="tag">Composition</span><h3>Prepare once; execute the plan.</h3><p>MicroBundles contribute capabilities and defaults. Forge-time composition prepares bucket-local FSM pipelines; runtime executes those structures and responds to changing data without rerunning arbitration.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues/7">Forge-time contract and acceptance criteria ↗</a></article>
+    </div>
+    <figure class="diagram"><img src="assets/renderer-composition.svg" alt="Renderer composition architecture diagram"><figcaption>Composition explainer: observer context, Event Horizons, independent work buckets, and frame assembly. This is a teaching diagram, not live telemetry.</figcaption></figure>
+  </div></section>
+  <section id="evidence"><div class="wrap">
+    <div class="eyebrow">02 · Proof, not promises</div><h2>Runnable models with explicit evidence boundaries.</h2>
+    <p class="intro">The repository's samples generate deterministic artifacts and its tests exercise contracts. Each exhibit says what it proves—and what it does not.</p>
+    <div class="proofs">
+      <article class="proof"><strong>Living Event Horizons</strong><p>Runs the FSM-backed representation model and generates a reproducible SVG snapshot of the resulting states.</p><a href="assets/living-event-horizons.svg">Open generated exhibit ↗</a></article>
+      <article class="proof"><strong>RenderFrame inspector</strong><p>Shows ordered commands, observer position, representation decisions, semantic IDs, resources, and index ranges from a real RenderFrame.</p><a href="assets/render-frame-inspector.svg">Open frame inspector ↗</a></article>
+      <article class="proof"><strong>Selective invalidation</strong><p>Demonstrates reuse of unaffected outputs when declared source dependencies change.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/BucketInvalidationReuseProof">Inspect runnable proof ↗</a></article>
+      <article class="proof"><strong>Semantic perception</strong><p>Two observers make independent FSM-backed Event Horizon decisions over a shared world revision; a player frame is derived from that same fixture.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/BlacksmithSemanticPerceptionProof">Inspect blacksmith proof ↗</a></article>
+      <article class="proof"><strong>Natural phenomena</strong><p>Different observer intents select multidimensional ash representations while declared dependencies drive selective invalidation.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples/NaturalPhenomenaEventHorizonProof">Inspect phenomenon proof ↗</a></article>
+      <article class="proof"><strong>Composition boundary</strong><p>Paired samples prove opt-in rendering composition and that a rendering-free FSM_COS consumer stays free of Renderer/Visualize dependencies.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/tree/development/samples">Browse all samples ↗</a></article>
+    </div>
+    <figure class="diagram"><img src="assets/living-event-horizons.svg" alt="Generated living Event Horizon states"><figcaption>Generated from executable sample code; the animation is a visual aid, not a live process monitor.</figcaption></figure>
+    <div class="callout"><strong>Evidence boundary:</strong> these are backend-free model and command-level proofs. They do not claim a production GPU renderer, pixel output, geometry-buffer compaction, or a measured end-to-end speedup. Renderer remains alpha software.</div>
+  </div></section>
+  <section id="theory"><div class="wrap">
+    <div class="eyebrow">03 · Learn and inspect</div><h2>A textbook path with source traceability.</h2>
+    <p class="intro">The theory is organized as a sequence from the observer problem to Event Horizons, work budgets, bucket dependencies, frame handoff, and worked examples. Every major concept should lead to a contract, test, or clearly labeled open question.</p>
+    <div class="grid">
+      <article class="card"><h3>Start here</h3><p>A guided route through the model, terminology, and Workshop boundaries.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/START_HERE.md">Open introduction ↗</a></article>
+      <article class="card"><h3>Ten-chapter rendering theory</h3><p>From the observer problem and input model through worked hazard scenarios and evidence.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/RENDERING_THEORY.md">Open theory index ↗</a></article>
+      <article class="card"><h3>Theory ↔ implementation map</h3><p>Trace concepts to public types, tests, samples, and remaining evidence gaps.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/THEORY_IMPLEMENTATION_MAP.md">Open traceability map ↗</a></article>
+      <article class="card"><h3>Architecture and handoff</h3><p>Understand why Renderer remains graphics-API-independent and where Visualize and GUI take over.</p><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/PRESENTATION_HANDOFF.md">Open presentation boundary ↗</a></article>
+    </div>
+    <p class="links" style="margin-top:24px"><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/GALLERY.md">Gallery</a><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/BENCHMARKING.md">Benchmarking</a><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/GPU_BOUNDARY.md">GPU boundary</a><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/blob/development/docs/MICROBUNDLE.md">MicroBundle contract</a><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/issues">Open work</a></p>
+  </div></section>
+</main>
+<footer><div class="wrap" style="text-align:center"><img src="https://raw.githubusercontent.com/TrentBest/FSM_API/master/Documentation/Branding/TheSingularityWorkshop.png" alt="The Singularity Workshop"><div>Renderer · The Singularity Workshop</div><div><a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer">Source repository</a> · <a href="https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions">Build and evidence</a></div><p>Living documentation is generated from the development branch. The source repository remains authoritative.</p></div></footer>
+</body></html>
