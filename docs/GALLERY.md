@@ -19,7 +19,13 @@ The exhibit is useful because the causal chain is testable: move the observer �
 
 The [semantic world-perception exhibit](gallery/semantic-world-perception.md) contrasts what an AI can know from structured world meaning with what a player sees as a visual manifestation. It begins with an executable blacksmith fixture: two observer-specific semantic observations and a player-facing RenderFrame are derived from the same source revisions, with permission boundaries asserted. CI archives a JSON trace and companion SVG. This is CPU-side sample integration, not a live AI/perception system or GPU pixel renderer.
 
-## 02 — Event Horizons: representation states
+## 02 — Natural phenomena: multidimensional Event Horizons
+
+The [natural phenomena proof](../samples/NaturalPhenomenaEventHorizonProof/README.md) uses a volcanic-ash fixture with distinct transient lightning, evolving density-field, and persistent deposited-ash lifecycles. The production deterministic policy selects FullVisual for a first-person observer, RegionalVolume for a distant camera, and HazardMarker for an AI/map observer under separate resource ceilings. It also proves provenance-preserving ash aggregation and selective invalidation of shadow, temporal-lighting, volume, view, and persistent surface outputs.
+
+**Evidence boundary:** actual CPU-side Renderer policy, aggregation, and dependency APIs with fixture-supplied source values and estimated costs. No volcanic simulation, shader, particle execution, GPU submission, or measured performance is claimed. CI archives the JSON trace and diagnostic SVG as `renderer-natural-phenomena-event-horizon-proof`.
+
+## 03 — Event Horizons: representation states
 
 ![Event Horizon representation-state snapshot](assets/living-event-horizons.svg)
 
@@ -27,7 +33,7 @@ The [semantic world-perception exhibit](gallery/semantic-world-perception.md) co
 
 **Recipe:** [Event Horizon state proof recipe](gallery/event-horizons.md).
 
-## 03 — RenderFrame inspector: ordered work
+## 04 — RenderFrame inspector: ordered work
 
 ![Renderer frame command inspector](assets/render-frame-inspector.svg)
 
@@ -35,7 +41,7 @@ The [semantic world-perception exhibit](gallery/semantic-world-perception.md) co
 
 **Recipe:** [RenderFrame inspector recipe and run command](gallery/render-frame-inspector.md).
 
-## 04 — Observer moves: policy-to-frame proof
+## 05 — Observer moves: policy-to-frame proof
 
 The executable proof compares two observer positions against the same entity fixture. It calls Renderer’s real `ObserverDistance.Select`, builds real `RenderFrame` command snapshots, and asserts that selected representations and total index work change.
 
@@ -43,7 +49,7 @@ The executable proof compares two observer positions against the same entity fix
 
 **Recipe:** [Observer-driven frame proof](gallery/observer-driven-frame.md). CI uploads the generated comparison as the `renderer-observer-driven-frame-proof` artifact.
 
-## 05 — Observer → buckets → frame
+## 06 — Observer → buckets → frame
 
 This connected executable proof joins observer-distance selection, per-subject bucket invalidation, declared shadow dependencies, explicit reuse of unchanged buckets, and the resulting ordered `RenderFrame` commands. It asserts that changed representations refresh their dependent outputs while a subject that remains in the same representation records reuse.
 
@@ -51,7 +57,7 @@ This connected executable proof joins observer-distance selection, per-subject b
 
 **Recipe:** [Observer-to-bucket-to-frame causal proof](gallery/observer-bucket-frame.md). CI uploads the SVG as the `renderer-observer-bucket-frame-proof` artifact.
 
-## 06 — Bucket invalidation and cache reuse
+## 07 — Bucket invalidation and cache reuse
 
 This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucketDependencyGraph` APIs. It changes a source revision, verifies that the changed bucket and its declared dependent are invalidated, confirms unrelated lighting and distant-motion buckets remain reusable, then accepts replacement refreshes. The SVG reports actual bucket metrics.
 
@@ -59,7 +65,7 @@ This executable proof uses the real `EventHorizonBucket` and `EventHorizonBucket
 
 **Recipe:** [Bucket invalidation and reuse proof](gallery/bucket-invalidation-and-reuse.md). CI uploads the generated SVG as `renderer-bucket-invalidation-reuse-proof`.
 
-## 07 — Composition: where responsibilities live
+## 08 — Composition: where responsibilities live
 
 ![Renderer composition illustration](assets/renderer-composition.svg)
 
