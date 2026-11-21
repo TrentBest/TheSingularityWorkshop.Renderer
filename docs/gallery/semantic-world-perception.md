@@ -137,21 +137,19 @@ Renderer already treats the observer as an input to representation and computati
 
 These consumers share authoritative world meaning but do not need identical representations. Renderer can help determine which representation and level of work is useful for each observer, while the experience remains authoritative for world state and the AI/FSM remains authoritative for its own decisions.
 
-## Evidence boundary and next proof
+## Executable proof and evidence boundary
 
-This exhibit is currently a **conceptual design showcase** built on the existing semantic-observation direction. It is not yet an executable blacksmith simulation, a pixel-rendered scene, a perception model, or a live AI integration.
+The first executable blacksmith proof now lives in [BlacksmithSemanticPerceptionProof](../../samples/BlacksmithSemanticPerceptionProof/README.md). Run it from the repository root:
 
-A proper next proof should:
+```bash
+dotnet run --project samples/BlacksmithSemanticPerceptionProof/BlacksmithSemanticPerceptionProof.csproj --configuration Release
+```
 
-1. Define a small, deterministic blacksmith-shop world fixture with stable entity IDs and explicit relations.
-2. Produce an AI semantic observation from that fixture without reading rendered pixels.
-3. Produce a separate player-facing representation from the same fixture.
-4. Change one authoritative event (for example, forge ignition or quenching) and prove both outputs update consistently.
-5. Add at least two observers with different knowledge permissions and prove that occluded or unauthorized facts do not leak.
-6. Record revisions, freshness, provenance, invalidation, and measured CPU work.
-7. Add further environments by reusing the same exhibit contract rather than inventing a new format for each scene.
+The deterministic fixture applies an initial snapshot, a hammer-strike event, and a quench event. At each source revision it derives two distinct semantic observations and a player-facing `RenderFrame` from the same authoritative world snapshot. The assistant has operational and maintenance channels; the player has direct line of sight. The executable asserts that the assistant can know the fuel-valve state while the player cannot, that locked-cabinet contents remain unknown to both, and that the player frame command count matches the player-visible semantic entity count. CI archives a machine-readable observation trace and a companion SVG.
 
-The first milestone is a deterministic semantic trace and a companion visual artifact. Only after that is connected should the gallery label it as an executable integration.
+**Evidence boundary:** this is an executable deterministic sample using Renderer’s actual `RenderFrame` and `RenderDrawCommand` contracts plus sample-owned world state and observer permissions. The semantic-observation schema and knowledge policy are sample-owned, not a production Renderer API. The SVG is a CPU-side diagnostic visualization, not GPU output or a full pixel renderer. There is no live AI, FSM, perception, sensor, or host integration, and no calibrated timing or allocation claim.
+
+Remaining proof work includes moving the semantic observation contract into an explicitly owned shared layer if warranted, testing richer sensor/occlusion models, connecting the policy to production Event Horizon selection, and adding further environments by reusing the same fixture contract.
 
 ## Related work
 
