@@ -1,0 +1,53 @@
+name: Publish Renderer review site
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - 'site/**'
+      - 'docs/assets/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout development
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Assemble static review site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s site/index.html
+          mkdir -p site/assets
+          cp docs/assets/renderer-composition.svg site/assets/
+          cp docs/assets/living-event-horizons.svg site/assets/
+          cp docs/assets/render-frame-inspector.svg site/assets/
+          touch site/.nojekyll
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
