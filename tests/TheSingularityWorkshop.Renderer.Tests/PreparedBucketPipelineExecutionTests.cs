@@ -20,7 +20,7 @@ public sealed class PreparedBucketPipelineExecutionTests
                 ["PostProcessing"] = () => trace.Add("PostProcessing"),
                 ["Finalization"] = () => trace.Add("FinalizationStage")
             },
-            () => trace.Add("Publish"));
+            () => { trace.Add("Publish"); return true; });
 
         Assert.Equal(PreparedBucketPipelineExecutionState.Executing, execution.State);
         Assert.Equal(PreparedBucketPipelineExecutionState.Executing, execution.Advance());
@@ -83,6 +83,30 @@ public sealed class PreparedBucketPipelineExecutionTests
         Assert.IsType<InvalidOperationException>(execution.Failure);
     }
 
+
+    [Fact]
+    public void RejectedPublicationGateDoesNotMarkPipelineFinalized()
+    {
+        using var execution = new PreparedBucketPipelineExecution(
+            "Lighting.RejectedPublication",
+            CreatePipeline(),
+            new Dictionary<string, Action>
+            {
+                ["PreProcessing"] = () => { },
+                ["Processing"] = () => { },
+                ["PostProcessing"] = () => { },
+                ["Finalization"] = () => { }
+            },
+            () => false);
+
+        for (var i = 0; i < 4; i++)
+            execution.Advance();
+
+        Assert.Equal(PreparedBucketPipelineExecutionState.Failed, execution.Advance());
+        Assert.False(execution.IsFinalized);
+        Assert.IsType<InvalidOperationException>(execution.Failure);
+    }
+
     [Fact]
     public void EveryPreparedStageRequiresExactlyOneRuntimeAction()
     {
@@ -91,7 +115,7 @@ public sealed class PreparedBucketPipelineExecutionTests
                 "Lighting.MissingAction",
                 CreatePipeline(),
                 new Dictionary<string, Action> { ["PreProcessing"] = () => { } },
-                () => { }));
+                () => true));
     }
 
     [Fact]
@@ -107,7 +131,7 @@ public sealed class PreparedBucketPipelineExecutionTests
                 ["PostProcessing"] = () => { },
                 ["Finalization"] = () => { }
             },
-            () => { });
+            () => true);
 
         execution.Dispose();
 
