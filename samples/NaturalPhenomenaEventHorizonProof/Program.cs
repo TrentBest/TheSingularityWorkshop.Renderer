@@ -98,7 +98,7 @@ var transitionTrace = new RepresentationTransitionTrace(
     transitionInitial.Selected!.Id,
     transitionPromoted.Selected!.Id,
     transitionDemoted.Selected!.Id,
-    transitionInitial.ProjectedSize,
+    transitionObserver.ProjectedSize,
     promotedObservation.ProjectedSize,
     transitionObserver.ProjectedSize,
     "CameraBudget → ExpandedBudget → CameraBudget",
