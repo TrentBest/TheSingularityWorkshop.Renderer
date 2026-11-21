@@ -78,6 +78,56 @@ public sealed class DeterministicRepresentationPolicyTests
             new RepresentationObservation("observer", RepresentationObserverKind.Camera,
                 "source", 1, 1.1, 0, 0));
     }
+
+    [Fact]
+    public void Select_InteractionIntentPromotesInteractionPrecisionCandidate()
+    {
+        var geometry = new RepresentationCandidate(
+            "geometry",
+            new RepresentationDimensionProfile(
+                RepresentationDetailLevel.Reduced, RepresentationDetailLevel.Omitted,
+                RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+                RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+                RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted),
+            Cost(1, 128));
+        var interaction = new RepresentationCandidate(
+            "interaction",
+            new RepresentationDimensionProfile(
+                RepresentationDetailLevel.Summary, RepresentationDetailLevel.Omitted,
+                RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+                RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Full,
+                RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted),
+            Cost(1, 128));
+        var candidates = new[] { geometry, interaction };
+        var minimum = new RepresentationDimensionProfile(
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted, 0,
+            RepresentationResidency.ReconstructOnDemand, RepresentationDetailLevel.Omitted,
+            RepresentationDetailLevel.Omitted, RepresentationDetailLevel.Omitted);
+        var budget = new RepresentationResourceBudget(5, 3, 1024, 256, 50, 0.5);
+        var passive = new RepresentationObservation(
+            "observer", RepresentationObserverKind.FirstPerson, "source", 1, 1, 1, 0.2);
+        var interacting = new RepresentationObservation(
+            "observer", RepresentationObserverKind.FirstPerson, "source", 1, 1, 1, 0.2,
+            RepresentationIntent.Interact);
+        var policy = new DeterministicRepresentationPolicy();
+
+        Assert.Equal("geometry", policy.Select(passive, minimum, budget, candidates).Selected!.Id);
+        Assert.Equal("interaction", policy.Select(interacting, minimum, budget, candidates).Selected!.Id);
+        Assert.Equal(RepresentationIntent.Interact, interacting.Intent);
+    }
+
+    [Fact]
+    public void Observation_RejectsInvalidIntentAndNegativeSourceRevision()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new RepresentationObservation("observer", RepresentationObserverKind.Camera,
+                "source", 1, 0.5, 0.5, 0.5, (RepresentationIntent)99));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new RepresentationObservation("observer", RepresentationObserverKind.Camera,
+                "source", -1, 0.5, 0.5, 0.5));
+    }
+
     [Fact]
     public void Select_ProjectedSizeAndVisibilityFavorVisualGeometry()
     {
