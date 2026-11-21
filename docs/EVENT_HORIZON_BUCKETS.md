@@ -114,6 +114,17 @@ A refresh ticket captures the bucket identity, invalidation generation, and sour
 
 `HorizonRepresentationHandoff` applies the corresponding presentation rule: the current representation remains selected while a candidate is prepared. A handoff can commit only when the candidate is ready, covers the observer view, and matches the current source and observer revisions. The code represents coverage as an input; it does not yet calculate reprojection or disocclusion coverage.
 
+## Connecting refresh tickets to visible representation handoff
+
+The two validity checks solve different problems and must both succeed before a host treats replacement output as current:
+
+1. `EventHorizonBucket.TryCompleteRefresh` accepts the work only if its bucket identity, invalidation generation, and source revision still match the issued ticket.
+2. `HorizonRepresentationHandoff.TryCommit` promotes the candidate only if it is ready, covers the current observer view, and matches the current source and observer revisions.
+
+The integration regression `BucketRepresentationHandoffIntegrationTests` exercises both contracts in one deterministic sequence. It starts with visible geometry, changes the source twice while the first replacement is in flight, rejects that stale ticket, keeps the old geometry selected, then accepts and promotes a replacement built from the latest source revision. A separate lighting bucket remains valid and records reuse throughout.
+
+These APIs intentionally remain separate: the bucket validates cached-work freshness; the handoff validates which prepared representation may be selected. The host coordinates them and must re-check the current revisions at promotion time. If observer movement or another invalidation occurs between cache acceptance and promotion, the host must keep the old visible representation and reprepare or invalidate the candidate as appropriate. This is not a cross-object atomic transaction and does not imply GPU resource synchronization.
+
 ## Measuring the work
 
 The bucket exposes a diagnostic snapshot with counts for cadence checks, due/not-due results, refresh attempts, accepted/rejected refreshes, invalidations, observed invalidation reasons, and explicit cache reuse.
