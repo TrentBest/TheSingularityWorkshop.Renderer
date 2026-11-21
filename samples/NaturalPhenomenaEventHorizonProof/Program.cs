@@ -50,6 +50,28 @@ Require(replay.Selected?.Id == decisions[2].Selected?.Id &&
         replay.CandidateScores.SequenceEqual(decisions[2].CandidateScores),
     "Identical AI/map inputs must produce an identical selection and score trace.");
 
+var stabilityObservation = new RepresentationObservation(
+    "camera-stability", RepresentationObserverKind.Camera, sourceId, sourceRevision, 0.20, 0.8, 0.2);
+var stabilityInitial = policy.Select(
+    stabilityObservation, minimum, new RepresentationResourceBudget(5, 5, 8 * 1024 * 1024, 4 * 1024 * 1024, 200, 0.5),
+    [candidates.Single(x => x.Id == "RegionalVolume")]);
+var slightlyMovedObservation = new RepresentationObservation(
+    "camera-stability", RepresentationObserverKind.Camera, sourceId, sourceRevision, 0.21, 0.8, 0.2);
+var stabilityDecision = policy.Select(
+    slightlyMovedObservation, minimum,
+    new RepresentationResourceBudget(5, 5, 8 * 1024 * 1024, 4 * 1024 * 1024, 200, 0.5),
+    candidates, stabilityInitial, minimumSwitchAdvantage: 150);
+Require(stabilityDecision.Selected?.Id == "RegionalVolume" && stabilityDecision.HysteresisApplied,
+    "A small projected-size change must not cause an unnecessary representation switch within the configured hysteresis margin.");
+var hysteresisTrace = new HysteresisTrace(
+    stabilityInitial.Selected!.Id,
+    stabilityDecision.Selected!.Id,
+    stabilityInitial.Selected.Id,
+    stabilityDecision.HysteresisApplied,
+    stabilityObservation.ProjectedSize,
+    slightlyMovedObservation.ProjectedSize,
+    150);
+
 var contributions = new[]
 {
     new RenderContribution("ash-cell-north", 2, "ash:regional-density:kg-m3", 0.005),
@@ -92,7 +114,8 @@ var trace = new NaturalPhenomenaTrace(
         item.Sources,
         item.IsAggregated,
         item.EstimatedTotalError)).ToArray(),
-    dependencyTrace);
+    dependencyTrace,
+    hysteresisTrace);
 
 var jsonPath = Path.Combine(outputDirectory, "natural-phenomena-trace.json");
 var svgPath = Path.Combine(outputDirectory, "natural-phenomena-event-horizons.svg");
@@ -226,11 +249,12 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     sb.AppendLine("""<text x="36" y="76" fill="#a9bacb" font-family="Consolas,monospace" font-size="13">Volcanic ash field · deterministic CPU policy proof · source identity and revision retained</text>""");
     sb.AppendLine("""<rect x="36" y="105" width="1088" height="90" rx="12" fill="#1b2b3a" stroke="#466176"/><text x="58" y="135" fill="#f2d6a2" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">SOURCE LIFECYCLES</text>""");
     sb.AppendLine("""<text x="58" y="164" fill="#f4f7fb" font-family="Consolas,monospace" font-size="13">Lightning event (transient)  →  Ash density field (evolving)  →  Deposited ash (persistent aftermath)</text>""");
-    sb.AppendLine("""<text x="36" y="230" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
+    sb.AppendLine($"""<text x="36" y="218" fill="#a9bacb" font-family="Consolas,monospace" font-size="12">Hysteresis: {Esc(trace.Hysteresis.Initial)} → {Esc(trace.Hysteresis.Selected)} retained after projected size {trace.Hysteresis.InitialProjectedSize:F2} → {trace.Hysteresis.NextProjectedSize:F2} (margin {trace.Hysteresis.SwitchMargin:F0})</text>""");
+    sb.AppendLine("""<text x="36" y="242" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">OBSERVER-RELATIVE MULTIDIMENSIONAL SELECTION</text>""");
     for (var i = 0; i < trace.Observers.Count; i++)
     {
         var observer = trace.Observers[i];
-        var y = 250 + i * 86;
+        var y = 262 + i * 76;
         sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Intent)} → {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
     }
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
@@ -259,4 +283,5 @@ sealed record SourceLifecycle(string SourceId, long Revision, string Lifecycle, 
 sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, string Intent, string SourceId, long SourceRevision, string Selected, IReadOnlyList<string> ReducedDimensions, IReadOnlyList<string> RejectedCandidates, IReadOnlyList<string> CandidateScores);
 sealed record AggregateTrace(string AggregationKey, IReadOnlyList<RenderContributionProvenance> Sources, bool IsAggregated, double EstimatedTotalError);
 sealed record BucketTrace(string Name, bool IsValid, string DirtyReasons, long Invalidations, long AcceptedRefreshes, long ReuseCount);
-sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets);
+sealed record HysteresisTrace(string Initial, string Selected, string RetainedCandidate, bool Applied, double InitialProjectedSize, double NextProjectedSize, double SwitchMargin);
+sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets, HysteresisTrace Hysteresis);
