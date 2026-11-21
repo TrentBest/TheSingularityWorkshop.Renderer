@@ -103,7 +103,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Architecture](docs/ARCHITECTURE.md) — component ownership and dependency direction.
 - [Rendering model](docs/RENDERING_MODEL.md) and [representation](docs/REPRESENTATION.md) — how stable identity can outlive a particular materialized form.
 - [Observation model](docs/OBSERVATION_MODEL.md) and [obstruction/sensor visibility](docs/OBSTRUCTION_AND_SENSOR_VISIBILITY.md) — observer geometry and channel-specific visibility contracts.
-- [Semantic observation](docs/SEMANTIC_OBSERVATION.md) — Event Horizons as structured observations for AI/FSM agents, including horizon summaries, relations, uncertainty, and freshness.
+- [Semantic observation](docs/SEMANTIC_OBSERVATION.md) — Event Horizons as structured observations for AI/FSM agents, including horizon summaries, relations, uncertainty, and freshness.\n- [Semantic world-perception exhibit](docs/gallery/semantic-world-perception.md) — one authoritative world, what an AI knows versus what a player sees, beginning with a blacksmith shop and a gallery of other environments.
 - [Spatial semantics and affordances](docs/SPATIAL_SEMANTICS_AND_AFFORDANCES.md) — spatially grounded concepts, named geometry anchors, visible widgets, and pose-aware interactions.
 - [FSM integration](docs/FSM_INTEGRATION.md) and [scheduling model](docs/FSM_SCHEDULING_MODEL.md) — where FSM_API fits without making it a graphics engine.
 - [GPU boundary](docs/GPU_BOUNDARY.md) — the intended division between CPU-side meaning/policy and GPU-facing execution.
