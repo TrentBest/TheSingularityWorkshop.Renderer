@@ -80,6 +80,7 @@ var trace = new NaturalPhenomenaTrace(
     decisions.Select((decision, index) => new ObserverDecisionTrace(
         decision.ObserverId,
         decision.ObserverKind.ToString(),
+        observers[index].Observation.Intent.ToString(),
         decision.SourceId,
         decision.SourceRevision,
         decision.Selected!.Id,
@@ -230,7 +231,7 @@ static string BuildSvg(NaturalPhenomenaTrace trace)
     {
         var observer = trace.Observers[i];
         var y = 250 + i * 86;
-        sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
+        sb.AppendLine($"""<rect x="36" y="{y}" width="1088" height="70" rx="10" fill="#1b2b3a" stroke="#466176"/><text x="56" y="{y + 27}" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700">{Esc(observer.ObserverId)} · {Esc(observer.Intent)} → {Esc(observer.Selected)}</text><text x="56" y="{y + 51}" fill="#a9bacb" font-family="Consolas,monospace" font-size="11">source {Esc(observer.SourceId)} @ r{observer.SourceRevision} · reduced: {Esc(string.Join(", ", observer.ReducedDimensions))}</text>""");
     }
     sb.AppendLine("""<text x="36" y="535" fill="#f4f7fb" font-family="Segoe UI,sans-serif" font-size="18" font-weight="700">DEPENDENCY INVALIDATION</text>""");
     var invalidated = trace.Buckets.Where(x => !x.IsValid).ToArray();
@@ -255,7 +256,7 @@ static void Require(bool condition, string message)
 
 sealed record ObserverBudget(RepresentationObservation Observation, RepresentationResourceBudget Budget);
 sealed record SourceLifecycle(string SourceId, long Revision, string Lifecycle, string Description);
-sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, string SourceId, long SourceRevision, string Selected, IReadOnlyList<string> ReducedDimensions, IReadOnlyList<string> RejectedCandidates, IReadOnlyList<string> CandidateScores);
+sealed record ObserverDecisionTrace(string ObserverId, string ObserverKind, string Intent, string SourceId, long SourceRevision, string Selected, IReadOnlyList<string> ReducedDimensions, IReadOnlyList<string> RejectedCandidates, IReadOnlyList<string> CandidateScores);
 sealed record AggregateTrace(string AggregationKey, IReadOnlyList<RenderContributionProvenance> Sources, bool IsAggregated, double EstimatedTotalError);
 sealed record BucketTrace(string Name, bool IsValid, string DirtyReasons, long Invalidations, long AcceptedRefreshes, long ReuseCount);
 sealed record NaturalPhenomenaTrace(IReadOnlyList<SourceLifecycle> Sources, IReadOnlyList<ObserverDecisionTrace> Observers, IReadOnlyList<AggregateTrace> Aggregates, IReadOnlyList<BucketTrace> Buckets);
