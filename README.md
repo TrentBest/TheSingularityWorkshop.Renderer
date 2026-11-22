@@ -3,6 +3,7 @@
 # ✳️ 00 TheSingularityWorkshop.Renderer
 
 [![Build](https://img.shields.io/github/actions/workflow/status/TrentBest/TheSingularityWorkshop.Renderer/build.yml?branch=development)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/build.yml)
+[![CiAi evidence](https://img.shields.io/github/actions/workflow/status/TrentBest/TheSingularityWorkshop.Renderer/ciai-evidence.yml?branch=development&label=CiAi%20evidence)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/ciai-evidence.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [![Sith Policy](assets/sith-policy.svg)](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/sith-policy.yml)
@@ -96,7 +97,7 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 - [Documentation index](docs/DOCUMENTATION_INDEX.md) — the map for learning, using, and verifying Renderer.
 - [Theory practice and traceability](docs/THEORY_PRACTICE_AND_TRACEABILITY.md) — exercises and the theory-to-evidence discipline.
 - [Start here](docs/START_HERE.md) — a guided explanation of the model and its place in the Workshop.
-- [Living Renderer guide](docs/LIVING_RENDERER.md) — visual teaching path, what is executable today, and the next evidence milestones.
+- [Living Renderer guide](docs/LIVING_RENDERER.md) — visual teaching path, what is executable today, and the next proofs.
 - [What Event Horizons mean](docs/EVENT_HORIZON_THEORY.md) — the conceptual rationale behind observer-relative computational detail.
 - [Event Horizon contracts](docs/EVENT_HORIZONS.md) and [bucket model](docs/EVENT_HORIZON_BUCKETS.md) — selection and grouping behavior, with the policy boundaries made explicit.
 - [Observable phenomena and effect budgets](docs/OBSERVABLE_PHENOMENA_AND_EFFECT_BUDGETS.md) — observer-relative representation budgets and perceptual effects, with implementation limits stated explicitly.
@@ -121,6 +122,10 @@ Want to see a soldier instead of a model test? Open the [Soldier Field WebGPU la
 Renderer is **alpha software**. The project has a .NET 10 library and automated tests for its current pure-model contracts. The runtime MicroBundle identity is the string ontology **TheSingularityWorkshop.Renderer**; a repository-local numeric handle, if used, is only a lookup into that repository's blob store. Durable artifact storage, resolution, and FSM_COS runtime loading remain explicit integration work. Its benchmark suite provides machine-specific measurements for selected operations; those measurements are calibration evidence, not proof that the complete system outperforms an established production renderer.
 
 Current implementation, design intent, and exploratory demonstrations are not interchangeable. The documentation linked above identifies the relevant contracts and known boundaries. The browser Soldier Field remains a separate Visualize lab until an explicit, tested policy handoff connects it to Renderer.
+
+### CiAi evidence lane
+
+The [CiAi Renderer Evidence workflow](https://github.com/TrentBest/TheSingularityWorkshop.Renderer/actions/workflows/ciai-evidence.yml) is a separate, read-only observer. It checks out CiAi at an immutable source commit, observes the authoritative `build.yml` run for the exact Renderer commit, and retains JSON/Markdown evidence as a workflow artifact. The Renderer build/test workflow remains authoritative; CiAi evidence is advisory and cannot authorize merges, NuGet publication, releases, or deployment. The integration is staged on `development` and is not considered verified until its first exact-SHA artifact has been inspected.
 
 ## Build and contribute
 
