@@ -1,0 +1,207 @@
+name: CiAi Renderer Evidence
+
+on:
+  push:
+    branches: [development]
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: "Full 40-character Renderer commit SHA to observe"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ciai-renderer-evidence-${{ github.event.inputs.commit_sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    name: Observe exact Renderer CI evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Resolve target commit
+        id: target
+        env:
+          INPUT_SHA: ${{ inputs.commit_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="${INPUT_SHA:-$GITHUB_SHA}"
+          if ! [[ "$target" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "::error::Target must be a full 40-character commit SHA."
+            exit 1
+          fi
+          echo "sha=${target,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve the exact authoritative Renderer build run and attempt
+        id: source-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          matching="[]"
+          for poll in $(seq 1 90); do
+            response="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/build.yml/runs?head_sha=$TARGET_SHA&branch=development&event=push&per_page=100")"
+            matching="$(jq --arg repo "$GITHUB_REPOSITORY" --arg sha "$TARGET_SHA" '
+              [.workflow_runs[]
+                | select(.head_sha == $sha)
+                | select(.path | split("@")[0] == ".github/workflows/build.yml")
+                | select(.event == "push" and .head_branch == "development")
+                | select(.head_repository.full_name == $repo)]
+            ' <<< "$response")"
+            count="$(jq 'length' <<< "$matching")"
+            if [ "$count" -gt 1 ]; then
+              echo "::warning::Multiple matching Renderer build runs exist for this SHA; preserving ambiguity rather than choosing one."
+              break
+            fi
+            if [ "$count" -eq 1 ] && [ "$(jq -r '.[0].status' <<< "$matching")" = "completed" ]; then
+              break
+            fi
+            echo "Waiting for exact Renderer build run (poll $poll/90; matches=$count)."
+            sleep 20
+          done
+
+          count="$(jq 'length' <<< "$matching")"
+          if [ "$count" -eq 1 ]; then
+            run_id="$(jq -r '.[0].id' <<< "$matching")"
+            run_attempt="$(jq -r '.[0].run_attempt' <<< "$matching")"
+            status="$(jq -r '.[0].status' <<< "$matching")"
+            conclusion="$(jq -r '.[0].conclusion // "none"' <<< "$matching")"
+            run_url="$(jq -r '.[0].html_url' <<< "$matching")"
+            [[ "$run_id" =~ ^[1-9][0-9]*$ ]]
+            [[ "$run_attempt" =~ ^[1-9][0-9]*$ ]]
+            echo "required_workflow=.github/workflows/build.yml#$run_id#$run_attempt" >> "$GITHUB_OUTPUT"
+            echo "source_run_id=$run_id" >> "$GITHUB_OUTPUT"
+            echo "source_run_attempt=$run_attempt" >> "$GITHUB_OUTPUT"
+            echo "source_run_status=$status" >> "$GITHUB_OUTPUT"
+            echo "source_run_conclusion=$conclusion" >> "$GITHUB_OUTPUT"
+            echo "source_run_url=$run_url" >> "$GITHUB_OUTPUT"
+            echo "Resolved exact Renderer run $run_id attempt $run_attempt ($status/$conclusion)."
+          else
+            if [ "$count" -gt 1 ]; then
+              state="ambiguous"
+            else
+              state="missing-or-not-yet-created"
+            fi
+            echo "required_workflow=.github/workflows/build.yml" >> "$GITHUB_OUTPUT"
+            echo "source_run_id=" >> "$GITHUB_OUTPUT"
+            echo "source_run_attempt=" >> "$GITHUB_OUTPUT"
+            echo "source_run_status=$state" >> "$GITHUB_OUTPUT"
+            echo "source_run_conclusion=$state" >> "$GITHUB_OUTPUT"
+            echo "source_run_url=" >> "$GITHUB_OUTPUT"
+            echo "::warning::CiAi will evaluate the workflow identity without inventing a run ID or attempt."
+          fi
+
+      - name: Check out pinned CiAi observer source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: TrentBest/TheSingularityWorkshop.CiAi
+          ref: 9e01a4be81fb94fa7bb2d4619196646adf3463f4
+          path: _tools/CiAi
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore pinned CiAi observer
+        working-directory: _tools/CiAi
+        run: dotnet restore samples/TheSingularityWorkshop.CiAi.ObserveRun/TheSingularityWorkshop.CiAi.ObserveRun.csproj
+
+      - name: Build pinned CiAi observer
+        working-directory: _tools/CiAi
+        run: dotnet build samples/TheSingularityWorkshop.CiAi.ObserveRun/TheSingularityWorkshop.CiAi.ObserveRun.csproj --configuration Release --no-restore
+
+      - name: Observe Renderer commit with CiAi
+        id: observe
+        working-directory: _tools/CiAi
+        env:
+          CIAI_GITHUB_TOKEN: ${{ github.token }}
+          CIAI_REQUIRED_WORKFLOW_PATHS: ${{ steps.source-run.outputs.required_workflow }}
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          OBSERVER_REPOSITORY: TrentBest/TheSingularityWorkshop.Renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          set +e
+          dotnet run --project samples/TheSingularityWorkshop.CiAi.ObserveRun --configuration Release --no-build -- \
+            "$OBSERVER_REPOSITORY" "$TARGET_SHA" artifacts/ciai-renderer-evidence.json
+          result=$?
+          set -e
+          echo "observer_exit_code=$result" >> "$GITHUB_OUTPUT"
+          echo "CiAi observer exit code: $result (advisory; the authoritative Renderer workflow remains responsible for its own verdict)."
+
+      - name: Validate report identity and schema
+        working-directory: _tools/CiAi
+        env:
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          REQUIRED_WORKFLOW: ${{ steps.source-run.outputs.required_workflow }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="artifacts/ciai-renderer-evidence.json"
+          test -s "$report"
+          jq -e --arg sha "$TARGET_SHA" --arg workflow "$REQUIRED_WORKFLOW" '
+            .schema == "ciai.commit-observation.v2" and
+            .reportType == "read-only-workflow-observation" and
+            .repository == "TrentBest/TheSingularityWorkshop.Renderer" and
+            .headSha == $sha and
+            .requiredWorkflowPolicy.configured == true and
+            (.requiredWorkflowResults | length) == 1 and
+            .requiredWorkflowResults[0].WorkflowPath == $workflow
+          ' "$report" >/dev/null
+
+      - name: Publish evidence summary
+        if: always()
+        working-directory: _tools/CiAi
+        env:
+          TARGET_SHA: ${{ steps.target.outputs.sha }}
+          SOURCE_RUN_URL: ${{ steps.source-run.outputs.source_run_url }}
+          SOURCE_RUN_ID: ${{ steps.source-run.outputs.source_run_id }}
+          SOURCE_RUN_ATTEMPT: ${{ steps.source-run.outputs.source_run_attempt }}
+          SOURCE_RUN_STATUS: ${{ steps.source-run.outputs.source_run_status }}
+          SOURCE_RUN_CONCLUSION: ${{ steps.source-run.outputs.source_run_conclusion }}
+          REQUIRED_WORKFLOW: ${{ steps.source-run.outputs.required_workflow }}
+          OBSERVER_EXIT_CODE: ${{ steps.observe.outputs.observer_exit_code }}
+        shell: bash
+        run: |
+          report="artifacts/ciai-renderer-evidence.json"
+          policy_state="not-produced"
+          if [ -s "$report" ]; then
+            policy_state="$(jq -r '.requiredWorkflowResults[0].State // "unknown"' "$report")"
+          fi
+          {
+            echo "## CiAi — Renderer exact commit evidence"
+            echo
+            echo "- Repository: TrentBest/TheSingularityWorkshop.Renderer"
+            echo "- Exact source commit: `$TARGET_SHA`"
+            echo "- Required workflow selector: `$REQUIRED_WORKFLOW`"
+            echo "- Authoritative build run: ${SOURCE_RUN_URL:-not uniquely resolved}"
+            echo "- Run ID / attempt: ${SOURCE_RUN_ID:-unknown} / ${SOURCE_RUN_ATTEMPT:-unknown}"
+            echo "- Provider status / conclusion: $SOURCE_RUN_STATUS / $SOURCE_RUN_CONCLUSION"
+            echo "- CiAi policy state: $policy_state"
+            echo "- CiAi observer exit code: ${OBSERVER_EXIT_CODE:-not run}"
+            echo
+            echo "Read-only evidence only. Renderer build/test remains authoritative; this lane does not merge, publish NuGet packages, create releases, or deploy."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload CiAi evidence reports
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: CiAi-Renderer-evidence-${{ steps.target.outputs.sha }}
+          path: |
+            _tools/CiAi/artifacts/ciai-renderer-evidence.json
+            _tools/CiAi/artifacts/ciai-renderer-evidence.md
+          if-no-files-found: warn
+          retention-days: 30
