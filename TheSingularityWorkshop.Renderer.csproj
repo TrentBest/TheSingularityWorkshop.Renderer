@@ -27,7 +27,7 @@
     <WorkshopSourceRoot Condition="'$(WorkshopSourceRoot)' == ''">$(MSBuildThisFileDirectory)..</WorkshopSourceRoot>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(WorkshopUseRepositorySources)' == 'true'">
+  <PropertyGroup Condition="'$(WorkshopUseRepositorySources)' == 'true' or '$(WorkshopUseFsmApiRepositorySource)' == 'true'">
     <DefineConstants>$(DefineConstants);WORKSHOP_USE_REPOSITORY_SOURCES</DefineConstants>
   </PropertyGroup>
 
