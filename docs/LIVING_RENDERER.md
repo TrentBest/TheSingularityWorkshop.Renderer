@@ -26,6 +26,8 @@ The first handoff is deliberately narrow:
 
 This is the first actual Renderer-policy-to-WebGPU workload connection. It does not yet run Renderer inside the browser, respond dynamically to live camera/focus changes, cull individual entities, promote/demote mesh fidelity, or invoke the Renderer/FSM_API bucket scheduler. The current Soldier Field workload deliberately repeats the selected population across all eight horizons as a stress fixture. Browser frame and JavaScript timing are not GPU execution measurements.
 
+Visualize now uses the verified FSM state to allocate a fixed detail budget of 0 / 64 / 256 / 1,024 / 4,096 dust motes for Semantic / Aggregate / Distant / Near / Interactive. Each mote is an eight-triangle octahedron; Interactive therefore submits 32,768 additional detail triangles. This mapping is owned by Visualize: Renderer selects the representation state, and Visualize decides how much visual work that state receives. It is not yet screen-space adaptive, particle-physics driven, or GPU-timestamp measured.
+
 The next proof should connect stable per-entity identity and observer position to live Renderer selection, then show that promotion/demotion changes actual geometry and submitted work without identity discontinuity.
 
 ## Build the evidence in layers
