@@ -20,7 +20,7 @@ Visualize's Soldier Field lab now consumes a deterministic `renderer-policy.json
 
 The first handoff is deliberately narrow:
 - Renderer selects horizon, representation label, and preferred update frequency from explicit distance policy.
-- A .NET sample serializes those decisions into a checked-in manifest with reproducible selection probes and an attention-floor example.
+- A .NET sample advances each selected representation through `RendererComputationMachine`/FSM_API, then serializes the verified state transitions into a checked-in manifest with reproducible selection probes and an attention-floor example.
 - Visualize loads that manifest in its browser WebGPU runner. Its distance and minimum-representation controls query the generated 8 × 5 Renderer decision matrix; default observer mode updates and draws only the selected horizon, while an explicit stress toggle runs all eight. Representation, cadence, reuse and policy-skip counters are shown together.
 - CI regenerates the manifest from Renderer development source and verifies the browser input snapshot.
 
