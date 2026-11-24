@@ -21,7 +21,7 @@ Visualize's Soldier Field lab now consumes a deterministic `renderer-policy.json
 The first handoff is deliberately narrow:
 - Renderer selects horizon, representation label, and preferred update frequency from explicit distance policy.
 - A .NET sample serializes those decisions into a checked-in manifest with reproducible selection probes and an attention-floor example.
-- Visualize loads that manifest in its browser WebGPU runner; Renderer-derived frame intervals govern the per-horizon instance-buffer refresh cadence, and representation labels are shown beside measured work/reuse counters.
+- Visualize loads that manifest in its browser WebGPU runner. Its distance and minimum-representation controls query the generated 8 × 5 Renderer decision matrix; default observer mode updates and draws only the selected horizon, while an explicit stress toggle runs all eight. Representation, cadence, reuse and policy-skip counters are shown together.
 - CI regenerates the manifest from Renderer development source and verifies the browser input snapshot.
 
 This is the first actual Renderer-policy-to-WebGPU workload connection. It does not yet run Renderer inside the browser, respond dynamically to live camera/focus changes, cull individual entities, promote/demote mesh fidelity, or invoke the Renderer/FSM_API bucket scheduler. The current Soldier Field workload deliberately repeats the selected population across all eight horizons as a stress fixture. Browser frame and JavaScript timing are not GPU execution measurements.
